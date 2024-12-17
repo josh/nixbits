@@ -1,0 +1,50 @@
+name: Nix
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  id-token: "write"
+  contents: "read"
+
+env:
+  NIX_ABORT_ON_WARN: "1"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        system:
+          - "aarch64-darwin"
+          - "aarch64-linux"
+          - "x86_64-linux"
+
+    runs-on: ${{ endsWith(matrix.system, '-darwin') && 'macos-latest' || 'ubuntu-latest' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - if: matrix.system == 'aarch64-linux'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            system = ${{ matrix.system }}
+            accept-flake-config = true
+            allow-import-from-derivation = false
+
+      - uses: cachix/cachix-action@v15
+        with:
+          name: josh
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
+      - uses: DeterminateSystems/flake-checker-action@v9
+
+      - name: Check flake
+        run: |
+          nix flake check --verbose --print-build-logs
