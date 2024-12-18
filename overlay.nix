@@ -1,10 +1,8 @@
-final: prev:
+final: _prev:
 let
   inherit (final) lib;
-  prev' = lib.attrsets.mapAttrs' (name: lib.attrsets.nameValuePair "${name}'") prev;
-  callPackage = lib.callPackageWith (final // prev');
   pkgs = lib.filesystem.packagesFromDirectoryRecursive {
-    inherit callPackage;
+    inherit (final) callPackage;
     directory = ./pkgs;
   };
 in
