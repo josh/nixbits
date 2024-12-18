@@ -4,7 +4,6 @@
   makeWrapper,
   runCommand,
   rclone,
-  nixbits,
 }:
 stdenv.mkDerivation (finalAttrs: {
   name = "rclone-taildrive";
@@ -15,7 +14,12 @@ stdenv.mkDerivation (finalAttrs: {
   buildCommand = ''
     mkdir -p $out/bin
     ln -s ${lib.getExe rclone} $out/bin/rclone
-    wrapProgram $out/bin/rclone --set RCLONE_CONFIG ${nixbits.rclone-taildrive-config}
+
+    wrapProgram $out/bin/rclone \
+      --set-default RCLONE_CONFIG "" \
+      --set RCLONE_CONFIG_TAILDRIVE_TYPE webdav \
+      --set RCLONE_CONFIG_TAILDRIVE_URL http://100.100.100.100:8080 \
+      --set RCLONE_CONFIG_TAILDRIVE_VENDOR other
   '';
 
   meta = {
