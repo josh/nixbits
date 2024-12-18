@@ -2,6 +2,7 @@
   lib,
   writeShellScript,
   writeShellApplication,
+  darwin,
   coreutils,
   diffutils,
 }:
@@ -15,6 +16,7 @@ writeShellApplication {
   runtimeInputs = [
     coreutils
     diffutils
+    darwin.sudo
   ];
   text = ''
     if diff /etc/pam.d/sudo_local ${./sudo_local}; then
@@ -22,7 +24,7 @@ writeShellApplication {
       exit 0
     fi
     echo "enabling pam_tid" >&2
-    /usr/bin/sudo ${install-pamd-sudo-local}
+    sudo ${install-pamd-sudo-local}
   '';
   meta = {
     description = "Enable sudo authentication with Touch ID";
