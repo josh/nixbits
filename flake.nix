@@ -16,7 +16,8 @@
         "x86_64-linux"
       ];
       eachSystem = lib.genAttrs systems;
-      eachPkgs = fn: eachSystem (system: fn nixpkgs.legacyPackages.${system});
+      eachPkgs =
+        fn: eachSystem (system: fn (nixpkgs.legacyPackages.${system}.extend self.overlays.default));
 
       internal-inputs = builtins.mapAttrs (
         _name: node: builtins.getFlake (builtins.flakeRefToString node.locked)
@@ -25,9 +26,15 @@
       treefmtEval = eachPkgs (pkgs: internal-inputs.treefmt-nix.lib.evalModule pkgs ./treefmt.nix);
     in
     {
-      packages = eachPkgs (pkgs: {
-        inherit (pkgs) hello;
-      });
+      overlays.default = import ./overlay.nix;
+
+      packages = eachPkgs (
+        pkgs:
+        let
+          isAvailable = _: pkg: pkg.meta.available;
+        in
+        lib.attrsets.filterAttrs isAvailable pkgs.nixbits
+      );
 
       formatter = eachSystem (system: treefmtEval.${system}.config.build.wrapper);
 
