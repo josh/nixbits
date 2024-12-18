@@ -38,8 +38,22 @@
 
       formatter = eachSystem (system: treefmtEval.${system}.config.build.wrapper);
 
-      checks = eachSystem (system: {
-        formatting = treefmtEval.${system}.config.build.check self;
-      });
+      checks = eachSystem (
+        system:
+        let
+          addAttrsetPrefix = prefix: lib.attrsets.concatMapAttrs (n: v: { "${prefix}${n}" = v; });
+          localTests = lib.attrsets.concatMapAttrs (
+            pkgName: pkg:
+            if (builtins.hasAttr "tests" pkg) then
+              ({ "${pkgName}-build" = pkg; } // (addAttrsetPrefix "${pkgName}-tests-" pkg.tests))
+            else
+              { "${pkgName}-build" = pkg; }
+          ) self.packages.${system};
+        in
+        {
+          formatting = treefmtEval.${system}.config.build.check self;
+        }
+        // localTests
+      );
     };
 }
