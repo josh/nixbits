@@ -7,7 +7,10 @@
 let
   git-track = writeShellApplication {
     name = "git-track";
-    runtimeInputs = [ git gnugrep ];
+    runtimeInputs = [
+      git
+      gnugrep
+    ];
     text = builtins.readFile ./git-track.bash;
 
     passthru.tests = {
@@ -21,9 +24,13 @@ let
           }
           ''
             git init -b main
-            git commit --allow-empty -m "initial commit"
+            git config user.email "you@example.com"
+            git config user.name "Your Name"
+            git commit --allow-empty --message "initial commit"
+
             git checkout -b foo
             git track
+
             touch $out
           '';
 
