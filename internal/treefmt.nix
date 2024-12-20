@@ -7,14 +7,17 @@ let
 
   treefmtConfig = {
     projectRootFile = "flake.nix";
+    # keep-sorted start
     programs.actionlint.enable = true;
     programs.deadnix.enable = true;
+    programs.keep-sorted.enable = true;
     programs.nixfmt.enable = true;
     programs.prettier.enable = true;
     programs.shellcheck.enable = true;
     programs.shfmt.enable = true;
     programs.statix.enable = true;
     programs.taplo.enable = true;
+    # keep-sorted end
   };
 in
 treefmtEval.config.build
