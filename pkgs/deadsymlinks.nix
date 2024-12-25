@@ -9,7 +9,9 @@ let
   deadsymlinks = writeShellApplication {
     name = "deadsymlinks";
     runtimeInputs = [ findutils ];
-    text = builtins.readFile ./deadsymlinks.bash;
+    text = ''
+      find . -xtype l
+    '';
 
     passthru.tests = {
       usage = testers.testEqualContents {
