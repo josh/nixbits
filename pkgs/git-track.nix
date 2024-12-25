@@ -1,4 +1,5 @@
 {
+  lib,
   writeShellApplication,
   runCommand,
   git,
@@ -7,10 +8,13 @@
 let
   git-track = writeShellApplication {
     name = "git-track";
-    runtimeInputs = [
-      git
-      gnugrep
-    ];
+    runtimeEnv = {
+      PATH = lib.strings.makeBinPath [
+        git
+        gnugrep
+      ];
+    };
+    # excludeShellChecks
     text = builtins.readFile ./git-track.bash;
 
     passthru.tests = {

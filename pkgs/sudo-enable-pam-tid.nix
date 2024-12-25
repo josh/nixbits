@@ -7,11 +7,13 @@
 }:
 writeShellApplication {
   name = "sudo-enable-pam-tid";
-  runtimeInputs = [
-    coreutils
-    diffutils
-    darwin.sudo
-  ];
+  runtimeEnv = {
+    PATH = lib.strings.makeBinPath [
+      coreutils
+      diffutils
+      darwin.sudo
+    ];
+  };
   text = ''
     if [ -f /etc/pam.d/sudo_local ] && diff /etc/pam.d/sudo_local ${./sudo_local}; then
       echo "pam_tid already enabled" >&2

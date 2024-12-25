@@ -1,4 +1,5 @@
 {
+  lib,
   writeShellApplication,
   runCommand,
   findutils,
@@ -7,7 +8,11 @@
 let
   deadsymlinks = writeShellApplication {
     name = "deadsymlinks";
-    runtimeInputs = [ findutils ];
+    runtimeEnv = {
+      PATH = lib.strings.makeBinPath [
+        findutils
+      ];
+    };
     text = ''
       find . -xtype l
     '';
