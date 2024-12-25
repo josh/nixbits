@@ -1,6 +1,5 @@
 {
   writeShellApplication,
-  writeText,
   runCommand,
   findutils,
   testers,
@@ -16,8 +15,8 @@ let
     passthru.tests = {
       usage = testers.testEqualContents {
         assertion = "deadsymlinks works";
-        expected = writeText "expected" ''
-          ./bar-symlink
+        expected = runCommand "expected" { } ''
+          echo "./bar-symlink" >$out
         '';
         actual = runCommand "actual" { nativeBuildInputs = [ deadsymlinks ]; } ''
           echo 42 >foo
