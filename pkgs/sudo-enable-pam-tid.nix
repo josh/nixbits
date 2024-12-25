@@ -13,7 +13,7 @@ writeShellApplication {
     darwin.sudo
   ];
   text = ''
-    if diff /etc/pam.d/sudo_local ${./sudo_local}; then
+    if [ -f /etc/pam.d/sudo_local ] && diff /etc/pam.d/sudo_local ${./sudo_local}; then
       echo "pam_tid already enabled" >&2
       exit 0
     fi
