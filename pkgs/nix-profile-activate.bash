@@ -5,6 +5,7 @@ fi
 
 new_profile="$1"
 nix_profile_dir="$HOME/.local/state/nix/profiles"
+old_profile=$(readlink -f "$nix_profile_dir/profile")
 
 if [ ! -f "$new_profile/manifest.json" ]; then
   echo "Invalid nix profile: $new_profile" >&2
@@ -41,10 +42,13 @@ profile_n() {
   echo $((m + 1))
 }
 
-if [[ $(readlink -f "$nix_profile_dir/profile") == "$new_profile" ]]; then
-  echo "Profile already activate" >&2
+if [ "$old_profile" == "$new_profile" ]; then
+  echo "Profile already activated" >&2
   exit 0
 fi
+
+export NIX_NEW_PROFILE="$new_profile"
+export NIX_OLD_PROFILE="$old_profile"
 
 run_hooks pre-install-hooks
 
