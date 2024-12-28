@@ -6,7 +6,7 @@
 }:
 writeShellApplication {
   name = "clean-dsstore";
-  
+
   runtimeEnv = {
     PATH = lib.strings.makeBinPath [
       coreutils
