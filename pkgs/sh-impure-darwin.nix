@@ -2,14 +2,17 @@
 {
   lib,
   runCommandLocal,
-  name ? (builtins.baseNameOf command),
   command ? "/bin/sh",
 }:
+let
+  name = builtins.baseNameOf command;
+in
 runCommandLocal "${name}-impure-darwin"
   {
     __impureHostDeps = [ command ];
 
     meta = {
+      mainProgram = name;
       platforms = lib.platforms.darwin;
     };
   }
