@@ -82,6 +82,6 @@ for label in $remove_labels; do
 done
 
 for label in $keep_labels; do
-  plist=$(readlink -f "$old_path/$label.plist")
+  plist=$(readlink -f "$new_path/$label.plist")
   install_agent "$label" "$plist"
 done
