@@ -38,7 +38,7 @@ install_agent() {
   fi
 
   if [ ! -e "$dst" ]; then
-    x ln -s "$src" "$dst"
+    x ln -sf "$src" "$dst"
   fi
 
   if ! is_loaded "$label"; then
