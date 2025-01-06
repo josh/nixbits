@@ -42,7 +42,7 @@ install_agent() {
   fi
 
   if ! is_loaded "$label"; then
-    x launchctl bootstrap "gui/$UID" "$dst"
+    x launchctl bootstrap "gui/$UID" "$dst" || true
   fi
 }
 
@@ -51,7 +51,7 @@ remove_agent() {
   local dst="$HOME/Library/LaunchAgents/$label.plist"
 
   if is_loaded "$label"; then
-    x launchctl bootout "gui/$UID/$label"
+    x launchctl bootout "gui/$UID/$label" || true
   fi
 
   if [ -f "$dst" ]; then
