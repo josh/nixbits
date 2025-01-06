@@ -2,6 +2,7 @@
   lib,
   writeShellApplication,
   coreutils,
+  findutils,
   nixbits,
 }:
 writeShellApplication {
@@ -9,6 +10,7 @@ writeShellApplication {
   runtimeEnv = {
     PATH = lib.strings.makeBinPath [
       coreutils
+      findutils
       nixbits.launchctl-impure-darwin
     ];
   };

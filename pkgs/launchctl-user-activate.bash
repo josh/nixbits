@@ -14,9 +14,7 @@ x() {
 }
 
 labels() {
-  for file in "$1"/*.plist; do
-    basename "$file" .plist
-  done | sort
+  find "$1" -maxdepth 1 -name "*.plist" -exec basename {} .plist \; | sort
 }
 
 is_loaded() {
