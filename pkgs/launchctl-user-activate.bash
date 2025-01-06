@@ -33,12 +33,14 @@ install_agent() {
   local src="$2"
   local dst="$HOME/Library/LaunchAgents/$label.plist"
 
-  if [ -L "$dst" ] && [ "$(readlink "$dst")" != "$src" ]; then
+  if [ -L "$dst" ] && [ ! -e "$dst" ]; then
+    remove_agent "$label"
+  elif [ -L "$dst" ] && [ "$(readlink "$dst")" != "$src" ]; then
     remove_agent "$label"
   fi
 
   if [ ! -e "$dst" ]; then
-    x ln -sf "$src" "$dst"
+    x ln -s "$src" "$dst"
   fi
 
   if ! is_loaded "$label"; then
