@@ -5,7 +5,7 @@
   nixbits,
 }:
 writeShellApplication {
-  name = "launchctl-activate";
+  name = "launchctl-user-activate";
   runtimeEnv = {
     PATH = lib.strings.makeBinPath [
       coreutils
@@ -14,7 +14,7 @@ writeShellApplication {
   };
   text = builtins.readFile ./launchctl-user-activate.bash;
   meta = {
-    mainProgram = "launchctl-activate";
+    mainProgram = "launchctl-user-activate";
     platforms = lib.platforms.darwin;
   };
 }
