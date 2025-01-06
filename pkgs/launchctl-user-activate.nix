@@ -13,4 +13,8 @@ writeShellApplication {
     ];
   };
   text = builtins.readFile ./launchctl-user-activate.bash;
+  meta = {
+    mainProgram = "launchctl-activate";
+    platforms = lib.platforms.darwin;
+  };
 }
