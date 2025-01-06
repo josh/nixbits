@@ -7,7 +7,7 @@
 writeShellApplication {
   name = "launchctl-activate";
   runtimeEnv = {
-    PATH = lib.makeBinPath [
+    PATH = lib.strings.makeBinPath [
       coreutils
       nixbits.launchctl-impure-darwin
     ];
