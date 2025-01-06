@@ -30,33 +30,39 @@ install_agent() {
   local label="$1"
   local src="$2"
   local dst="$HOME/Library/LaunchAgents/$label.plist"
+  local result=0
 
   if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
     :
   else
-    remove_agent "$label"
+    remove_agent "$label" || result=1
   fi
 
   if [ ! -e "$dst" ]; then
-    x ln -s "$src" "$dst"
+    x ln -s "$src" "$dst" || result=1
   fi
 
   if ! is_loaded "$label"; then
-    x launchctl bootstrap "gui/$UID" "$dst"
+    x launchctl bootstrap "gui/$UID" "$dst" || result=1
   fi
+
+  return $result
 }
 
 remove_agent() {
   local label="$1"
   local dst="$HOME/Library/LaunchAgents/$label.plist"
+  local result=0
 
   if is_loaded "$label"; then
-    x launchctl bootout "gui/$UID/$label"
+    x launchctl bootout "gui/$UID/$label" || result=1
   fi
 
   if [ -f "$dst" ]; then
-    x rm "$dst"
+    x rm "$dst" || result=1
   fi
+
+  return $result
 }
 
 new_path="$1"
