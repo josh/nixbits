@@ -44,7 +44,7 @@ install_agent() {
   fi
 
   if ! is_loaded "$label"; then
-    x launchctl bootstrap "gui/$UID" "$dst" || true
+    x launchctl bootstrap "gui/$UID" "$dst"
   fi
 }
 
@@ -53,7 +53,7 @@ remove_agent() {
   local dst="$HOME/Library/LaunchAgents/$label.plist"
 
   if is_loaded "$label"; then
-    x launchctl bootout "gui/$UID/$label" || true
+    x launchctl bootout "gui/$UID/$label"
   fi
 
   if [ -f "$dst" ]; then
@@ -79,11 +79,19 @@ fi
 remove_labels=$(comm -2 -3 <(labels "$old_path") <(labels "$new_path"))
 keep_labels=$(comm -1 <(labels "$old_path") <(labels "$new_path"))
 
+code=0
+
 for label in $remove_labels; do
-  remove_agent "$label"
+  if ! remove_agent "$label"; then
+    code=1
+  fi
 done
 
 for label in $keep_labels; do
   plist=$(readlink -f "$new_path/$label.plist")
-  install_agent "$label" "$plist"
+  if ! install_agent "$label" "$plist"; then
+    code=1
+  fi
 done
+
+exit $code
