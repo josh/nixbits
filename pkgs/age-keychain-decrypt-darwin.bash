@@ -1,3 +1,7 @@
+usage() {
+  echo "usage: age-keychain-decrypt NAME" >&2
+}
+
 while [[ $# -gt 0 ]]; do
   case $1 in
   --filename)
@@ -21,8 +25,8 @@ while [[ $# -gt 0 ]]; do
     shift 2
     ;;
   *)
-    echo "unknown $1" >&2
-    exit 1
+    AGE_KEYCHAIN_BASENAME="$1"
+    shift
     ;;
   esac
 done
@@ -31,8 +35,12 @@ if [ -z "$AGE_KEYCHAIN_FILENAME" ] && [ -n "$AGE_KEYCHAIN_DIRNAME" ] && [ -n "$A
   AGE_KEYCHAIN_FILENAME="$AGE_KEYCHAIN_DIRNAME/$AGE_KEYCHAIN_BASENAME.age"
 fi
 
-if [ ! -f "$AGE_KEYCHAIN_FILENAME" ]; then
-  echo "'$AGE_KEYCHAIN_FILENAME' not found" >&2
+if [ -z "$AGE_KEYCHAIN_FILENAME" ]; then
+  usage
+  exit 1
+elif [ ! -f "$AGE_KEYCHAIN_FILENAME" ]; then
+  echo "error: '$AGE_KEYCHAIN_FILENAME' doesn't exist" >&2
+  usage
   exit 1
 fi
 
