@@ -29,6 +29,25 @@ writeShellApplication {
   };
   text = builtins.readFile ./age-keychain-decrypt-darwin.bash;
 
+  derivationArgs = {
+    preCheck = ''
+      if [ -n "${age-filename}" ] && [ ! -f "${age-filename}" ]; then
+        echo "error: '${age-filename}' not a file" >&2
+        exit 1
+      fi
+
+      if [ -n "${age-dirname}" ] && [ ! -d "${age-dirname}" ]; then
+        echo "error: '${age-dirname}' not a directory" >&2
+        exit 1
+      fi
+
+      if [ -n "${age-filename}" ] && [ ! -f "${age-filename}" ]; then
+        echo "error: '${age-filename}' not a file" >&2
+        exit 1
+      fi      
+    '';
+  };
+
   meta = {
     description = "Decrypt age file using key stored in macOS Keychain";
     platforms = lib.platforms.darwin;
