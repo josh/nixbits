@@ -1,5 +1,5 @@
 usage() {
-  echo "usage: age-keychain-decrypt NAME" >&2
+  echo "usage: $(basename "$0") NAME" >&2
 }
 
 while [[ $# -gt 0 ]]; do

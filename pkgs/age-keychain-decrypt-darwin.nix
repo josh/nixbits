@@ -5,6 +5,7 @@
   age,
   age-plugin-se ? null,
   nixbits,
+  name ? "age-keychain-decrypt",
   age-filename ? "",
   age-dirname ? nixbits.empty-directory,
   age-basename ? "",
@@ -12,7 +13,7 @@
   age-recipient ? "",
 }:
 writeShellApplication {
-  name = "age-keychain-decrypt";
+  inherit name;
 
   runtimeEnv = {
     PATH = lib.strings.makeBinPath [
