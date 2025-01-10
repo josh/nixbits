@@ -42,8 +42,8 @@ writeShellApplication {
         exit 1
       fi
 
-      if [ -n "${age-filename}" ] && [ ! -f "${age-filename}" ]; then
-        echo "error: '${age-filename}' not a file" >&2
+      if [ -n "${age-basename}" ] && [ ! -f "${age-dirname}/${age-basename}" ]; then
+        echo "error: '${age-dirname}/${age-basename}' not a file" >&2
         exit 1
       fi      
     '';
