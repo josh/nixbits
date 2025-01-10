@@ -27,7 +27,7 @@ let
       }
       ''
         mkdir -p $out/bin
-        ln -s '${app}/Contents/Resources/app/bin/windsurf' $out/bin
+        ln -s '${app}/Contents/Resources/app/bin/windsurf' $out/bin/windsurf
       '';
 in
 windsurf
