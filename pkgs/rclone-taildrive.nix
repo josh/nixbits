@@ -13,9 +13,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildCommand = ''
     mkdir -p $out/bin
-    ln -s ${lib.getExe rclone} $out/bin/rclone
-
-    wrapProgram $out/bin/rclone \
+    makeWrapper ${lib.getExe rclone} $out/bin/rclone \
       --set-default RCLONE_CONFIG "" \
       --set RCLONE_CONFIG_TAILDRIVE_TYPE webdav \
       --set RCLONE_CONFIG_TAILDRIVE_URL http://100.100.100.100:8080 \
