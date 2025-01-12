@@ -17,6 +17,7 @@ derivation {
 }
 // {
   meta = {
+    description = "launchd exec permissions wrapper";
     mainProgram = "launchd-exec";
     platforms = [ "aarch64-darwin" ];
     sourceProvenance = lib.sourceTypes.fromSource;

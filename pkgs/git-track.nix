@@ -17,6 +17,8 @@ let
     # excludeShellChecks
     text = builtins.readFile ./git-track.bash;
 
+    meta.description = "Set up tracking for current git branch";
+
     passthru.tests = {
       track =
         runCommand "test-git-track"

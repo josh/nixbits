@@ -10,6 +10,7 @@ let
         __impureHostDeps = [ app ];
 
         meta = {
+          description = "Zed Command Line Tools";
           mainProgram = "zed";
           platforms = lib.platforms.darwin;
         };

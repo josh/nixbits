@@ -13,4 +13,6 @@ writeShellApplication {
     ];
   };
   text = builtins.readFile ./tccutil-list.bash;
+
+  meta.description = "List program's Privacy & Security accesses";
 }

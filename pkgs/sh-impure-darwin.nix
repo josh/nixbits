@@ -12,6 +12,7 @@ runCommandLocal "${name}-impure-darwin"
     __impureHostDeps = [ command ];
 
     meta = {
+      description = "macOS system '${name}'";
       mainProgram = name;
       platforms = lib.platforms.darwin;
     };

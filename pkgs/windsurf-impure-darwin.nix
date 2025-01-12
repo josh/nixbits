@@ -10,6 +10,7 @@ let
         __impureHostDeps = [ app ];
 
         meta = {
+          description = "Windsurf Command Line Tools";
           mainProgram = "windsurf";
           platforms = lib.platforms.darwin;
         };

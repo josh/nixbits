@@ -13,4 +13,6 @@ writeShellApplication {
     ];
   };
   text = builtins.readFile ./nix-profile-dry-run.bash;
+
+  meta.description = "Build new nix profile without modifying the current one";
 }

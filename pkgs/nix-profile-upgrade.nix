@@ -22,4 +22,6 @@ writeShellApplication {
     ];
   };
   text = builtins.readFile ./nix-profile-upgrade.bash;
+
+  meta.description = "Upgrade nix profile and run pre/post install hooks";
 }

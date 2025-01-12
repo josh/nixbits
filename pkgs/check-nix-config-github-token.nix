@@ -15,4 +15,6 @@ writeShellApplication {
     ];
   };
   text = builtins.readFile ./check-nix-config-github-token.bash;
+
+  meta.description = "Check nix config for github.com access token";
 }

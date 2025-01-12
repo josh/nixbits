@@ -13,4 +13,6 @@ writeShellApplication {
   text = ''
     find . -xtype l
   '';
+
+  meta.description = "Find dead symlinks";
 }

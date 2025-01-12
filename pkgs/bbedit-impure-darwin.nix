@@ -10,6 +10,7 @@ let
         __impureHostDeps = [ app ];
 
         meta = {
+          description = "BBEdit Command Line Tools";
           mainProgram = "bbedit";
           platforms = lib.platforms.darwin;
         };

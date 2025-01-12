@@ -16,6 +16,7 @@ writeShellApplication {
   };
   text = builtins.readFile ./launchctl-user-activate.bash;
   meta = {
+    description = "Install LaunchAgents plists for current user";
     mainProgram = "launchctl-user-activate";
     platforms = lib.platforms.darwin;
   };

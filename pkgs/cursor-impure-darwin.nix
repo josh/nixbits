@@ -10,6 +10,7 @@ let
         __impureHostDeps = [ app ];
 
         meta = {
+          description = "Cursor Command Line Tools";
           mainProgram = "cursor";
           platforms = lib.platforms.darwin;
         };

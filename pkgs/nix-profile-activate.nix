@@ -9,4 +9,6 @@ writeShellApplication {
     PATH = lib.strings.makeBinPath [ coreutils ];
   };
   text = builtins.readFile ./nix-profile-activate.bash;
+
+  meta.description = "Activate target nix profile";
 }
