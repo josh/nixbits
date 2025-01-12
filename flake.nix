@@ -46,13 +46,24 @@
       checks = eachSystem (
         system:
         let
+          pkgs = nixpkgs.legacyPackages.${system};
+          checkMeta = checkPkg: pkgs.callPackage ./internal/check-meta.nix { inherit checkPkg; };
           addAttrsetPrefix = prefix: lib.attrsets.concatMapAttrs (n: v: { "${prefix}${n}" = v; });
           localTests = lib.attrsets.concatMapAttrs (
             pkgName: pkg:
             if (builtins.hasAttr "tests" pkg) then
-              ({ "${pkgName}-build" = pkg; } // (addAttrsetPrefix "${pkgName}-tests-" pkg.tests))
+              (
+                {
+                  "${pkgName}-build" = pkg;
+                  "${pkgName}-meta" = checkMeta pkg;
+                }
+                // (addAttrsetPrefix "${pkgName}-tests-" pkg.tests)
+              )
             else
-              { "${pkgName}-build" = pkg; }
+              {
+                "${pkgName}-build" = pkg;
+                "${pkgName}-meta" = checkMeta pkg;
+              }
           ) self.packages.${system};
         in
         {
