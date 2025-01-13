@@ -3,6 +3,7 @@
   lib,
   runCommandLocal,
   command ? "/bin/sh",
+  hash ? lib.fakeHash,
 }:
 let
   name = builtins.baseNameOf command;
@@ -12,6 +13,11 @@ runCommandLocal "${name}-impure-darwin"
     __impureHostDeps = [ command ];
     allowedReferences = [ ];
     allowedRequisites = [ ];
+
+    outputHash =
+      if command == "/bin/sh" then "sha256-F/UrD7LSusULVjWqq2WCaAP2JdPf+A8Jp/FPIWWlY3I=" else hash;
+    outputHashAlgo = "sha256";
+    outputHashMode = "nar";
 
     meta = {
       description = "macOS system '${name}'";

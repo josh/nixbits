@@ -14,6 +14,10 @@ derivation {
   '';
   allowedReferences = [ ];
   allowedRequisites = [ ];
+
+  outputHash = "sha256-CX8BosUndLeV/IzuJSmVlO0hgvbOlYWvT9YNMvQ6sfA=";
+  outputHashAlgo = "sha256";
+  outputHashMode = "recursive";
 }
 // {
   meta = {

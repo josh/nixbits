@@ -11,6 +11,10 @@ let
         allowedReferences = [ ];
         allowedRequisites = [ ];
 
+        outputHash = "sha256-tNPJjdo4N1+5LgvNj/Lm2iW3SRNTetHlBXhy9O6Gbsg=";
+        outputHashAlgo = "sha256";
+        outputHashMode = "nar";
+
         meta = {
           description = "BBEdit Command Line Tools";
           mainProgram = "bbedit";

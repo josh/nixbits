@@ -11,6 +11,10 @@ let
         allowedReferences = [ ];
         allowedRequisites = [ ];
 
+        outputHash = "sha256-ZAvBVIW5XGnSZEvszKnqXJII7Vf0pAPl/JQgPL8e/zY=";
+        outputHashAlgo = "sha256";
+        outputHashMode = "nar";
+
         meta = {
           description = "Zed Command Line Tools";
           mainProgram = "zed";

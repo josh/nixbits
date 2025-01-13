@@ -11,6 +11,10 @@ let
         allowedReferences = [ ];
         allowedRequisites = [ ];
 
+        outputHash = "sha256-5G14DTFog/5nxSo6m1zACLGhVIFqXktBLbfPTUsuzo0=";
+        outputHashAlgo = "sha256";
+        outputHashMode = "nar";
+
         meta = {
           description = "Cursor Command Line Tools";
           mainProgram = "cursor";
