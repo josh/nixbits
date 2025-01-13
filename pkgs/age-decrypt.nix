@@ -2,28 +2,41 @@
   stdenv,
   makeWrapper,
   runCommand,
-  nixbits,
   age,
-  age-input ? nixbits.empty-file,
+  age-identity ? "",
+  age-input ? "",
 }:
 stdenv.mkDerivation (finalAttrs: {
   name = "age-decrypt";
   inherit (age) version;
 
   nativeBuildInputs = [ makeWrapper ];
+  buildInputs = [ age ];
 
+  AGE_IDENTITY = age-identity;
   AGE_INPUT = age-input;
 
   buildCommand = ''
-    if [ ! -f "$AGE_INPUT" ]; then
-      echo "error: $AGE_INPUT not a file" >&2
-      exit 1
+    args=(--add-flags "--decrypt")
+
+    if [ -n "$AGE_IDENTITY" ]; then
+      if [[ "$AGE_IDENTITY" =~ ^$NIX_STORE/ ]]; then
+        echo "error: identity cannot be a store path" >&2
+        exit 1
+      fi
+      args+=(--add-flags "--identity $AGE_IDENTITY")
+    fi
+
+    if [ -n "$AGE_INPUT" ]; then
+      if [[ "$AGE_INPUT" =~ ^$NIX_STORE/ ]] && [ ! -f "$AGE_INPUT" ]; then
+        echo "error: store path '$AGE_INPUT' must be a file" >&2
+        exit 1
+      fi
+      args+=(--append-flags "$AGE_INPUT")
     fi
 
     mkdir -p $out/bin
-    makeWrapper ${age}/bin/age $out/bin/age-decrypt \
-      --add-flags "--decrypt" \
-      --append-flags "$AGE_INPUT"
+    makeWrapper ${age}/bin/age $out/bin/age-decrypt "''${args[@]}"
   '';
 
   meta = {
