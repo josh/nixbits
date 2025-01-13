@@ -7,10 +7,11 @@ runCommand "${checkPkg.name}-references-check"
   {
     inherit checkPkg;
     __structuredAttrs = true;
-    allowedReferencesCount =
-      if (checkPkg ? allowedReferences) then (builtins.length checkPkg.allowedReferences) else -1;
-    allowedRequisitesCount =
-      if (checkPkg ? allowedRequisites) then (builtins.length checkPkg.allowedRequisites) else -1;
+    checkPkgAttrs = {
+      allowedReferences = checkPkg.allowedReferences or null;
+      allowedRequisites = checkPkg.allowedRequisites or null;
+      outputHash = checkPkg.outputHash or null;
+    };
     exportReferencesGraph.closure = checkPkg;
     nativeBuildInputs = [ jq ];
   }
@@ -24,23 +25,39 @@ runCommand "${checkPkg.name}-references-check"
 
     allowedRefcount=$(jq \
       --raw-output \
-      '.allowedReferencesCount' \
+      '.checkPkgAttrs.allowedReferences | if . == null then -1 else length end' \
       "$NIX_ATTRS_JSON_FILE"
     );
     allowedReqcount=$(jq \
       --raw-output \
-      '.allowedRequisitesCount' \
+      '.checkPkgAttrs.allowedRequisites | if . == null then -1 else length end' \
+      "$NIX_ATTRS_JSON_FILE"
+    );
+    outputHash=$(jq \
+      --raw-output \
+      '.checkPkgAttrs.outputHash' \
       "$NIX_ATTRS_JSON_FILE"
     );
 
-    if [ "$refcount" -eq 0 ] && [ "$allowedRefcount" -ne 0 ]; then
-      echo "error: ${checkPkg.name} has no references, it should add 'allowedReferences = [ ];'" >&2
-      exit 1
-    fi
-    if [ "$refcount" -eq 0 ] && [ "$allowedReqcount" -ne 0 ]; then
-      echo "error: ${checkPkg.name} has no references, it should add 'allowedRequisites = [ ];'" >&2
-      exit 1
+    if [ "$refcount" -eq 0 ]; then
+      if [ "$allowedRefcount" -ne 0 ]; then
+        echo "error: ${checkPkg.name} has no references, it should add 'allowedReferences = [ ];'" >&2
+        exit 1
+      fi
+      if [ "$allowedReqcount" -ne 0 ]; then
+        echo "error: ${checkPkg.name} has no references, it should add 'allowedRequisites = [ ];'" >&2
+        exit 1
+      fi
+      if [ "$outputHash" == "null" ]; then
+        echo "error: ${checkPkg.name} has no references, it should be a fixed-output derivation" >&2
+        exit 1
+      fi
     fi
 
-    touch $out
+    (
+      echo "refcount: $refcount" ;
+      echo "allowedRefcount: $allowedRefcount" ;
+      echo "allowedReqcount: $allowedReqcount" ;
+      echo "outputHash: $outputHash"
+    ) >$out
   ''
