@@ -10,6 +10,8 @@ in
 runCommandLocal "${name}-impure-darwin"
   {
     __impureHostDeps = [ command ];
+    allowedReferences = [ ];
+    allowedRequisites = [ ];
 
     meta = {
       description = "macOS system '${name}'";

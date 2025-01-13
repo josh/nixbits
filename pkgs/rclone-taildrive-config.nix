@@ -10,9 +10,13 @@ let
       vendor = "other";
     };
   };
-  meta = config.meta // {
+in
+config.overrideAttrs {
+  allowedReferences = [ ];
+  allowedRequisites = [ ];
+
+  meta = {
     description = "rclone config for Tailscale Taildrive";
     platforms = lib.platforms.all;
   };
-in
-config // { inherit meta; }
+}

@@ -8,6 +8,8 @@ let
     runCommandLocal "zed-impure-darwin"
       {
         __impureHostDeps = [ app ];
+        allowedReferences = [ ];
+        allowedRequisites = [ ];
 
         meta = {
           description = "Zed Command Line Tools";

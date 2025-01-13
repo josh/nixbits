@@ -8,6 +8,8 @@ let
     runCommandLocal "bbedit-impure-darwin"
       {
         __impureHostDeps = [ app ];
+        allowedReferences = [ ];
+        allowedRequisites = [ ];
 
         meta = {
           description = "BBEdit Command Line Tools";

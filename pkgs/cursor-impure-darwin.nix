@@ -8,6 +8,8 @@ let
     runCommandLocal "cursor-impure-darwin"
       {
         __impureHostDeps = [ app ];
+        allowedReferences = [ ];
+        allowedRequisites = [ ];
 
         meta = {
           description = "Cursor Command Line Tools";
