@@ -1,34 +1,52 @@
 {
   lib,
+  stdenv,
+  runtimeShell,
   runCommandLocal,
 }:
 let
   app = "/Applications/Windsurf.app";
-  windsurf =
-    runCommandLocal "windsurf-impure-darwin"
-      {
-        __impureHostDeps = [ app ];
+in
+stdenv.mkDerivation (finalAttrs: {
+  name = "windsurf-impure-darwin";
+  version = "1.0.0";
 
-        meta = {
-          description = "Windsurf Command Line Tools";
-          mainProgram = "windsurf";
-          platforms = lib.platforms.darwin;
-        };
+  wrapper = ''
+    #!${runtimeShell} -e
+    exec "${app}/Contents/Resources/app/bin/windsurf" "$@"
+  '';
+  passAsFile = [ "wrapper" ];
 
-        passthru.tests = {
-          help = runCommandLocal "test-windsurf-help" { nativeBuildInputs = [ windsurf ]; } ''
+  buildCommand = ''
+    mkdir -p $out/bin
+    install -m 755 $wrapperPath $out/bin/windsurf
+  '';
+
+  meta = {
+    description = "Windsurf Command Line Tools";
+    homepage = "https://codeium.com/windsurf";
+    platforms = lib.platforms.darwin;
+    mainProgram = "windsurf";
+  };
+
+  passthru.tests =
+    let
+      windsurf = finalAttrs.finalPackage;
+    in
+    {
+      version =
+        runCommandLocal "test-windsurf-version"
+          {
+            __impureHostDeps = [ app ];
+            nativeBuildInputs = [ windsurf ];
+          }
+          ''
             if [ -d '${app}' ]; then
-              windsurf --help
+              windsurf --version
             else
               echo "WARN: Windsurf not installed" >&2
             fi
             touch $out
           '';
-        };
-      }
-      ''
-        mkdir -p $out/bin
-        ln -s '${app}/Contents/Resources/app/bin/windsurf' $out/bin/windsurf
-      '';
-in
-windsurf
+    };
+})
