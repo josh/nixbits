@@ -5,7 +5,7 @@
 }:
 derivation {
   inherit system;
-  name = "empty";
+  name = "empty-file";
   builder = "${coreutils}/bin/touch";
   args = [ (builtins.placeholder "out") ];
 

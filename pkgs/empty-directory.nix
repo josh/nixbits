@@ -5,7 +5,7 @@
 }:
 derivation {
   inherit system;
-  name = "empty";
+  name = "empty-directory";
   builder = "${coreutils}/bin/mkdir";
   args = [ (builtins.placeholder "out") ];
 
