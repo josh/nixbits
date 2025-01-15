@@ -14,7 +14,6 @@ let
         gnugrep
       ];
     };
-    # excludeShellChecks
     text = builtins.readFile ./git-track.bash;
 
     meta.description = "Set up tracking for current git branch";
@@ -39,7 +38,6 @@ let
 
             touch $out
           '';
-
     };
   };
 in
