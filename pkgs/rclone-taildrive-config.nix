@@ -20,6 +20,7 @@ config.overrideAttrs {
   outputHashMode = "nar";
 
   meta = {
+    name = "rclone-taildrive-config";
     description = "rclone config for Tailscale Taildrive";
     platforms = lib.platforms.all;
   };
