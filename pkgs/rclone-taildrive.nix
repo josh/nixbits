@@ -6,18 +6,34 @@
   rclone,
 }:
 stdenv.mkDerivation (finalAttrs: {
+  __structuredAttrs = true;
+
   name = "rclone-taildrive";
   inherit (rclone) version;
 
   nativeBuildInputs = [ makeWrapper ];
 
+  makeWrapperArgs = [
+    "--set-default"
+    "RCLONE_CONFIG"
+    ""
+
+    "--set"
+    "RCLONE_CONFIG_TAILDRIVE_TYPE"
+    "webdav"
+
+    "--set"
+    "RCLONE_CONFIG_TAILDRIVE_URL"
+    "http://100.100.100.100:8080"
+
+    "--set"
+    "RCLONE_CONFIG_TAILDRIVE_VENDOR"
+    "other"
+  ];
+
   buildCommand = ''
     mkdir -p $out/bin
-    makeWrapper ${lib.getExe rclone} $out/bin/rclone \
-      --set-default RCLONE_CONFIG "" \
-      --set RCLONE_CONFIG_TAILDRIVE_TYPE webdav \
-      --set RCLONE_CONFIG_TAILDRIVE_URL http://100.100.100.100:8080 \
-      --set RCLONE_CONFIG_TAILDRIVE_VENDOR other
+    makeWrapper ${lib.getExe rclone} $out/bin/rclone "''${makeWrapperArgs[@]}"
   '';
 
   meta = {
