@@ -36,9 +36,12 @@
       packages = eachPkgs (
         pkgs:
         let
+          uniqueMergeAttrs = lib.misc.mergeAttrsWithFunc (
+            a: b: if a == b && a.meta == b.meta then a else builtins.throw "duplicate pkgs: ${a}"
+          );
           collectPkgs =
             attrs:
-            lib.lists.foldl' lib.trivial.mergeAttrs { } (
+            lib.lists.foldl' uniqueMergeAttrs { } (
               builtins.map (
                 value:
                 if (lib.attrsets.isDerivation value) && value.meta.available then
