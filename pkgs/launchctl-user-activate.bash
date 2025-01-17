@@ -56,6 +56,18 @@ remove_agent() {
 
   if is_loaded "$label"; then
     x launchctl bootout "gui/$UID/$label" || result=1
+
+    local attempts=0
+    while is_loaded "$label" && [ $attempts -lt 3 ]; do
+      echo "Waiting for $label to unload..."
+      sleep 3
+      attempts=$((attempts + 1))
+    done
+
+    if is_loaded "$label"; then
+      echo "Failed to bootout $label" >&2
+      result=1
+    fi
   fi
 
   if [ -f "$dst" ]; then
