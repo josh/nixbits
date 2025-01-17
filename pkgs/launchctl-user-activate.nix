@@ -11,7 +11,7 @@ writeShellApplication {
     PATH = lib.strings.makeBinPath [
       coreutils
       findutils
-      nixbits.launchctl-impure-darwin
+      nixbits.darwin.launchctl
     ];
   };
   text = builtins.readFile ./launchctl-user-activate.bash;

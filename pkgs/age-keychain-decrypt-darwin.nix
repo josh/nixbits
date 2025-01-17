@@ -20,7 +20,7 @@ writeShellApplication {
       coreutils
       age
       age-plugin-se
-      nixbits.security-impure-darwin
+      nixbits.darwin.security
     ];
     AGE_KEYCHAIN_FILENAME = age-filename;
     AGE_KEYCHAIN_DIRNAME = age-dirname;
@@ -45,7 +45,7 @@ writeShellApplication {
       if [ -n "${age-basename}" ] && [ ! -f "${age-dirname}/${age-basename}" ]; then
         echo "error: '${age-dirname}/${age-basename}' not a file" >&2
         exit 1
-      fi      
+      fi
     '';
   };
 

@@ -14,7 +14,7 @@ stdenv.mkDerivation (_finalAttrs: {
   name = "security-find-generic-password";
 
   nativeBuildInputs = [ makeWrapper ];
-  buildInputs = [ nixbits.security-impure-darwin ];
+  buildInputs = [ nixbits.darwin.security ];
 
   makeWrapperArgs =
     (lib.lists.optionals (security-item-account != null) [
@@ -37,7 +37,7 @@ stdenv.mkDerivation (_finalAttrs: {
   buildCommand = ''
     mkdir -p $out/bin
     prependToVar makeWrapperArgs "--add-flags" "find-generic-password"
-    makeWrapper ${nixbits.security-impure-darwin}/bin/security $out/bin/security-find-generic-password "''${makeWrapperArgs[@]}"
+    makeWrapper ${nixbits.darwin.security}/bin/security $out/bin/security-find-generic-password "''${makeWrapperArgs[@]}"
   '';
 
   meta = {
