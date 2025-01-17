@@ -15,6 +15,28 @@ fi
 run_hooks() {
   echo "Running $1" >&2
   local code=0
+  if [ -x "$new_profile/share/nix/hooks/${1}" ]; then
+    echo "+ $1" >&2
+    if ! "$new_profile/share/nix/hooks/${1}"; then
+      code=1
+    fi
+  fi
+  if [ -d "$new_profile/share/nix/hooks/${1}.d" ]; then
+    for script in "$new_profile/share/nix/hooks/${1}.d"/*; do
+      echo "+ $(basename "$script")" >&2
+      if ! "$script"; then
+        code=1
+      fi
+    done
+  fi
+  if [ $code -ne 0 ]; then
+    echo "$1 hooks failed" >&2
+    exit $code
+  fi
+}
+
+run_old_hooks() {
+  local code=0
   if [ -d "$new_profile/libexec/$1" ]; then
     for script in "$new_profile/libexec/$1"/*; do
       echo "+ $(basename "$script" ".sh")" >&2
@@ -24,7 +46,7 @@ run_hooks() {
     done
   fi
   if [ $code -ne 0 ]; then
-    echo "$1 hooks failed" >&2
+    echo "$1 old hooks failed" >&2
     exit $code
   fi
 }
@@ -50,11 +72,13 @@ fi
 export NIX_NEW_PROFILE="$new_profile"
 export NIX_OLD_PROFILE="$old_profile"
 
-run_hooks pre-install-hooks
+run_hooks pre-install
+run_old_hooks pre-install-hooks
 
 echo "Installing profile" >&2
 profile_link="profile-$(profile_n)-link"
 ln -s "$new_profile" "$nix_profile_dir/$profile_link"
 ln -sfn "$profile_link" "$nix_profile_dir/profile"
 
-run_hooks post-install-hooks
+run_hooks post-install
+run_old_hooks post-install-hooks
