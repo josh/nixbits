@@ -54,30 +54,50 @@ in
     hash = "sha256-d5wtaZ570M7nUABLLxt390Y8ID6+n08TZBHVDqVUUkM=";
     manpage = "brctl.1";
   };
+  dscl = mkDarwinImpureDrv {
+    command = "/usr/bin/dscl";
+    hash = "sha256-/sGeGnSk7qysjP/D3zu6s3CYP9k+JvuG5aRnBqMo2lQ=";
+    manpage = "dscl.1";
+  };
   fdesetup = mkDarwinImpureDrv {
     command = "/usr/bin/fdesetup";
     hash = "sha256-J2dTbqOlCeVFHnVV9Zl8n8w7uC8dn3fDa0yPc4KEXrQ=";
     manpage = "fdesetup.8";
+  };
+  ifconfig = mkDarwinImpureDrv {
+    command = "/sbin/ifconfig";
+    hash = "sha256-6NdoRhHic/qf3oQcw9jBkbZpT8wDobOYvU/vGo/mZLA=";
+    manpage = "ifconfig.8";
   };
   launchctl = mkDarwinImpureDrv {
     command = "/bin/launchctl";
     hash = "sha256-mS4CMi/fjOBtHPi3KDVSslJDuisiw8zWNRbswfMVpXw=";
     manpage = "launchctl.1";
   };
+  lsof = mkDarwinImpureDrv {
+    command = "/usr/sbin/lsof";
+    hash = "sha256-rwRBYmFAHF0AWITQGx/GtJVITsCB6cNK3TsOFEzX6PY=";
+    manpage = "lsof.8";
+  };
   open = mkDarwinImpureDrv {
     command = "/usr/bin/open";
     hash = "sha256-v+s2BjGCTz1Kx6yY464NlpdYqGO0YuATIAJdd9WT3bs=";
     manpage = "open.1";
+  };
+  osacompile = mkDarwinImpureDrv {
+    command = "/usr/bin/osacompile";
+    hash = "sha256-YbrCroTRaJHuTq8loLRGiLrPwshvGInKbLaF/HJnHx0=";
+    manpage = "osacompile.1";
   };
   osascript = mkDarwinImpureDrv {
     command = "/usr/bin/osascript";
     hash = "sha256-Fsoik9dbcymYGpsjVYdtwuitzMgptIKRJVQQYl+Mb+4=";
     manpage = "osascript.1";
   };
-  osacompile = mkDarwinImpureDrv {
-    command = "/usr/bin/osacompile";
-    hash = "sha256-YbrCroTRaJHuTq8loLRGiLrPwshvGInKbLaF/HJnHx0=";
-    manpage = "osacompile.1";
+  route = mkDarwinImpureDrv {
+    command = "/sbin/route";
+    hash = "sha256-6o+n0SQWJ0TsOG477BEn9vAPa22JLF+Gmp3CT64EJlQ=";
+    manpage = "route.8";
   };
   security = mkDarwinImpureDrv {
     command = "/usr/bin/security";
