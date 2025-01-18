@@ -109,6 +109,11 @@ in
     hash = "sha256-F/UrD7LSusULVjWqq2WCaAP2JdPf+A8Jp/FPIWWlY3I=";
     manpage = "sh.1";
   };
+  shortcuts = mkDarwinImpureDrv {
+    command = "/usr/bin/shortcuts";
+    hash = "sha256-HZfyqd/bCCYCfFhpRwHGV7oZxKqU+E+SzBIosiHm6Xc=";
+    manpage = "shortcuts.1";
+  };
   tccutil = mkDarwinImpureDrv {
     command = "/usr/bin/tccutil";
     hash = "sha256-N0v0YyAxl2jfZwi8uTnpMTURMluLL5/WHaDv8d7Wnik=";
