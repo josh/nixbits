@@ -17,8 +17,6 @@ EOF
 
 HC_API_URL=${HC_API_URL:-"https://healthchecks.io"}
 HC_API_KEY=${HC_API_KEY:-""}
-HC_API_KEY_FILE=${HC_API_KEY_FILE:-""}
-HC_API_KEY_COMMAND=${HC_API_KEY_COMMAND:-""}
 HC_CHECKS_PATH=${HC_CHECKS_PATH:-""}
 verbose=0
 
@@ -32,14 +30,6 @@ while [[ $# -gt 0 ]]; do
     HC_API_KEY="$2"
     shift 2
     ;;
-  --api-key-file)
-    HC_API_KEY_FILE="$2"
-    shift 2
-    ;;
-  --api-key-command)
-    HC_API_KEY_COMMAND="$2"
-    shift 2
-    ;;
   --verbose)
     verbose=1
     shift
@@ -51,10 +41,23 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [ -z "$HC_API_KEY" ] && [ -n "$HC_API_KEY_FILE" ]; then
-  HC_API_KEY=$(cat "$HC_API_KEY_FILE")
-elif [ -z "$HC_API_KEY" ] && [ -n "$HC_API_KEY_COMMAND" ]; then
-  HC_API_KEY=$(eval "$HC_API_KEY_COMMAND")
+load_api_key() {
+  local key="$1"
+  case "$key" in
+  file:*)
+    cat "${key#file:}"
+    ;;
+  command:*)
+    eval "${key#command:}"
+    ;;
+  *)
+    echo "$key"
+    ;;
+  esac
+}
+
+if [ -n "$HC_API_KEY" ]; then
+  HC_API_KEY=$(load_api_key "$HC_API_KEY")
 fi
 
 if [ -z "$HC_API_KEY" ]; then
