@@ -75,7 +75,7 @@ def main(
         hc_api_key = Path(hc_api_key[5:]).read_text()
     elif hc_api_key.startswith("command:"):
         hc_api_key = subprocess.check_output(
-            hc_api_key[7:].split(),
+            hc_api_key[8:].split(),
             shell=True,
             encoding="utf-8",
         ).strip()
