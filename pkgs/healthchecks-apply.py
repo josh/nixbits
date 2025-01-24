@@ -40,7 +40,7 @@ UPDATABLE_FIELDS = [
     envvar="HC_CHECKS_PATH",
     type=click.Path(
         exists=True,
-        file_okay=False,
+        file_okay=True,
         dir_okay=True,
         resolve_path=True,
         path_type=Path,
@@ -87,13 +87,7 @@ def main(
             encoding="utf-8",
         ).strip()
 
-    local_checks: dict[str, Check] = {}
-    for path in checks_path.glob("*.json"):
-        check = json.load(open(path, mode="r"))
-        assert check["slug"]
-        assert check["slug"] not in local_checks
-        local_checks[check["slug"]] = check
-
+    local_checks = _load_checks_config(checks_path)
     remote_checks = {
         check["slug"]: check
         for check in _hc_list_check(api_url=hc_api_url, api_key=hc_api_key)
@@ -155,6 +149,26 @@ def main(
                 logger.warning(f"{slug} does not exist in local config")
 
     exit(code)
+
+
+def _load_checks_config(path: Path) -> dict[str, Check]:
+    all_checks: dict[str, Check] = {}
+
+    if path.is_file():
+        check_paths = [path]
+    else:
+        check_paths = [f for f in path.rglob("*") if f.is_file()]
+
+    for file_path in check_paths:
+        checks = json.load(file_path.open(mode="r"))
+        if not isinstance(checks, list):
+            checks = [checks]
+
+        for check in checks:
+            assert check["slug"] and check["slug"] not in all_checks
+            all_checks[check["slug"]] = check
+
+    return all_checks
 
 
 def _hc_list_check(
