@@ -96,55 +96,45 @@ def main(
     for slug, local_check in local_checks.items():
         remote_check = remote_checks.get(slug)
         if not remote_check:
-            if dry_run:
-                logger.info(f"Would create new check '{slug}'")
-            else:
-                _hc_create_check(
-                    api_url=hc_api_url,
-                    api_key=hc_api_key,
-                    check=local_check,
-                )
+            _hc_create_check(
+                api_url=hc_api_url,
+                api_key=hc_api_key,
+                check=local_check,
+                dry_run=dry_run,
+            )
             continue
 
         uuid = remote_check["uuid"]
         assert local_check["slug"] == remote_check["slug"]
 
         needs_update = False
-        update_fields = []
         for field in UPDATABLE_FIELDS:
             value = local_check.get(field)
             if value and value != remote_check.get(field):
                 needs_update = True
-                update_fields.append(field)
 
         if needs_update:
-            if dry_run:
-                logger.info(
-                    f"Would update check '{slug}' fields: {', '.join(update_fields)}"
-                )
-            else:
-                _hc_update_check(
-                    api_url=hc_api_url,
-                    api_key=hc_api_key,
-                    uuid=uuid,
-                    check=local_check,
-                )
+            _hc_update_check(
+                api_url=hc_api_url,
+                api_key=hc_api_key,
+                uuid=uuid,
+                check=local_check,
+                dry_run=dry_run,
+            )
 
     for slug, remote_check in remote_checks.items():
         uuid = remote_check["uuid"]
         if slug not in local_checks:
             if delete:
-                if dry_run:
-                    logger.info(f"Would delete check '{slug}'")
-                else:
-                    ok = _hc_delete_check(
-                        api_url=hc_api_url,
-                        api_key=hc_api_key,
-                        slug=slug,
-                        uuid=uuid,
-                    )
-                    if not ok:
-                        code = 1
+                ok = _hc_delete_check(
+                    api_url=hc_api_url,
+                    api_key=hc_api_key,
+                    slug=slug,
+                    uuid=uuid,
+                    dry_run=dry_run,
+                )
+                if not ok:
+                    code = 1
             else:
                 logger.warning(f"{slug} does not exist in local config")
 
@@ -187,12 +177,17 @@ def _hc_create_check(
     api_url: str,
     api_key: str,
     check: Check,
+    dry_run: bool,
 ) -> bool:
+    slug = check["slug"]
     url = urljoin(api_url, "api/v3/checks/")
     headers = {"X-Api-Key": api_key}
-    slug = check["slug"]
-    logger.info(f"POST {url}")
+    if dry_run:
+        logger.info(f"Would POST {url}")
+        return True
+
     try:
+        logger.info(f"POST {url}")
         response = requests.post(url, headers=headers, json=check)
         response.raise_for_status()
         return True
@@ -206,13 +201,18 @@ def _hc_update_check(
     api_key: str,
     uuid: str,
     check: Check,
+    dry_run: bool,
 ) -> bool:
+    slug = check["slug"]
     url = urljoin(api_url, f"api/v3/checks/{uuid}")
     headers = {"X-Api-Key": api_key}
-    slug = check["slug"]
-    logger.info(f"POST {url}")
+    if dry_run:
+        logger.info(f"Would PUT {url}")
+        return True
+
     try:
-        response = requests.post(url, headers=headers, json=check)
+        logger.info(f"PUT {url}")
+        response = requests.put(url, headers=headers, json=check)
         response.raise_for_status()
         return True
     except Exception as e:
@@ -225,11 +225,16 @@ def _hc_delete_check(
     api_key: str,
     slug: str,
     uuid: str,
+    dry_run: bool,
 ) -> bool:
     url = urljoin(api_url, f"api/v3/checks/{uuid}")
     headers = {"X-Api-Key": api_key}
-    logger.info(f"DELETE {url}")
+    if dry_run:
+        logger.info(f"Would DELETE {url}")
+        return True
+
     try:
+        logger.info(f"DELETE {url}")
         response = requests.delete(url, headers=headers)
         response.raise_for_status()
         return True
