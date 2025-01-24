@@ -207,12 +207,12 @@ def _hc_update_check(
     url = urljoin(api_url, f"api/v3/checks/{uuid}")
     headers = {"X-Api-Key": api_key}
     if dry_run:
-        logger.info(f"Would PUT {url}")
+        logger.info(f"Would POST {url}")
         return True
 
     try:
-        logger.info(f"PUT {url}")
-        response = requests.put(url, headers=headers, json=check)
+        logger.info(f"POST {url}")
+        response = requests.post(url, headers=headers, json=check)
         response.raise_for_status()
         return True
     except Exception as e:
