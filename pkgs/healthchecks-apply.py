@@ -61,11 +61,18 @@ UPDATABLE_FIELDS = [
     is_flag=True,
     default=False,
 )
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    default=False,
+    help="Show what would be done without making any actual changes",
+)
 def main(
     checks_path: Path,
     hc_api_url: str,
     hc_api_key: str,
     delete: bool,
+    dry_run: bool,
 ) -> None:
     logging.basicConfig(level=logging.INFO)
 
@@ -95,42 +102,55 @@ def main(
     for slug, local_check in local_checks.items():
         remote_check = remote_checks.get(slug)
         if not remote_check:
-            _hc_create_check(
-                api_url=hc_api_url,
-                api_key=hc_api_key,
-                check=local_check,
-            )
+            if dry_run:
+                logger.info(f"Would create new check '{slug}'")
+            else:
+                _hc_create_check(
+                    api_url=hc_api_url,
+                    api_key=hc_api_key,
+                    check=local_check,
+                )
             continue
 
         uuid = remote_check["uuid"]
         assert local_check["slug"] == remote_check["slug"]
 
         needs_update = False
+        update_fields = []
         for field in UPDATABLE_FIELDS:
             value = local_check.get(field)
             if value and value != remote_check.get(field):
                 needs_update = True
+                update_fields.append(field)
 
         if needs_update:
-            _hc_update_check(
-                api_url=hc_api_url,
-                api_key=hc_api_key,
-                uuid=uuid,
-                check=local_check,
-            )
+            if dry_run:
+                logger.info(
+                    f"Would update check '{slug}' fields: {', '.join(update_fields)}"
+                )
+            else:
+                _hc_update_check(
+                    api_url=hc_api_url,
+                    api_key=hc_api_key,
+                    uuid=uuid,
+                    check=local_check,
+                )
 
     for slug, remote_check in remote_checks.items():
         uuid = remote_check["uuid"]
         if slug not in local_checks:
             if delete:
-                ok = _hc_delete_check(
-                    api_url=hc_api_url,
-                    api_key=hc_api_key,
-                    slug=slug,
-                    uuid=uuid,
-                )
-                if not ok:
-                    code = 1
+                if dry_run:
+                    logger.info(f"Would delete check '{slug}'")
+                else:
+                    ok = _hc_delete_check(
+                        api_url=hc_api_url,
+                        api_key=hc_api_key,
+                        slug=slug,
+                        uuid=uuid,
+                    )
+                    if not ok:
+                        code = 1
             else:
                 logger.warning(f"{slug} does not exist in local config")
 
