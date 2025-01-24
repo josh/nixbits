@@ -27,6 +27,7 @@ profile_n() {
 
 if [ "$old_profile" == "$new_profile" ]; then
   echo "Profile already activated" >&2
+  nix-profile-run-hooks post-install "$new_profile" "$old_profile"
   exit 0
 fi
 
