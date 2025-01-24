@@ -17,6 +17,7 @@ new_profile=$(build "$@")
 
 if [ "$old_profile" = "$new_profile" ]; then
   echo "No profile changes" >&2
+  nix-profile-run-hooks post-install "$new_profile" "$old_profile"
   exit 0
 fi
 
