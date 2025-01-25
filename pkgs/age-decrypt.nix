@@ -7,24 +7,26 @@
   age-input ? "",
 }:
 stdenv.mkDerivation (finalAttrs: {
+  __structuredAttrs = true;
+
   name = "age-decrypt";
   inherit (age) version;
 
   nativeBuildInputs = [ makeWrapper ];
   buildInputs = [ age ];
 
+  makeWrapperArgs = [ ];
+
   AGE_IDENTITY = age-identity;
   AGE_INPUT = age-input;
 
   buildCommand = ''
-    args=(--add-flags "--decrypt")
-
     if [ -n "$AGE_IDENTITY" ]; then
       if [[ "$AGE_IDENTITY" =~ ^$NIX_STORE/ ]]; then
         echo "error: identity cannot be a store path" >&2
         exit 1
       fi
-      args+=(--add-flags "--identity $AGE_IDENTITY")
+      appendToVar makeWrapperArgs "--add-flags" "--identity $AGE_IDENTITY"
     fi
 
     if [ -n "$AGE_INPUT" ]; then
@@ -32,11 +34,13 @@ stdenv.mkDerivation (finalAttrs: {
         echo "error: store path '$AGE_INPUT' must be a file" >&2
         exit 1
       fi
-      args+=(--append-flags "$AGE_INPUT")
+      appendToVar makeWrapperArgs "--append-flags" "$AGE_INPUT"
     fi
 
     mkdir -p $out/bin
-    makeWrapper ${age}/bin/age $out/bin/age-decrypt "''${args[@]}"
+    prependToVar makeWrapperArgs "--add-flags" "--decrypt"
+    echo "makeWrapperArgs: ''${makeWrapperArgs[@]}"
+    makeWrapper ${age}/bin/age $out/bin/age-decrypt "''${makeWrapperArgs[@]}"
   '';
 
   meta = {

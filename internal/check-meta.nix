@@ -13,15 +13,22 @@ runCommand "${checkPkg.name}-meta-check"
   ''
     jq '.checkPkgMeta' "$NIX_ATTRS_JSON_FILE" >meta.json
 
+    name=$(jq --raw-output '.name' meta.json)
     description=$(jq --raw-output '.description' meta.json)
     available=$(jq --raw-output '.available' meta.json)
     platforms=$(jq --raw-output '.platforms' meta.json)
     mainProgram=$(jq --raw-output '.mainProgram' meta.json)
 
+    echo "name: $name"
     echo "description: $description"
     echo "available: $available"
     echo "platforms: $platforms"
     echo "mainProgram: $mainProgram"
+
+    if [ "$name" == "null" ]; then
+      echo "error: meta.name not set" >&2
+      exit 1
+    fi
 
     if [ "$description" == "null" ]; then
       echo "error: meta.description not set" >&2

@@ -36,9 +36,24 @@
       packages = eachPkgs (
         pkgs:
         let
-          isAvailable = _: pkg: pkg.meta.available;
+          uniqueMergeAttrs = lib.misc.mergeAttrsWithFunc (
+            a: b: if a == b && a.meta == b.meta then a else builtins.throw "duplicate pkgs: ${a}"
+          );
+          collectPkgs =
+            attrs:
+            lib.lists.foldl' uniqueMergeAttrs { } (
+              builtins.map (
+                value:
+                if (lib.attrsets.isDerivation value) && value.meta.available then
+                  { "${lib.strings.getName value.meta.name}" = value; }
+                else if (builtins.isAttrs value) && (value.recurseForDerivations or false) then
+                  collectPkgs value
+                else
+                  { }
+              ) (builtins.attrValues attrs)
+            );
         in
-        lib.attrsets.filterAttrs isAvailable pkgs.nixbits
+        collectPkgs pkgs.nixbits
       );
 
       formatter = eachSystem (system: treefmt-nix.${system}.wrapper);

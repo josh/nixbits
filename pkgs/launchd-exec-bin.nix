@@ -24,6 +24,7 @@ derivation {
 }
 // {
   meta = {
+    name = "launchd-exec-bin";
     description = "launchd exec permissions wrapper";
     mainProgram = "launchd-exec";
     platforms = [ "aarch64-darwin" ];

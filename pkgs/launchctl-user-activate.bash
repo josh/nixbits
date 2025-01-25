@@ -26,6 +26,50 @@ is_loaded() {
   fi
 }
 
+wait_for_loaded() {
+  local label="$1"
+  local timeout="${2:-30}"
+  local start_time=$SECONDS
+
+  if is_loaded "$label"; then
+    return 0
+  fi
+
+  echo "Waiting for $label to load..." >&2
+
+  while ! is_loaded "$label"; do
+    if [ $((SECONDS - start_time)) -ge "$timeout" ]; then
+      echo "Timed out waiting for $label to load" >&2
+      return 1
+    fi
+    sleep 1
+  done
+
+  return 0
+}
+
+wait_for_unloaded() {
+  local label="$1"
+  local timeout="${2:-30}"
+  local start_time=$SECONDS
+
+  if ! is_loaded "$label"; then
+    return 0
+  fi
+
+  echo "Waiting for $label to unload..." >&2
+
+  while is_loaded "$label"; do
+    if [ $((SECONDS - start_time)) -ge "$timeout" ]; then
+      echo "Timed out waiting for $label to unload" >&2
+      return 1
+    fi
+    sleep 1
+  done
+
+  return 0
+}
+
 install_agent() {
   local label="$1"
   local src="$2"
@@ -44,6 +88,9 @@ install_agent() {
 
   if ! is_loaded "$label"; then
     x launchctl bootstrap "gui/$UID" "$dst" || result=1
+    if ! wait_for_loaded "$label"; then
+      result=1
+    fi
   fi
 
   return $result
@@ -56,6 +103,9 @@ remove_agent() {
 
   if is_loaded "$label"; then
     x launchctl bootout "gui/$UID/$label" || result=1
+    if ! wait_for_unloaded "$label"; then
+      result=1
+    fi
   fi
 
   if [ -f "$dst" ]; then

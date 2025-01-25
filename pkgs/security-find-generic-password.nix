@@ -9,33 +9,35 @@
   security-print-password ? false,
 }:
 stdenv.mkDerivation (_finalAttrs: {
+  __structuredAttrs = true;
+
   name = "security-find-generic-password";
 
   nativeBuildInputs = [ makeWrapper ];
-  buildInputs = [ nixbits.security-impure-darwin ];
+  buildInputs = [ nixbits.darwin.security ];
 
-  SECURITY_ITEM_ACCOUNT = security-item-account;
-  SECURITY_ITEM_LABEL = security-item-label;
-  SECURITY_ITEM_SERVICE = security-item-service;
-  SECURITY_PRINT_PASSWORD = security-print-password;
+  makeWrapperArgs =
+    (lib.lists.optionals (security-item-account != null) [
+      "--add-flags"
+      "-a ${security-item-account}"
+    ])
+    ++ (lib.lists.optionals (security-item-label != null) [
+      "--add-flags"
+      "-l ${security-item-label}"
+    ])
+    ++ (lib.lists.optionals (security-item-service != null) [
+      "--add-flags"
+      "-s ${security-item-service}"
+    ])
+    ++ (lib.lists.optionals security-print-password [
+      "--add-flags"
+      "-w"
+    ]);
 
   buildCommand = ''
-    args=(--add-flags "find-generic-password")
-    if [ -n "$SECURITY_ITEM_ACCOUNT" ]; then
-      args+=(--add-flags "-a $SECURITY_ITEM_ACCOUNT")
-    fi
-    if [ -n "$SECURITY_ITEM_LABEL" ]; then
-      args+=(--add-flags "-l $SECURITY_ITEM_LABEL")
-    fi
-    if [ -n "$SECURITY_ITEM_SERVICE" ]; then
-      args+=(--add-flags "-s $SECURITY_ITEM_SERVICE")
-    fi
-    if [ "$SECURITY_PRINT_PASSWORD" = true ]; then
-      args+=(--add-flags "-w")
-    fi
-
     mkdir -p $out/bin
-    makeWrapper ${nixbits.security-impure-darwin}/bin/security $out/bin/security-find-generic-password "''${args[@]}"
+    prependToVar makeWrapperArgs "--add-flags" "find-generic-password"
+    makeWrapper ${nixbits.darwin.security}/bin/security $out/bin/security-find-generic-password "''${makeWrapperArgs[@]}"
   '';
 
   meta = {

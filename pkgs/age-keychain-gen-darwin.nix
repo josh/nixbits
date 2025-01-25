@@ -14,7 +14,7 @@ writeShellApplication {
       coreutils
       age
       age-plugin-se
-      nixbits.security-impure-darwin
+      nixbits.darwin.security
     ];
   };
   text = builtins.readFile ./age-keychain-gen-darwin.bash;

@@ -18,6 +18,7 @@ writeShellApplication {
       nix-output-monitor
       nixbits.nix-profile-activate
       nixbits.nix-profile-dry-run
+      nixbits.nix-profile-run-hooks
       nvd
     ];
   };

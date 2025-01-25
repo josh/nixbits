@@ -18,6 +18,7 @@ derivation {
 }
 // {
   meta = {
+    name = "empty-file";
     description = "An empty file";
     platforms = lib.platforms.all;
     available = true;
