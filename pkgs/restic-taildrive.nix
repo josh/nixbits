@@ -1,4 +1,9 @@
 { restic, nixbits }:
-(restic.overrideAttrs { pname = "restic-taildrive"; }).override {
-  rclone = nixbits.rclone-taildrive;
-}
+(restic.overrideAttrs {
+  pname = "restic-taildrive";
+  # Disable tests requiring kvm
+  passthru.tests = { };
+}).override
+  {
+    rclone = nixbits.rclone-taildrive;
+  }
