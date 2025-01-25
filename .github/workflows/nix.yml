@@ -21,7 +21,7 @@ jobs:
           - "aarch64-linux"
           - "x86_64-linux"
 
-    runs-on: ${{ endsWith(matrix.system, '-darwin') && 'macos-latest' || 'ubuntu-latest' }}
+    runs-on: ${{ endsWith(matrix.system, '-darwin') && 'macos-15' || 'ubuntu-24.04' }}
 
     steps:
       - uses: actions/checkout@v4
