@@ -35,19 +35,10 @@ if [ -x "$NIX_NEW_PROFILE/share/nix/hooks/$hook" ]; then
     code=1
   fi
 fi
+
 if [ -d "$NIX_NEW_PROFILE/share/nix/hooks/$hook.d" ]; then
   for script in "$NIX_NEW_PROFILE/share/nix/hooks/$hook.d"/*; do
     echo "+ $(basename "$script")" >&2
-    if ! "$script"; then
-      code=1
-    fi
-  done
-fi
-
-# TODO: Deprecated, remove this eventually
-if [ -d "$NIX_NEW_PROFILE/libexec/$hook-hooks" ]; then
-  for script in "$NIX_NEW_PROFILE/libexec/$hook-hooks"/*; do
-    echo "+ $(basename "$script" ".sh")" >&2
     if ! "$script"; then
       code=1
     fi
