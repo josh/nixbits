@@ -10,6 +10,10 @@ let
       email = "josh@users.noreply.github.com";
     };
 
+    alias = {
+      co = "checkout";
+    };
+
     init.defaultBranch = "main";
 
     push.autoSetupRemote = true;
@@ -19,7 +23,7 @@ config.overrideAttrs {
   allowedReferences = [ ];
   allowedRequisites = [ ];
 
-  outputHash = "sha256-BIIctweTzwQ84dO3kYXr+1/dMQaDTnymffo/KIaNZWw=";
+  outputHash = "sha256-rcaXWLCxXwgSTbf0zDE/ELK8CCbHSnFxMARDhFvVds0=";
   outputHashAlgo = "sha256";
   outputHashMode = "nar";
 
