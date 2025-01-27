@@ -1,3 +1,11 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "click",
+#     "requests",
+# ]
+# ///
+
 import json
 import logging
 import subprocess
