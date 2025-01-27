@@ -15,7 +15,6 @@ let
       git
       nixbits.git-branch-prune
       nixbits.git-fetch-dir
-      nixbits.git-track
     ];
     buildInputs = [ makeWrapper ];
     postBuild = ''

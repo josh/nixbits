@@ -11,13 +11,15 @@ let
     };
 
     init.defaultBranch = "main";
+
+    push.autoSetupRemote = true;
   };
 in
 config.overrideAttrs {
   allowedReferences = [ ];
   allowedRequisites = [ ];
 
-  outputHash = "sha256-G/bBLI1PLGSVMmZ7PqDTIzBgxqOWXLsTlgxaV/gzl80=";
+  outputHash = "sha256-BIIctweTzwQ84dO3kYXr+1/dMQaDTnymffo/KIaNZWw=";
   outputHashAlgo = "sha256";
   outputHashMode = "nar";
 
