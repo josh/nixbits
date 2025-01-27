@@ -12,6 +12,7 @@ let
 
     alias = {
       co = "checkout";
+      ci = "commit --verbose";
     };
 
     init.defaultBranch = "main";
@@ -23,7 +24,7 @@ config.overrideAttrs {
   allowedReferences = [ ];
   allowedRequisites = [ ];
 
-  outputHash = "sha256-rcaXWLCxXwgSTbf0zDE/ELK8CCbHSnFxMARDhFvVds0=";
+  outputHash = "sha256-7+clCQl7JWtZZGWwfMGb4QTMQQCx0R7C55OmqnMIynU=";
   outputHashAlgo = "sha256";
   outputHashMode = "nar";
 
