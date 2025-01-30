@@ -79,13 +79,21 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   healthcheckSlug = healthcheckConfig.slug;
   healthcheckConfig = builtins.toJSON healthcheckConfig;
 
+  outputs = [
+    "out"
+    "healthcheck"
+  ];
+
   buildCommand = ''
     mkdir -p $out/bin
     makeWrapper ${lib.getExe runitor} $out/bin/$mainProgram "''${makeWrapperArgs[@]}"
 
     if [ -n "$healthcheckSlug" ]; then
-      mkdir -p $out/etc/healthchecks
+      mkdir -p $out/etc/healthchecks $healthcheck/etc/healthchecks
       echo "$healthcheckConfig" >"$out/etc/healthchecks/$healthcheckSlug.json"
+      echo "$healthcheckConfig" >"$healthcheck/etc/healthchecks/$healthcheckSlug.json"
+    else
+      touch "$healthcheck"
     fi
   '';
 
