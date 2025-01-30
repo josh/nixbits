@@ -75,14 +75,24 @@ UPDATABLE_FIELDS = [
     default=False,
     help="Show what would be done without making any actual changes",
 )
+@click.option(
+    "--allow-hc-offline",
+    is_flag=True,
+    default=False,
+    help="Skip if healthchecks instance is offline",
+)
 def main(
     checks_path: Path,
     hc_api_url: str,
     hc_api_key: str,
     delete: bool,
     dry_run: bool,
+    allow_hc_offline: bool,
 ) -> None:
     logging.basicConfig(level=logging.INFO)
+
+    if allow_hc_offline is True and _hc_online(hc_api_url=hc_api_url) is False:
+        return
 
     code = 0
 
@@ -169,6 +179,17 @@ def _load_checks_config(path: Path) -> dict[str, Check]:
     return all_checks
 
 
+def _hc_online(hc_api_url: str) -> bool:
+    url = urljoin(hc_api_url, "api/v3/checks/")
+    logger.debug(f"GET {url}")
+    try:
+        requests.get(url, timeout=(5, 10))
+        return True
+    except Exception as e:
+        logger.error(f"Healthchecks instance is offline: {str(e)}")
+        return False
+
+
 def _hc_list_check(
     api_url: str,
     api_key: str,
@@ -176,7 +197,7 @@ def _hc_list_check(
     url = urljoin(api_url, "api/v3/checks/")
     headers = {"X-Api-Key": api_key}
     logger.debug(f"GET {url}")
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, timeout=(5, 30))
     response.raise_for_status()
     return response.json()["checks"]
 
@@ -196,7 +217,7 @@ def _hc_create_check(
 
     try:
         logger.info(f"POST {url}")
-        response = requests.post(url, headers=headers, json=check)
+        response = requests.post(url, headers=headers, json=check, timeout=(5, 30))
         response.raise_for_status()
         return True
     except Exception as e:
@@ -220,7 +241,7 @@ def _hc_update_check(
 
     try:
         logger.info(f"POST {url}")
-        response = requests.post(url, headers=headers, json=check)
+        response = requests.post(url, headers=headers, json=check, timeout=(5, 30))
         response.raise_for_status()
         return True
     except Exception as e:
@@ -243,7 +264,7 @@ def _hc_delete_check(
 
     try:
         logger.info(f"DELETE {url}")
-        response = requests.delete(url, headers=headers)
+        response = requests.delete(url, headers=headers, timeout=(5, 30))
         response.raise_for_status()
         return True
     except Exception as e:
