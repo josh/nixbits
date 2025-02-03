@@ -12,10 +12,15 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nurpkgs.url = "github:josh/nurpkgs";
   };
 
   outputs =
-    { self, nixpkgs }:
+    {
+      self,
+      nixpkgs,
+      nurpkgs,
+    }:
     let
       inherit (nixpkgs) lib;
 
@@ -26,7 +31,19 @@
       ];
       eachSystem = lib.genAttrs systems;
       eachPkgs =
-        fn: eachSystem (system: fn (nixpkgs.legacyPackages.${system}.extend self.overlays.default));
+        fn:
+        eachSystem (
+          system:
+          fn (
+            import nixpkgs {
+              system = "${system}";
+              overlays = [
+                nurpkgs.overlays.default
+                self.overlays.default
+              ];
+            }
+          )
+        );
 
       treefmt-nix = eachPkgs (pkgs: import ./internal/treefmt.nix pkgs);
     in
