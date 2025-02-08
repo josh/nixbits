@@ -4,6 +4,7 @@
   makeWrapper,
   python3,
   jq,
+  cacert,
 }:
 let
   inherit (python3.pkgs.llm) version;
@@ -56,6 +57,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
             nativeBuildInputs = [
               llm
             ];
+            # Appears to be a regression in httpx cacert bundling
+            # https://github.com/NixOS/nixpkgs/commit/14ec122
+            SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
           }
           ''
             llm --help
@@ -69,6 +73,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
               llm
               jq
             ];
+            # Appears to be a regression in httpx cacert bundling
+            # https://github.com/NixOS/nixpkgs/commit/14ec122
+            SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
           }
           ''
             llm plugins | jq --exit-status 'map(select(.name == "llm-ollama")) | length > 0'
