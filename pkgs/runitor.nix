@@ -69,7 +69,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     ])
     ++ (lib.lists.optionals (isPresent healthchecksApiTimeout) [
       "--append-flags"
-      "-api-timeout=${builtins.toString healthchecksApiTimeout}"
+      "-api-timeout=${healthchecksApiTimeout}"
     ])
     ++ (lib.lists.optionals (isPresent healthchecksPingKey) [
       "--set"
