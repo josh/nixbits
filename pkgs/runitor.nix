@@ -10,6 +10,8 @@ in
   runitor,
   healthchecksApiUrl ? null,
   healthchecksPingKey ? null,
+  healthchecksApiRetries ? null,
+  healthchecksApiTimeout ? null,
   checkProgram ? null,
   checkName ? checkSlug,
   checkSlug ? null,
@@ -60,6 +62,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       "--set"
       "HC_API_URL"
       healthchecksApiUrl
+    ])
+    ++ (lib.lists.optionals (isPresent healthchecksApiRetries) [
+      "--append-flags"
+      "-api-retries ${healthchecksApiRetries}"
+    ])
+    ++ (lib.lists.optionals (isPresent healthchecksApiTimeout) [
+      "--append-flags"
+      "-api-timeout ${healthchecksApiTimeout}"
     ])
     ++ (lib.lists.optionals (isPresent healthchecksPingKey) [
       "--set"
