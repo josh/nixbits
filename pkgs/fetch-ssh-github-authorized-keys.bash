@@ -12,3 +12,4 @@ if [ -f "$target" ] && cmp -s "$tmp_file" "$target"; then
 fi
 
 mv "$tmp_file" "$target"
+echo "$target updated" >&2
