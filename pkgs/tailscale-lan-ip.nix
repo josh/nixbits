@@ -1,19 +1,17 @@
 {
   lib,
   writeShellApplication,
-  gawk,
   gnugrep,
   tailscale,
-  unixtools,
+  nixbits,
 }:
 writeShellApplication {
   name = "tailscale-lan-ip";
   runtimeEnv = {
     PATH = lib.strings.makeBinPath [
-      gawk
       gnugrep
       tailscale
-      unixtools.route
+      nixbits.network-gateway
     ];
   };
   text = builtins.readFile ./tailscale-lan-ip.bash;

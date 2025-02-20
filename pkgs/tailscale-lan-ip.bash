@@ -3,7 +3,7 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
-gateway=$(route -n get default | grep gateway | awk '{print $2}')
+gateway=$(network-gateway)
 
 # FIXME: Don't hardcode 10.0.0.x subnet
 if [[ $gateway == "10.0.0.1" ]]; then
