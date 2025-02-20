@@ -1,0 +1,10 @@
+let
+  flake = builtins.getFlake (builtins.getEnv "FLAKE_URI");
+in
+derivation {
+  __structuredAttrs = true;
+  name = "all-packages";
+  system = builtins.getEnv "SYSTEM";
+  builder = "/bin/sh";
+  inherit (flake.outputs) packages checks;
+}
