@@ -7,7 +7,8 @@
   screenSharingHostname ? "",
 }:
 writeShellApplication {
-  name = "screen-sharing";
+  name =
+    if screenSharingHostname != "" then "screen-sharing-${screenSharingHostname}" else "screen-sharing";
   runtimeEnv = {
     PATH = lib.strings.makeBinPath [
       nixbits.darwin.open
