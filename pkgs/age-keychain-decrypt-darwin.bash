@@ -24,6 +24,10 @@ while [[ $# -gt 0 ]]; do
     AGE_KEYCHAIN_RECIPIENT="$2"
     shift 2
     ;;
+  --recipient-command)
+    AGE_KEYCHAIN_RECIPIENT_COMMAND="$2"
+    shift 2
+    ;;
   *)
     AGE_KEYCHAIN_BASENAME="$1"
     shift
@@ -42,6 +46,10 @@ elif [ ! -f "$AGE_KEYCHAIN_FILENAME" ]; then
   echo "error: '$AGE_KEYCHAIN_FILENAME' doesn't exist" >&2
   usage
   exit 1
+fi
+
+if [ -z "$AGE_KEYCHAIN_RECIPIENT" ] && [ -n "$AGE_KEYCHAIN_RECIPIENT_COMMAND" ]; then
+  AGE_KEYCHAIN_RECIPIENT=$($AGE_KEYCHAIN_RECIPIENT_COMMAND)
 fi
 
 if [ -n "$AGE_KEYCHAIN_LABEL" ] && [ -n "$AGE_KEYCHAIN_RECIPIENT" ]; then

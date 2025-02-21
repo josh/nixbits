@@ -11,6 +11,7 @@
   age-basename ? "",
   age-label ? "",
   age-recipient ? "",
+  age-recipient-command ? "",
 }:
 writeShellApplication {
   inherit name;
@@ -27,6 +28,7 @@ writeShellApplication {
     AGE_KEYCHAIN_BASENAME = age-basename;
     AGE_KEYCHAIN_LABEL = age-label;
     AGE_KEYCHAIN_RECIPIENT = age-recipient;
+    AGE_KEYCHAIN_RECIPIENT_COMMAND = age-recipient-command;
   };
   text = builtins.readFile ./age-keychain-decrypt-darwin.bash;
 
