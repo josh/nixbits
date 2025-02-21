@@ -29,7 +29,11 @@ writeShellApplication {
     AGE_KEYCHAIN_BASENAME = age-basename;
     AGE_KEYCHAIN_LABEL = age-label;
     AGE_KEYCHAIN_RECIPIENT = age-recipient;
-    AGE_KEYCHAIN_RECIPIENT_COMMAND = age-recipient-command;
+    AGE_KEYCHAIN_RECIPIENT_COMMAND =
+      if lib.attrsets.isDerivation age-recipient-command then
+        lib.getExe age-recipient-command
+      else
+        age-recipient-command;
   };
   text = builtins.readFile ./age-keychain-decrypt-darwin.bash;
 

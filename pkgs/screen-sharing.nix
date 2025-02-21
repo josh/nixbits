@@ -16,7 +16,11 @@ writeShellApplication {
     ];
     SCREEN_SHARING_USER = screenSharingUser;
     SCREEN_SHARING_PASSWORD = "";
-    SCREEN_SHARING_PASSWORD_COMMAND = screenSharingPasswordCommand;
+    SCREEN_SHARING_PASSWORD_COMMAND =
+      if lib.attrsets.isDerivation screenSharingPasswordCommand then
+        lib.getExe screenSharingPasswordCommand
+      else
+        screenSharingPasswordCommand;
     SCREEN_SHARING_HOSTNAME = screenSharingHostname;
   };
   text = builtins.readFile ./screen-sharing.bash;
