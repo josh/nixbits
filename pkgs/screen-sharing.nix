@@ -15,6 +15,7 @@ writeShellApplication {
       nixbits.tailscale-lan-ip
     ];
     SCREEN_SHARING_USER = screenSharingUser;
+    SCREEN_SHARING_PASSWORD = "";
     SCREEN_SHARING_PASSWORD_COMMAND = screenSharingPasswordCommand;
     SCREEN_SHARING_HOSTNAME = screenSharingHostname;
   };
