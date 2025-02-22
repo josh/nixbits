@@ -25,6 +25,7 @@ let
 
     init.defaultBranch = "main";
 
+    fetch.prune = true;
     push.autoSetupRemote = true;
 
     credential =
