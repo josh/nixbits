@@ -1,9 +1,7 @@
 {
   lib,
   hostPlatform,
-  stdenvNoCC,
   writeShellApplication,
-  makeWrapper,
   coreutils,
   gh,
   nixbits,
@@ -39,84 +37,47 @@ let
       ephemeral = github-runner-ephemeral;
     }
   );
-  shortConfigHash = builtins.substring 0 7 configHash;
-
-  script = writeShellApplication {
-    name = "github-runner-config";
-    runtimeEnv = {
+in
+writeShellApplication {
+  name = "github-runner-config";
+  runtimeEnv =
+    {
       PATH = lib.strings.makeBinPath [
         coreutils
+        gh
         github-runner-config-remove
       ];
       CONFIG_HASH = configHash;
       GITHUB_RUNNER_PATH = github-runner;
-    };
-    text = builtins.readFile ./github-runner-config.bash;
-  };
-in
-stdenvNoCC.mkDerivation (_finalAttrs: {
-  __structuredAttrs = true;
-
-  pname = "github-runner-config";
-  version = shortConfigHash;
-
-  nativeBuildInputs = [ makeWrapper ];
-  makeWrapperArgs =
-    (lib.lists.optionals (github-runner-root != null) [
-      "--set"
-      "RUNNER_ROOT"
-      github-runner-root
-    ])
-    ++ [
-      "--add-flags"
-      "--unattended"
-    ]
-    ++ (lib.lists.optionals (github-runner-url != null) [
-      "--add-flags"
-      "--url ${github-runner-url}"
-    ])
-    ++ (lib.lists.optionals (github-runner-name != null) [
-      "--add-flags"
-      "--name ${github-runner-name}"
-    ])
-    ++ (lib.lists.optionals (github-runner-group != null) [
-      "--add-flags"
-      "--runnergroup ${github-runner-group}"
-    ])
-    ++ (lib.lists.optionals (labels != null) [
-      "--add-flags"
-      "--labels ${labels}"
-    ])
-    ++ (lib.lists.optionals (github-runner-work != null) [
-      "--add-flags"
-      "--work ${github-runner-work}"
-    ])
-    ++ [
-      "--add-flags"
-      "--replace"
-    ]
-    ++ (lib.lists.optionals github-runner-use-gh-token [
-      "--add-flags"
-      "--pat $(${lib.getExe gh} auth token)"
-    ])
-    ++ [
-      "--add-flags"
-      "--disableupdate"
-    ]
-    ++ (lib.lists.optionals github-runner-ephemeral [
-      "--add-flags"
-      "--ephemeral"
-    ]);
-
-  buildCommand = ''
-    mkdir -p $out/bin
-    makeWrapper ${lib.getExe script} $out/bin/github-runner-config \
-      "''${makeWrapperArgs[@]}"
-  '';
+    }
+    // (lib.attrsets.optionalAttrs (github-runner-root != null) {
+      RUNNER_ROOT = github-runner-root;
+    })
+    // (lib.attrsets.optionalAttrs (github-runner-url != null) {
+      RUNNER_URL = github-runner-url;
+    })
+    // (lib.attrsets.optionalAttrs github-runner-use-gh-token {
+      RUNNER_USE_GH_TOKEN = true;
+    })
+    // (lib.attrsets.optionalAttrs (github-runner-group != null) {
+      RUNNER_RUNNERGROUP = github-runner-group;
+    })
+    // (lib.attrsets.optionalAttrs (github-runner-name != null) {
+      RUNNER_NAME = github-runner-name;
+    })
+    // (lib.attrsets.optionalAttrs (labels != null) {
+      RUNNER_LABELS = labels;
+    })
+    // (lib.attrsets.optionalAttrs (github-runner-work != null) {
+      RUNNER_WORK = github-runner-work;
+    })
+    // (lib.attrsets.optionalAttrs github-runner-ephemeral {
+      RUNNER_EPHEMERAL = github-runner-ephemeral;
+    });
+  text = builtins.readFile ./github-runner-config.bash;
 
   meta = {
     description = "Configure GitHub Actions runner";
     platforms = lib.platforms.all;
-    mainProgram = "github-runner-config";
   };
-})
+}
