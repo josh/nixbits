@@ -17,10 +17,6 @@
   github-runner-ephemeral ? false,
 }:
 let
-  github-runner-config-remove = nixbits.github-runner-config-remove.override {
-    inherit github-runner-root github-runner-use-gh-token;
-  };
-
   labels =
     if github-runner-labels != null && github-runner-labels != [ ] then
       (builtins.concatStringsSep "," github-runner-labels)
@@ -34,8 +30,8 @@ writeShellApplication {
       PATH = lib.strings.makeBinPath [
         coreutils
         gh
-        github-runner-config-remove
         gnugrep
+        nixbits.github-runner-config-remove
       ];
       GITHUB_RUNNER_PATH = github-runner;
     }
