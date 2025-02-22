@@ -7,14 +7,17 @@ if [ -n "${RUNNER_USE_GH_TOKEN:-}" ]; then
   RUNNER_PAT=$(gh auth token)
 fi
 
-if [ -f "$RUNNER_ROOT/.config.hash" ]; then
-  if [ "$(cat "$RUNNER_ROOT/.config.hash")" = "$CONFIG_HASH" ]; then
-    echo "Configuration already up-to-date" >&2
-    exit 0
-  else
+if [ -f "$RUNNER_ROOT/.credentials" ] && [ -f "$RUNNER_ROOT/.runner" ]; then
+  if [ ! -f "$RUNNER_ROOT/.config.hash" ]; then
+    echo "Configured, but missing config hash" >&2
+    github-runner-config-remove
+  elif [ "$(cat "$RUNNER_ROOT/.config.hash")" != "$CONFIG_HASH" ]; then
     echo "Removing outdated configuration" >&2
     github-runner-config-remove
     rm -f "$RUNNER_ROOT/.config.hash"
+  else
+    echo "Configuration already up-to-date" >&2
+    exit 0
   fi
 fi
 
