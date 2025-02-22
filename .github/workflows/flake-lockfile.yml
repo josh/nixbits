@@ -47,7 +47,7 @@ jobs:
               name = "all-packages";
               system = "x86_64-linux";
               builder = "/bin/sh";
-              inherit (flake.outputs) packages checks;
+              inherit (flake.outputs) packages;
             }
 
       - name: Get base SHA derivation path
