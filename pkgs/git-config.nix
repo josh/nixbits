@@ -1,5 +1,6 @@
 {
   lib,
+  hostPlatform,
   formats,
   gh,
 }:
@@ -26,10 +27,14 @@ let
 
     push.autoSetupRemote = true;
 
-    credential = {
-      "https://github.com".helper = "${lib.getExe gh} auth git-credential";
-      "https://gist.github.com".helper = "${lib.getExe gh} auth git-credential";
-    };
+    credential =
+      {
+        "https://github.com".helper = "${lib.getExe gh} auth git-credential";
+        "https://gist.github.com".helper = "${lib.getExe gh} auth git-credential";
+      }
+      // (lib.attrsets.optionalAttrs hostPlatform.isMacOS {
+        helper = "osxkeychain";
+      });
   };
 in
 config.overrideAttrs {
