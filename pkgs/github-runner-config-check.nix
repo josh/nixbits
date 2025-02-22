@@ -23,6 +23,10 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
       "--run"
       "export RUNNER_ROOT=$TMPDIR/github-runner-config-check"
     ]
+    ++ [
+      "--add-flags"
+      "--unattended"
+    ]
     ++ (lib.lists.optionals (github-runner-url != null) [
       "--add-flags"
       "--url ${github-runner-url}"
