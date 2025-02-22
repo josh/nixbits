@@ -1,6 +1,7 @@
 {
   lib,
   formats,
+  gh,
 }:
 let
   gitIni = formats.gitIni { };
@@ -18,16 +19,14 @@ let
     init.defaultBranch = "main";
 
     push.autoSetupRemote = true;
+
+    credential = {
+      "https://github.com".helper = "${lib.getExe gh} auth git-credential";
+      "https://gist.github.com".helper = "${lib.getExe gh} auth git-credential";
+    };
   };
 in
 config.overrideAttrs {
-  allowedReferences = [ ];
-  allowedRequisites = [ ];
-
-  outputHash = "sha256-7+clCQl7JWtZZGWwfMGb4QTMQQCx0R7C55OmqnMIynU=";
-  outputHashAlgo = "sha256";
-  outputHashMode = "nar";
-
   meta = {
     description = "git config";
     platforms = lib.platforms.all;
