@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   makeWrapper,
+  mktemp,
   gh,
   github-runner,
   github-runner-url ? "https://github.com/josh/nixbits",
@@ -14,7 +15,15 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
 
   nativeBuildInputs = [ makeWrapper ];
   makeWrapperArgs =
-    (lib.lists.optionals (github-runner-url != null) [
+    [
+      "--run"
+      "export TMPDIR=$(${lib.getExe mktemp} -d)"
+    ]
+    ++ [
+      "--run"
+      "export RUNNER_ROOT=$TMPDIR/github-runner-config-check"
+    ]
+    ++ (lib.lists.optionals (github-runner-url != null) [
       "--add-flags"
       "--url ${github-runner-url}"
     ])
