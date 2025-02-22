@@ -26,18 +26,6 @@ let
       (builtins.concatStringsSep "," github-runner-labels)
     else
       null;
-
-  configHash = builtins.hashString "sha256" (
-    builtins.toJSON {
-      url = github-runner-url;
-      use-gh-token = github-runner-use-gh-token;
-      runnergroup = github-runner-group;
-      name = github-runner-name;
-      inherit labels;
-      work = github-runner-work;
-      ephemeral = github-runner-ephemeral;
-    }
-  );
 in
 writeShellApplication {
   name = "github-runner-config";
@@ -49,7 +37,6 @@ writeShellApplication {
         github-runner-config-remove
         gnugrep
       ];
-      CONFIG_HASH = configHash;
       GITHUB_RUNNER_PATH = github-runner;
     }
     // (lib.attrsets.optionalAttrs (github-runner-root != null) {
