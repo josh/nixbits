@@ -12,8 +12,14 @@ let
     };
 
     alias = {
-      co = "checkout";
+      b = "branch";
+      ba = "branch --all";
+      ca = "commit --all --verbose";
       ci = "commit --verbose";
+      co = "checkout";
+      ct = "checkout --track";
+      st = "status --short --branch";
+      up = "pull";
     };
 
     init.defaultBranch = "main";
