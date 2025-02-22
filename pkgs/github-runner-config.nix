@@ -4,6 +4,7 @@
   writeShellApplication,
   coreutils,
   gh,
+  gnugrep,
   nixbits,
   github-runner,
   github-runner-root ? null,
@@ -46,6 +47,7 @@ writeShellApplication {
         coreutils
         gh
         github-runner-config-remove
+        gnugrep
       ];
       CONFIG_HASH = configHash;
       GITHUB_RUNNER_PATH = github-runner;
