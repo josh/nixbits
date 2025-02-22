@@ -14,6 +14,7 @@
   github-runner-group ? null,
   github-runner-name ? null,
   github-runner-labels ? [ hostPlatform.system ],
+  github-runner-work ? null,
   github-runner-ephemeral ? false,
 }:
 let
@@ -34,6 +35,7 @@ let
       runnergroup = github-runner-group;
       name = github-runner-name;
       inherit labels;
+      work = github-runner-work;
       ephemeral = github-runner-ephemeral;
     }
   );
@@ -84,6 +86,10 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
     ++ (lib.lists.optionals (labels != null) [
       "--add-flags"
       "--labels ${labels}"
+    ])
+    ++ (lib.lists.optionals (github-runner-work != null) [
+      "--add-flags"
+      "--work ${github-runner-work}"
     ])
     ++ [
       "--add-flags"
