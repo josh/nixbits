@@ -8,7 +8,7 @@
   nixbits,
   github-runner,
   github-runner-root ? null,
-  github-runner-url ? "https://github.com/josh/nixbits",
+  github-runner-url ? null,
   github-runner-use-gh-token ? true,
   github-runner-group ? null,
   github-runner-name ? null,
