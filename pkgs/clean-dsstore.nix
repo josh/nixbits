@@ -11,6 +11,8 @@ let
   '';
 in
 stdenvNoCC.mkDerivation {
+  __structuredAttrs = true;
+
   name = "clean-dsstore";
 
   buildCommand = ''
