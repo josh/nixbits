@@ -17,8 +17,8 @@ let
     alias = {
       b = "branch";
       ba = "branch --all";
-      ca = "commit --all --verbose";
-      ci = "commit --verbose";
+      ca = "commit --all";
+      ci = "commit";
       co = "checkout";
       ct = "checkout --track";
       patch = "!git --no-pager diff --no-color";
@@ -26,10 +26,76 @@ let
       up = "pull";
     };
 
+    # Improve listing branches
+    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#listing-branches>
+    column.ui = "auto";
+    branch.sort = "-committerdate";
+
+    # Improve listing tags
+    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#listing-tags>
+    tag.sort = "version:refname";
+
+    # Set default branch
+    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#default-branch>
     init.defaultBranch = "main";
 
-    fetch.prune = true;
-    push.autoSetupRemote = true;
+    # Better diff
+    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#better-diff>
+    diff = {
+      algorithm = "histogram";
+      colorMoved = "plain";
+      mnemonicPrefix = true;
+      renames = true;
+    };
+
+    # Better pushing
+    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#better-pushing>
+    push = {
+      default = "simple"; # (default since 2.0)
+      autoSetupRemote = true;
+      followTags = true;
+    };
+
+    # Better pulling
+    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#better-pulling>
+    pull = {
+      rebase = true;
+    };
+
+    # Better fetching
+    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#better-fetching>
+    fetch = {
+      prune = true;
+      pruneTags = true;
+      all = true;
+    };
+
+    # Autocorrect prompting
+    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#autocorrect-prompting>
+    help.autocorrect = "prompt";
+
+    # Commit with diffs
+    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#commit-with-diffs>
+    commit.verbose = true;
+
+    # Reuse recorded resolutions
+    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#reuse-recorded-resolutions>
+    rerere = {
+      enabled = true;
+      autoupdate = true;
+    };
+
+    # Slightly nicer rebase
+    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#slightly-nicer-rebase>
+    rebase = {
+      autoSquash = true;
+      autoStash = true;
+      updateRefs = true;
+    };
+
+    # Better merge conflicts
+    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#better-merge-conflicts>
+    # merge.conflictstyle = "zdiff3";
 
     credential =
       {
