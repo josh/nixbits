@@ -70,6 +70,14 @@ jobs:
         env:
           REF: ${{ github.event.pull_request.head.sha }}
 
+      - name: Compare head and base flake packages
+        if: steps.changed.outputs.only_lock_changed == 'true'
+        run: |
+          nix run github:josh/nixbits#nix-flake-diff-packages -- "$BASE_FLAKE" "$HEAD_FLAKE" || true
+        env:
+          BASE_FLAKE: "github:${{ github.event.pull_request.base.repo.full_name }}/${{ github.event.pull_request.base.sha }}"
+          HEAD_FLAKE: "github:${{ github.event.pull_request.head.repo.full_name }}/${{ github.event.pull_request.head.sha }}"
+
       - name: Compare head and base derivation paths
         if: steps.changed.outputs.only_lock_changed == 'true' && steps.base-drv.outputs.path == steps.head-drv.outputs.path
         run: |
