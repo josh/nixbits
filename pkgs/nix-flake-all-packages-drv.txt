@@ -6,5 +6,5 @@ derivation {
   name = "all-packages";
   system = builtins.getEnv "SYSTEM";
   builder = "/bin/sh";
-  inherit (flake.outputs) packages checks;
+  inherit (flake.outputs) packages;
 }
