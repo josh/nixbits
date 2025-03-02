@@ -3,18 +3,21 @@
   runCommand,
   makeWrapper,
   python3,
-  jq,
   cacert,
+  jq,
 }:
 let
   inherit (python3.pkgs.llm) version;
   venv =
     (python3.withPackages (
       ps: with ps; [
+        # keep-sorted start
         llm
+        llm-anthropic
         llm-cmd
         llm-gguf
         llm-ollama
+        # keep-sorted end
       ]
     )).overrideAttrs
       {
@@ -29,7 +32,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   inherit version;
 
   nativeBuildInputs = [ makeWrapper ];
-  makeWrapperArgs = [ ];
+  makeWrapperArgs = [
+    # Need for ollama/httpx dependency
+    "--set"
+    "SSL_CERT_FILE"
+    "${cacert}/etc/ssl/certs/ca-bundle.crt"
+  ];
 
   buildCommand = ''
     mkdir -p $out/bin
@@ -57,9 +65,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
             nativeBuildInputs = [
               llm
             ];
-            # Appears to be a regression in httpx cacert bundling
-            # https://github.com/NixOS/nixpkgs/commit/14ec122
-            SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
           }
           ''
             llm --help
@@ -73,9 +78,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
               llm
               jq
             ];
-            # Appears to be a regression in httpx cacert bundling
-            # https://github.com/NixOS/nixpkgs/commit/14ec122
-            SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
           }
           ''
             llm plugins | jq --exit-status 'map(select(.name == "llm-ollama")) | length > 0'
