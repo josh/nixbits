@@ -18,5 +18,5 @@ while [ $# -gt 0 ]; do
 done
 
 export FLAKE_URI SYSTEM
-nix eval --read-only --raw --file "$NIX_EXPR_FILE"
+nix eval --raw --file "$NIX_EXPR_FILE"
 echo ""
