@@ -1,15 +1,23 @@
 {
   stdenv,
+  writeShellScript,
   makeWrapper,
   runCommand,
   age,
-  age-identity ? "",
-  age-input ? "",
 }:
+let
+  preinstallHook = writeShellScript "age-decrypt-preinstall-hook" ''
+    if ! "$1" --output /dev/null; then
+      echo "$1 failed to decrypt data" >&2
+      exit 1
+    fi
+  '';
+in
+
 stdenv.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
-  name = "age-decrypt";
+  pname = "age-decrypt";
   inherit (age) version;
 
   nativeBuildInputs = [ makeWrapper ];
@@ -17,29 +25,37 @@ stdenv.mkDerivation (finalAttrs: {
 
   makeWrapperArgs = [ ];
 
-  AGE_IDENTITY = age-identity;
-  AGE_INPUT = age-input;
+  ageIdentity = "";
+  ageInput = "";
+  preinstallCheck = if finalAttrs.ageIdentity != "" && finalAttrs.ageInput != "" then true else false;
 
   buildCommand = ''
-    if [ -n "$AGE_IDENTITY" ]; then
-      if [[ "$AGE_IDENTITY" =~ ^$NIX_STORE/ ]]; then
+    if [ -n "$ageIdentity" ]; then
+      if [[ "$ageIdentity" =~ ^$NIX_STORE/ ]]; then
         echo "error: identity cannot be a store path" >&2
         exit 1
       fi
-      appendToVar makeWrapperArgs "--add-flags" "--identity $AGE_IDENTITY"
+      appendToVar makeWrapperArgs "--add-flags" "--identity $ageIdentity"
     fi
 
-    if [ -n "$AGE_INPUT" ]; then
-      if [[ "$AGE_INPUT" =~ ^$NIX_STORE/ ]] && [ ! -f "$AGE_INPUT" ]; then
-        echo "error: store path '$AGE_INPUT' must be a file" >&2
+    if [ -n "$ageInput" ]; then
+      if [[ "$ageInput" =~ ^$NIX_STORE/ ]] && [ ! -f "$ageInput" ]; then
+        echo "error: store path '$ageInput' must be a file" >&2
         exit 1
       fi
-      appendToVar makeWrapperArgs "--append-flags" "$AGE_INPUT"
+      appendToVar makeWrapperArgs "--append-flags" "$ageInput"
     fi
 
     mkdir -p $out/bin
     prependToVar makeWrapperArgs "--add-flags" "--decrypt"
-    makeWrapper ${age}/bin/age $out/bin/age-decrypt "''${makeWrapperArgs[@]}"
+    makeWrapper ${age}/bin/age $out/bin/$pname "''${makeWrapperArgs[@]}"
+
+    if [ -n "$preinstallCheck" ]; then
+      mkdir -p $out/share/nix/hooks/pre-install.d
+      makeWrapper ${preinstallHook} \
+        $out/share/nix/hooks/pre-install.d/$pname \
+        --append-flags "$out/bin/$pname"
+    fi
   '';
 
   meta = {
@@ -49,7 +65,7 @@ stdenv.mkDerivation (finalAttrs: {
       license
       platforms
       ;
-    mainProgram = "age-decrypt";
+    mainProgram = finalAttrs.pname;
   };
 
   passthru.tests =
@@ -66,11 +82,14 @@ stdenv.mkDerivation (finalAttrs: {
         AQxIIbneSxQvVy5k
         -----END AGE ENCRYPTED FILE-----
       '';
-      age-decrypt = finalAttrs.finalPackage.overrideAttrs { AGE_INPUT = "${data}"; };
+      age-decrypt = finalAttrs.finalPackage.overrideAttrs {
+        pname = "age-decrypt-data";
+        ageInput = "${data}";
+      };
     in
     {
       decrypt = runCommand "test-age-decrypt" { nativeBuildInputs = [ age-decrypt ]; } ''
-        age-decrypt --identity ${identity} >data.txt
+        age-decrypt-data --identity ${identity} >data.txt
         if [ "$(cat data.txt)" = "foo" ]; then
           cp data.txt $out
         else
