@@ -39,7 +39,6 @@ stdenv.mkDerivation (finalAttrs: {
 
     mkdir -p $out/bin
     prependToVar makeWrapperArgs "--add-flags" "--decrypt"
-    echo "makeWrapperArgs: ''${makeWrapperArgs[@]}"
     makeWrapper ${age}/bin/age $out/bin/age-decrypt "''${makeWrapperArgs[@]}"
   '';
 
