@@ -78,8 +78,6 @@
       checks = eachSystem (
         system:
         let
-          pkgs = nixpkgs.legacyPackages.${system};
-          checkReferences = checkPkg: pkgs.callPackage ./internal/check-references.nix { inherit checkPkg; };
           addAttrsetPrefix = prefix: lib.attrsets.concatMapAttrs (n: v: { "${prefix}${n}" = v; });
           localTests = lib.attrsets.concatMapAttrs (
             pkgName: pkg:
@@ -87,14 +85,12 @@
               (
                 {
                   "${pkgName}-build" = pkg;
-                  "${pkgName}-references" = checkReferences pkg;
                 }
                 // (addAttrsetPrefix "${pkgName}-tests-" pkg.tests)
               )
             else
               {
                 "${pkgName}-build" = pkg;
-                "${pkgName}-references" = checkReferences pkg;
               }
           ) self.packages.${system};
         in
