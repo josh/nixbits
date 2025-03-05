@@ -39,10 +39,7 @@ jobs:
       - name: Compare head and base flake packages
         if: steps.changed.outputs.only_lock_changed == 'true'
         run: |
-          if nix-flake-diff-packages "$BASE_FLAKE" "$HEAD_FLAKE"; then
-            echo "::error file=flake.lock::flake.lock changes produced the same package output"
-            exit 1
-          fi
+          nix-flake-diff-packages --changes "$BASE_FLAKE" "$HEAD_FLAKE"
         env:
           BASE_FLAKE: "github:${{ github.event.pull_request.base.repo.full_name }}/${{ github.event.pull_request.base.sha }}"
           HEAD_FLAKE: "github:${{ github.event.pull_request.head.repo.full_name }}/${{ github.event.pull_request.head.sha }}"
