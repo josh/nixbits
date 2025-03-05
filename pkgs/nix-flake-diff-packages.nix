@@ -1,6 +1,7 @@
 {
   lib,
   writeShellApplication,
+  coreutils,
   jd-diff-patch,
   nix,
 }:
@@ -8,6 +9,7 @@ writeShellApplication {
   name = "nix-flake-diff-packages";
   runtimeEnv = {
     PATH = lib.strings.makeBinPath [
+      coreutils
       jd-diff-patch
       nix
     ];
