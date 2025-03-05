@@ -8,30 +8,30 @@ changes=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --help)
+  --help)
+    usage
+    exit 0
+    ;;
+  --changes)
+    changes=true
+    shift
+    ;;
+  --no-changes)
+    changes=false
+    shift
+    ;;
+  *)
+    if [ -z "${flake_a}" ]; then
+      flake_a="$1"
+    elif [ -z "${flake_b}" ]; then
+      flake_b="$1"
+    else
+      echo "error: unexpected argument: $1" >&2
       usage
-      exit 0
-      ;;
-    --changes)
-      changes=true
-      shift
-      ;;
-    --no-changes)
-      changes=false
-      shift
-      ;;
-    *)
-      if [ -z "${flake_a}" ]; then
-        flake_a="$1"
-      elif [ -z "${flake_b}" ]; then
-        flake_b="$1"
-      else
-        echo "error: unexpected argument: $1" >&2
-        usage
-        exit 1
-      fi
-      shift
-      ;;
+      exit 1
+    fi
+    shift
+    ;;
   esac
 done
 
