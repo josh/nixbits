@@ -1,9 +1,7 @@
 {
   lib,
   writeShellApplication,
-  gawk,
   gnugrep,
-  gnused,
   nixbits,
 }:
 let
@@ -13,9 +11,7 @@ writeShellApplication {
   name = "shortcuts-check";
   runtimeEnv = {
     PATH = lib.strings.makeBinPath [
-      gawk
       gnugrep
-      gnused
       shortcuts
     ];
   };
