@@ -32,7 +32,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     appendToVar preInstallHookMakeWrapperArgs "--add-flags" "--id $shortcutId"
 
     if [ -n "$shortcutName" ]; then
-      appendToVar preInstallHookMakeWrapperArgs "--add-flags" "--name $shortcutName"
+      appendToVar preInstallHookMakeWrapperArgs "--add-flags" "--name '$shortcutName'"
     fi
 
     mkdir -p $out/bin $out/share/nix/hooks/pre-install.d
