@@ -1,61 +1,48 @@
 {
   lib,
   stdenvNoCC,
-  writeShellScript,
   makeWrapper,
-  gnugrep,
   nixbits,
-  name ? (if shortcutSlug == "" then "shortcuts-run" else "shortcuts-run-${shortcutSlug}"),
-  mainProgram ? name,
-  shortcutSlug ? lib.strings.toLower (
-    lib.strings.replaceStrings [ " " "\"" "'" ] [ "-" "" "" ] shortcutName
-  ),
-  shortcutName ? "",
-  shortcutId ? "00000000-0000-0000-0000-000000000000",
 }:
 let
   inherit (nixbits.darwin) shortcuts;
-
-  preinstallHook = writeShellScript "shortcuts-preinstall-hook" ''
-    set -o errexit
-    set -o nounset
-    set -o pipefail
-    export PATH=${
-      lib.strings.makeBinPath [
-        shortcuts
-        gnugrep
-      ]
-    }
-
-    if ! shortcuts list --show-identifiers | grep --quiet "(${shortcutId})"; then
-      echo "error: Shortcut '${shortcutName} (${shortcutId})' not found" >&2
-      exit 1
-    fi
-    if ! shortcuts list --show-identifiers | grep --quiet "${shortcutName} (${shortcutId})"; then
-      echo "warn: Shortcut '${shortcutId}' expected to be named '${shortcutName}'" >&2
-    fi
-  '';
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
-  inherit name;
+  pname = "shortcuts-run";
+  name =
+    if finalAttrs.shortcutSlug == "" then
+      "shortcuts-run"
+    else
+      "shortcuts-run-${finalAttrs.shortcutSlug}";
+
+  shortcutId = "00000000-0000-0000-0000-000000000000";
+  shortcutName = "";
+  shortcutSlug = lib.strings.toLower (
+    lib.strings.replaceStrings [ " " "\"" "'" ] [ "-" "" "" ] finalAttrs.shortcutName
+  );
 
   nativeBuildInputs = [ makeWrapper ];
-  makeWrapperArgs = [
-    "--add-flags"
-    "run ${shortcutId}"
-  ];
+  makeWrapperArgs = [ ];
+  preInstallHookMakeWrapperArgs = [ ];
 
   buildCommand = ''
+    appendToVar makeWrapperArgs "--add-flags" "run $shortcutId"
+    appendToVar preInstallHookMakeWrapperArgs "--add-flags" "--id $shortcutId"
+
+    if [ -n "$shortcutName" ]; then
+      appendToVar preInstallHookMakeWrapperArgs "--add-flags" "--name $shortcutName"
+    fi
+
     mkdir -p $out/bin $out/share/nix/hooks/pre-install.d
-    makeWrapper ${lib.getExe shortcuts} $out/bin/${mainProgram} "''${makeWrapperArgs[@]}"
-    install -m 755 ${preinstallHook} $out/share/nix/hooks/pre-install.d/${finalAttrs.name}
+    makeWrapper ${lib.getExe shortcuts} $out/bin/$name "''${makeWrapperArgs[@]}"
+    makeWrapper ${lib.getExe nixbits.shortcuts-check} $out/share/nix/hooks/pre-install.d/$name "''${preInstallHookMakeWrapperArgs[@]}"
   '';
 
   meta = {
-    description = "Run '${shortcutName}' Shortcut";
+    description = "Run '${finalAttrs.shortcutName}' Shortcut";
     platforms = lib.platforms.darwin;
-    inherit mainProgram;
+    mainProgram = finalAttrs.name;
   };
 })

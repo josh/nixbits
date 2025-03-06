@@ -1,0 +1,27 @@
+{
+  lib,
+  writeShellApplication,
+  gawk,
+  gnugrep,
+  gnused,
+  nixbits,
+}:
+let
+  inherit (nixbits.darwin) shortcuts;
+in
+writeShellApplication {
+  name = "shortcuts-check";
+  runtimeEnv = {
+    PATH = lib.strings.makeBinPath [
+      gawk
+      gnugrep
+      gnused
+      shortcuts
+    ];
+  };
+  text = builtins.readFile ./shortcuts-check.bash;
+  meta = {
+    description = "Check if macOS Shortcut is available";
+    platforms = lib.platforms.darwin;
+  };
+}
