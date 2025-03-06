@@ -3,12 +3,8 @@
   stdenvNoCC,
   makeWrapper,
   nixbits,
-  security-item-account ? null,
-  security-item-label ? null,
-  security-item-service ? null,
-  security-print-password ? false,
 }:
-stdenvNoCC.mkDerivation (_finalAttrs: {
+stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
   name = "security-find-generic-password";
@@ -16,33 +12,36 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
   nativeBuildInputs = [ makeWrapper ];
   buildInputs = [ nixbits.darwin.security ];
 
-  makeWrapperArgs =
-    (lib.lists.optionals (security-item-account != null) [
-      "--add-flags"
-      "-a ${security-item-account}"
-    ])
-    ++ (lib.lists.optionals (security-item-label != null) [
-      "--add-flags"
-      "-l ${security-item-label}"
-    ])
-    ++ (lib.lists.optionals (security-item-service != null) [
-      "--add-flags"
-      "-s ${security-item-service}"
-    ])
-    ++ (lib.lists.optionals security-print-password [
-      "--add-flags"
-      "-w"
-    ]);
+  securityAccount = "";
+  securityLabel = "";
+  securityService = "";
+  securityPrintPassword = true;
+
+  makeWrapperArgs = [ ];
 
   buildCommand = ''
-    mkdir -p $out/bin
     prependToVar makeWrapperArgs "--add-flags" "find-generic-password"
-    makeWrapper ${nixbits.darwin.security}/bin/security $out/bin/security-find-generic-password "''${makeWrapperArgs[@]}"
+
+    if [ -n "$securityAccount" ]; then
+      appendToVar makeWrapperArgs "--add-flags" "-a '$securityAccount'"
+    fi
+    if [ -n "$securityLabel" ]; then
+      appendToVar makeWrapperArgs "--add-flags" "-l '$securityLabel'"
+    fi
+    if [ -n "$securityService" ]; then
+      appendToVar makeWrapperArgs "--add-flags" "-s '$securityService'"
+    fi
+    if [ "$securityPrintPassword" = true ]; then
+      appendToVar makeWrapperArgs "--add-flags" "-w"
+    fi
+
+    mkdir -p $out/bin
+    makeWrapper ${nixbits.darwin.security}/bin/security $out/bin/$name "''${makeWrapperArgs[@]}"
   '';
 
   meta = {
     description = "Find a generic password item in macOS Keychain";
     platforms = lib.platforms.darwin;
-    mainProgram = "security-find-generic-password";
+    mainProgram = finalAttrs.name;
   };
 })
