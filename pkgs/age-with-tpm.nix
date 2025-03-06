@@ -25,7 +25,7 @@ symlinkJoin {
       homepage
       license
       ;
-    platforms = age-plugin-tpm.meta.platforms;
+    inherit (age-plugin-tpm.meta) platforms;
     mainProgram = "age";
   };
 }
