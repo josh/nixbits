@@ -13,6 +13,8 @@ writeShellApplication {
     ];
   };
   text = builtins.readFile ./tccutil-check.bash;
-
-  meta.description = "Check that program has specific Privacy & Security access";
+  meta = {
+    description = "Check that program has specific Privacy & Security access";
+    platforms = lib.platforms.darwin;
+  };
 }
