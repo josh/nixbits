@@ -1,5 +1,5 @@
 {
-  stdenv,
+  stdenvNoCC,
   writeShellScript,
   makeWrapper,
   runCommand,
@@ -13,7 +13,7 @@ let
     fi
   '';
 in
-stdenv.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
   pname = "age-decrypt";

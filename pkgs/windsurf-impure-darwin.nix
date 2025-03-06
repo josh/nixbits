@@ -1,13 +1,13 @@
 {
   lib,
-  stdenv,
+  stdenvNoCC,
   runtimeShell,
   runCommandLocal,
 }:
 let
   app = "/Applications/Windsurf.app";
 in
-stdenv.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation (finalAttrs: {
   name = "windsurf-impure-darwin";
   version = "1.0.0";
 

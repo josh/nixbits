@@ -1,6 +1,6 @@
 {
   lib,
-  stdenv,
+  stdenvNoCC,
   makeWrapper,
   nixbits,
   security-item-account ? null,
@@ -8,7 +8,7 @@
   security-item-service ? null,
   security-print-password ? false,
 }:
-stdenv.mkDerivation (_finalAttrs: {
+stdenvNoCC.mkDerivation (_finalAttrs: {
   __structuredAttrs = true;
 
   name = "security-find-generic-password";

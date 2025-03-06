@@ -1,11 +1,11 @@
 {
   lib,
-  stdenv,
+  stdenvNoCC,
   makeWrapper,
   runCommand,
   rclone,
 }:
-stdenv.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
   name = "rclone-taildrive";
