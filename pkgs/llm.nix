@@ -16,6 +16,7 @@ let
         llm-anthropic
         llm-cmd
         llm-gguf
+        llm-jq
         llm-ollama
         # keep-sorted end
       ]
