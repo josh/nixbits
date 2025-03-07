@@ -67,15 +67,13 @@ if [ $status_b -ne 0 ]; then
   exit $status_b
 fi
 
-jd -color "$a_out" "$b_out"
-jd_exit_code=$?
-
-if [ "$changes" == false ]; then
-  exit $jd_exit_code
-else
-  if [[ $jd_exit_code -eq 0 ]]; then
+if [ "$changes" == true ]; then
+  # Invert jd exit code
+  if jd -color "$a_out" "$b_out"; then
     exit 1
   else
     exit 0
   fi
+else
+  jd -color "$a_out" "$b_out"
 fi
