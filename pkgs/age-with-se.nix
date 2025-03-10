@@ -5,7 +5,7 @@
   nur,
 }:
 let
-  age-plugin-se = nur.repos.josh.age-plugin-se;
+  inherit (nur.repos.josh) age-plugin-se;
 in
 symlinkJoin {
   pname = "age-with-se";
