@@ -5,9 +5,13 @@
   python3,
   cacert,
   jq,
+  nur,
 }:
 let
   inherit (python3.pkgs.llm) version;
+
+  inherit (nur.repos.josh) llm-sentence-transformers;
+
   venv =
     (python3.withPackages (
       ps: with ps; [
@@ -18,6 +22,7 @@ let
         llm-gguf
         llm-jq
         llm-ollama
+        llm-sentence-transformers
         # keep-sorted end
       ]
     )).overrideAttrs
