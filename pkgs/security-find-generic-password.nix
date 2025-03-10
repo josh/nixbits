@@ -31,7 +31,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     if [ -n "$securityService" ]; then
       appendToVar makeWrapperArgs "--add-flags" "-s '$securityService'"
     fi
-    if [ "$securityPrintPassword" = true ]; then
+    if [ -n "$securityPrintPassword" ]; then
       appendToVar makeWrapperArgs "--add-flags" "-w"
     fi
 
