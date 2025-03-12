@@ -10,7 +10,7 @@
 let
   inherit (python3.pkgs.llm) version;
 
-  inherit (nur.repos.josh) llm-sentence-transformers;
+  inherit (nur.repos.josh) llm-sentence-transformers llm-ttok;
 
   venv =
     (python3.withPackages (
@@ -48,6 +48,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   buildCommand = ''
     mkdir -p $out/bin
     makeWrapper ${venv}/bin/llm $out/bin/llm "''${makeWrapperArgs[@]}"
+    makeWrapper ${llm-ttok}/bin/ttok $out/bin/ttok
   '';
 
   meta = {
@@ -74,6 +75,18 @@ stdenvNoCC.mkDerivation (finalAttrs: {
           }
           ''
             llm --help
+            touch $out
+          '';
+
+      ttok =
+        runCommand "test-llm-ttok"
+          {
+            nativeBuildInputs = [
+              llm
+            ];
+          }
+          ''
+            ttok --help
             touch $out
           '';
 
