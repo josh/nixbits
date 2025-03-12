@@ -53,22 +53,27 @@
       packages = eachPkgs (
         pkgs:
         let
-          uniqueMergeAttrs = lib.misc.mergeAttrsWithFunc (
-            a: b: if a == b && a.meta == b.meta then a else builtins.throw "duplicate pkgs: ${a}"
-          );
+          collectPkgsByName =
+            attrs:
+            lib.attrsets.foldlAttrs (
+              pkgs: _name: pkg:
+              if (lib.attrsets.isDerivation pkg) && pkg.meta.available then
+                pkgs // { ${lib.strings.getName pkg.name} = pkg; }
+              else
+                pkgs
+            ) { } attrs;
+
           collectPkgs =
             attrs:
-            lib.lists.foldl' uniqueMergeAttrs { } (
-              builtins.map (
-                value:
-                if (lib.attrsets.isDerivation value) && value.meta.available then
-                  { "${lib.strings.getName value.meta.name}" = value; }
-                else if (builtins.isAttrs value) && (value.recurseForDerivations or false) then
-                  collectPkgs value
-                else
-                  { }
-              ) (builtins.attrValues attrs)
-            );
+            lib.attrsets.foldlAttrs (
+              pkgs: name: pkg:
+              if (builtins.isAttrs pkg) && (pkg.recurseForDerivations or false) then
+                pkgs // (collectPkgsByName pkg)
+              else if (lib.attrsets.isDerivation pkg) && pkg.meta.available then
+                pkgs // { ${name} = pkg; }
+              else
+                pkgs
+            ) { } attrs;
         in
         collectPkgs pkgs.nixbits
       );
