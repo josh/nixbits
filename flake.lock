@@ -37,11 +37,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1741740383,
-        "narHash": "sha256-uLBv0LcO+rUuBb/4WRHahghM5bdUUTBAeoNQWR73XEI=",
+        "lastModified": 1741810998,
+        "narHash": "sha256-IBfv7X0c7IvnT+7QKzVklW0EP7OUwPjirV+b/e5RZ54=",
         "owner": "josh",
         "repo": "nurpkgs",
-        "rev": "518351806b0fbe98ee565cdd8679a76f4b9aa73d",
+        "rev": "751519268a897f48092b9a50d589fa2379c64c36",
         "type": "github"
       },
       "original": {
