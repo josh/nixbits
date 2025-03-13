@@ -47,6 +47,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     fi
 
     $out/bin/bat cache --build
+    sed -i 's/secs_since_epoch: [0-9]*/secs_since_epoch: 0/' $out/var/cache/bat/metadata.yaml
+    sed -i 's/nanos_since_epoch: [0-9]*/nanos_since_epoch: 0/' $out/var/cache/bat/metadata.yaml
   '';
 
   passthru.tests =
