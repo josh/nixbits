@@ -1,9 +1,18 @@
 {
   lib,
   stdenvNoCC,
+  writeShellScript,
   makeWrapper,
   nixbits,
 }:
+let
+  inherit (nixbits.darwin) security;
+  preinstallHook = writeShellScript "security-find-generic-password-preinstall-hook" ''
+    if ! ${security}/bin/security find-generic-password "$@" >/dev/null 2>&1; then
+      echo "warn: keychain missing generic password for $@" >&2
+    fi
+  '';
+in
 stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
@@ -20,8 +29,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   makeWrapperArgs = [ ];
 
   buildCommand = ''
-    prependToVar makeWrapperArgs "--add-flags" "find-generic-password"
-
     if [ -n "$securityAccount" ]; then
       appendToVar makeWrapperArgs "--add-flags" "-a '$securityAccount'"
     fi
@@ -31,12 +38,19 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     if [ -n "$securityService" ]; then
       appendToVar makeWrapperArgs "--add-flags" "-s '$securityService'"
     fi
+
+    mkdir -p $out/share/nix/hooks/pre-install.d
+    makeWrapper ${preinstallHook} $out/share/nix/hooks/pre-install.d/$name \
+      "''${makeWrapperArgs[@]}"
+
     if [ -n "$securityPrintPassword" ]; then
       appendToVar makeWrapperArgs "--add-flags" "-w"
     fi
 
     mkdir -p $out/bin
-    makeWrapper ${nixbits.darwin.security}/bin/security $out/bin/$name "''${makeWrapperArgs[@]}"
+    makeWrapper ${security}/bin/security $out/bin/$name \
+      --add-flags find-generic-password \
+      "''${makeWrapperArgs[@]}"
   '';
 
   meta = {
