@@ -19,7 +19,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   preInstallHook = ''
     #!${runtimeShell} -e
     if [ ! -d '${app}' ]; then
-      echo "WARN: Cursor not installed" >&2
+      echo "warn: Cursor is not installed" >&2
       echo "  https://www.cursor.com" >&2
     fi
   '';

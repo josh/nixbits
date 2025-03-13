@@ -19,7 +19,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   preInstallHook = ''
     #!${runtimeShell} -e
     if [ ! -d '${app}' ]; then
-      echo "WARN: Zed not installed" >&2
+      echo "warn: Zed is not installed" >&2
       echo "  https://zed.dev/download" >&2
     fi
   '';

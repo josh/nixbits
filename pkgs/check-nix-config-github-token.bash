@@ -9,7 +9,7 @@ if nix config show access-tokens | grep --quiet "github.com=$GITHUB_TOKEN"; then
 fi
 
 if nix config show access-tokens | grep --quiet "github.com="; then
-  echo "WARN: nix config github.com access token out of date" >&2
+  echo "warn: nix config github.com access token out of date" >&2
   exit 0
 fi
 

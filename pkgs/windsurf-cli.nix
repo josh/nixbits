@@ -19,7 +19,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   preInstallHook = ''
     #!${runtimeShell} -e
     if [ ! -d '${app}' ]; then
-      echo "WARN: Windsurf not installed" >&2
+      echo "warn: Windsurf is not installed" >&2
       echo "  https://codeium.com/download" >&2
     fi
   '';
