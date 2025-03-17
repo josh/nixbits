@@ -114,11 +114,6 @@ in
     hash = "sha256-HZfyqd/bCCYCfFhpRwHGV7oZxKqU+E+SzBIosiHm6Xc=";
     manpage = "shortcuts.1";
   };
-  tccutil = mkDarwinImpureDrv {
-    command = "/usr/bin/tccutil";
-    hash = "sha256-N0v0YyAxl2jfZwi8uTnpMTURMluLL5/WHaDv8d7Wnik=";
-    manpage = "tccutil.1";
-  };
   wait4path = mkDarwinImpureDrv {
     command = "/bin/wait4path";
     hash = "sha256-UumV34CAR80Vy99ugn9zF3HsVUl8mc5cSMqqPaGcC+E=";
