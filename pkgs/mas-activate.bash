@@ -60,7 +60,5 @@ for entry in "$dir"/*; do
       echo "+ mas install $app_id # $name" >&2
       mas install "$app_id"
     fi
-  else
-    echo "$name is installed" >&2
   fi
 done
