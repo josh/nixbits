@@ -24,6 +24,10 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [ -d "$HOME/Developer/nixpkgs" ]; then
+  cd "$HOME/Developer/nixpkgs" || true
+fi
+
 exec nixpkgs-review pr \
   --systems "$systems" \
   $shell_flag \
