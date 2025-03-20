@@ -3,44 +3,57 @@
   writeText,
   tmuxPlugins,
   nur,
-  nixbits,
   theme ? null,
 }:
 let
-  defaultTheme = ''
-    run-shell '${nixbits.tmux-env-theme}/share/tmux-plugins/env-theme.tmux'
-  '';
+  validThemes = builtins.attrNames loadThemes;
+
+  loadTheme =
+    if theme == null then
+      envTheme
+    else
+      assert (lib.asserts.assertOneOf "theme" theme validThemes);
+      loadThemes.${theme};
+
   loadThemes = {
     "tokyonight_day" = ''
       set-option -g @theme_variation 'day'
+      ${tokyonightConfig}
       run-shell '${nur.repos.josh.tmux-tokyo-night}/share/tmux-plugins/tmux-tokyo-night/tmux-tokyo-night.tmux'
     '';
     "tokyonight_moon" = ''
       set-option -g @theme_variation 'moon'
+      ${tokyonightConfig}
       run-shell '${nur.repos.josh.tmux-tokyo-night}/share/tmux-plugins/tmux-tokyo-night/tmux-tokyo-night.tmux'
     '';
     "tokyonight_storm" = ''
       set-option -g @theme_variation 'storm'
+      ${tokyonightConfig}
       run-shell '${nur.repos.josh.tmux-tokyo-night}/share/tmux-plugins/tmux-tokyo-night/tmux-tokyo-night.tmux'
     '';
     "tokyonight_night" = ''
       set-option -g @theme_variation 'night'
+      ${tokyonightConfig}
       run-shell '${nur.repos.josh.tmux-tokyo-night}/share/tmux-plugins/tmux-tokyo-night/tmux-tokyo-night.tmux'
     '';
     "catppuccin_frappe" = ''
       set-option -g @catppuccin_flavor 'frappe'
+      ${catppuccinConfig}
       run-shell '${nur.repos.josh.tmux-catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux'
     '';
     "catppuccin_latte" = ''
       set-option -g @catppuccin_flavor 'latte'
+      ${catppuccinConfig}
       run-shell '${nur.repos.josh.tmux-catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux'
     '';
     "catppuccin_macchiato" = ''
       set-option -g @catppuccin_flavor 'macchiato'
+      ${catppuccinConfig}
       run-shell '${nur.repos.josh.tmux-catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux'
     '';
     "catppuccin_mocha" = ''
       set-option -g @catppuccin_flavor 'mocha'
+      ${catppuccinConfig}
       run-shell '${nur.repos.josh.tmux-catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux'
     '';
     "rosepine_moon" = ''
@@ -55,26 +68,42 @@ let
       run-shell ${tmuxPlugins.rose-pine}/share/tmux-plugins/rose-pine/rose-pine.tmux
     '';
   };
-  validThemes = builtins.attrNames loadThemes;
-  loadTheme =
-    if theme == null then
-      defaultTheme
-    else
-      assert (lib.asserts.assertOneOf "theme" theme validThemes);
-      loadThemes.${theme};
 
-  ifTheme =
-    themePrefix: themeConfig:
-    if theme == null then
-      ''
-        if-shell '[ "''${THEME#${themePrefix}}" != "$THEME" ]' {
-          ${themeConfig}
-        }
-      ''
-    else if (lib.strings.hasPrefix themePrefix theme) then
-      themeConfig
-    else
-      "";
+  envTheme = ''
+    if-shell '[ "$THEME" = "tokyonight_day" ]' {
+      ${loadThemes.tokyonight_day}
+    }
+    if-shell '[ "$THEME" = "tokyonight_moon" ]' {
+      ${loadThemes.tokyonight_moon}
+    }
+    if-shell '[ "$THEME" = "tokyonight_storm" ]' {
+      ${loadThemes.tokyonight_storm}
+    }
+    if-shell '[ "$THEME" = "tokyonight_night" ]' {
+      ${loadThemes.tokyonight_night}
+    }
+    if-shell '[ "$THEME" = "catppuccin_frappe" ]' {
+      ${loadThemes.catppuccin_frappe}
+    }
+    if-shell '[ "$THEME" = "catppuccin_latte" ]' {
+      ${loadThemes.catppuccin_latte}
+    }
+    if-shell '[ "$THEME" = "catppuccin_macchiato" ]' {
+      ${loadThemes.catppuccin_macchiato}
+    }
+    if-shell '[ "$THEME" = "catppuccin_mocha" ]' {
+      ${loadThemes.catppuccin_mocha}
+    }
+    if-shell '[ "$THEME" = "rosepine_moon" ]' {
+      ${loadThemes.rosepine_moon}
+    }
+    if-shell '[ "$THEME" = "rosepine_dawn" ]' {
+      ${loadThemes.rosepine_dawn}
+    }
+    if-shell '[ "$THEME" = "rosepine" ]' {
+      ${loadThemes.rosepine}
+    }
+  '';
 
   tokyonightConfig = ''
     set-option -g @theme_disable_plugins '1'
@@ -104,7 +133,6 @@ let
 
     set-option -g @catppuccin_directory_text "#{pane_current_path}"
   '';
-
 in
 writeText "tmux.conf" ''
   # First thing, initialize tmux sensible
@@ -159,7 +187,6 @@ writeText "tmux.conf" ''
   # iTerm wants this off
   set-window-option -g aggressive-resize off
 
-  ${ifTheme "tokyonight" tokyonightConfig}
-  ${ifTheme "catppuccin" catppuccinConfig}
+  # Theme
   ${loadTheme}
 ''
