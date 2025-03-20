@@ -12,43 +12,43 @@ let
   '';
   loadThemes = {
     "tokyonight_day" = ''
-      tmux set-option -g '@theme_variation' 'day'
+      set-option -g @theme_variation 'day'
       run-shell '${nur.repos.josh.tmux-tokyo-night}/share/tmux-plugins/tmux-tokyo-night/tmux-tokyo-night.tmux'
     '';
     "tokyonight_moon" = ''
-      tmux set-option -g '@theme_variation' 'moon'
+      set-option -g @theme_variation 'moon'
       run-shell '${nur.repos.josh.tmux-tokyo-night}/share/tmux-plugins/tmux-tokyo-night/tmux-tokyo-night.tmux'
     '';
     "tokyonight_storm" = ''
-      tmux set-option -g '@theme_variation' 'storm'
+      set-option -g @theme_variation 'storm'
       run-shell '${nur.repos.josh.tmux-tokyo-night}/share/tmux-plugins/tmux-tokyo-night/tmux-tokyo-night.tmux'
     '';
     "tokyonight_night" = ''
-      tmux set-option -g '@theme_variation' 'night'
+      set-option -g @theme_variation 'night'
       run-shell '${nur.repos.josh.tmux-tokyo-night}/share/tmux-plugins/tmux-tokyo-night/tmux-tokyo-night.tmux'
     '';
     "catppuccin_frappe" = ''
-      tmux set-option -g '@catppuccin_flavor' 'frappe'
+      set-option -g @catppuccin_flavor 'frappe'
       run-shell '${nur.repos.josh.tmux-catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux'
     '';
     "catppuccin_latte" = ''
-      tmux set-option -g '@catppuccin_flavor' 'latte'
+      set-option -g @catppuccin_flavor 'latte'
       run-shell '${nur.repos.josh.tmux-catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux'
     '';
     "catppuccin_macchiato" = ''
-      tmux set-option -g '@catppuccin_flavor' 'macchiato'
+      set-option -g @catppuccin_flavor 'macchiato'
       run-shell '${nur.repos.josh.tmux-catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux'
     '';
     "catppuccin_mocha" = ''
-      tmux set-option -g '@catppuccin_flavor' 'mocha'
+      set-option -g @catppuccin_flavor 'mocha'
       run-shell '${nur.repos.josh.tmux-catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux'
     '';
     "rosepine_moon" = ''
-      tmux set-option -g '@rose_pine_variant' 'moon'
+      set-option -g @rose_pine_variant 'moon'
       run-shell '${nur.repos.josh.rose-pine}/share/tmux-plugins/rose-pine/rose-pine.tmux'
     '';
     "rosepine_dawn" = ''
-      tmux set-option -g '@rose_pine_variant' 'dawn'
+      set-option -g @rose_pine_variant 'dawn'
       run-shell '${nur.repos.josh.rose-pine}/share/tmux-plugins/rose-pine/rose-pine.tmux'
     '';
     "rosepine" = ''
