@@ -7,6 +7,9 @@
   theme ? "tokyonight_moon",
 }:
 let
+  tmux = nixbits.tmux.override { inherit theme; };
+  tmux-attach = nixbits.tmux-attach.override { inherit tmux; };
+
   themeImports = {
     "catppuccin_frappe" = "${nur.repos.josh.alacritty-catppuccin}/catppuccin-frappe.toml";
     "catppuccin_latte" = "${nur.repos.josh.alacritty-catppuccin}/catppuccin-latte.toml";
@@ -39,7 +42,7 @@ let
         args = [
           "--login"
           "-c"
-          (lib.getExe nixbits.tmux-attach)
+          (lib.getExe tmux-attach)
         ];
       };
     };
