@@ -45,14 +45,14 @@ let
     '';
     "rosepine_moon" = ''
       set-option -g @rose_pine_variant 'moon'
-      run-shell '${nur.repos.josh.rose-pine}/share/tmux-plugins/rose-pine/rose-pine.tmux'
+      run-shell ${tmuxPlugins.rose-pine}/share/tmux-plugins/rose-pine/rose-pine.tmux
     '';
     "rosepine_dawn" = ''
       set-option -g @rose_pine_variant 'dawn'
-      run-shell '${nur.repos.josh.rose-pine}/share/tmux-plugins/rose-pine/rose-pine.tmux'
+      run-shell ${tmuxPlugins.rose-pine}/share/tmux-plugins/rose-pine/rose-pine.tmux
     '';
     "rosepine" = ''
-      run-shell '${nur.repos.josh.rose-pine}/share/tmux-plugins/rose-pine/rose-pine.tmux'
+      run-shell ${tmuxPlugins.rose-pine}/share/tmux-plugins/rose-pine/rose-pine.tmux
     '';
   };
   validThemes = builtins.attrNames loadThemes;
