@@ -36,18 +36,10 @@ let
   config = {
     general.import = [ themeImport ];
 
-    terminal = {
-      shell = {
-        program = lib.getExe zsh;
-        args = [
-          "--login"
-          "-c"
-          (lib.getExe tmux-attach)
-        ];
-      };
-    };
+    terminal.shell.program = lib.getExe tmux-attach;
 
     env = {
+      SHELL = lib.getExe zsh;
       THEME = theme;
     };
 
