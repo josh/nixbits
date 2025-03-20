@@ -4,13 +4,13 @@
   tmuxPlugins,
   nur,
   nixbits,
-  theme ? "env",
+  theme ? null,
 }:
 let
+  defaultTheme = ''
+    run-shell '${nixbits.tmux-env-theme}/share/tmux-plugins/env-theme.tmux'
+  '';
   loadThemes = {
-    "env" = ''
-      run-shell '${nixbits.tmux-env-theme}/share/tmux-plugins/env-theme.tmux'
-    '';
     "tokyonight_day" = ''
       tmux set-option -g '@theme_variation' 'day'
       run-shell '${nur.repos.josh.tmux-tokyo-night}/share/tmux-plugins/tmux-tokyo-night/tmux-tokyo-night.tmux'
@@ -57,12 +57,15 @@ let
   };
   validThemes = builtins.attrNames loadThemes;
   loadTheme =
-    assert (lib.asserts.assertOneOf "theme" theme validThemes);
-    loadThemes.${theme};
+    if theme == null then
+      defaultTheme
+    else
+      assert (lib.asserts.assertOneOf "theme" theme validThemes);
+      loadThemes.${theme};
 
   ifTheme =
     themePrefix: themeConfig:
-    if theme == "env" then
+    if theme == null then
       ''
         if-shell '[ "''${THEME#${themePrefix}}" != "$THEME" ]' {
           ${themeConfig}
