@@ -1,8 +1,10 @@
 {
   lib,
   writers,
+  bashInteractive,
   nur,
   nixbits,
+  interactiveShell ? bashInteractive,
   theme ? "tokyonight_moon",
   enableTmux ? true,
 }:
@@ -31,11 +33,19 @@ let
     assert (lib.asserts.assertOneOf "theme" theme validThemes);
     themeImports.${theme};
 
+  shell = lib.getExe interactiveShell;
+
   config = {
     general.import =
       (lib.lists.optional (theme != null) themeImport) ++ (lib.lists.optional enableTmux tmuxConfig);
 
-    env = lib.attrsets.optionalAttrs (theme != null) { THEME = theme; };
+    terminal = {
+      shell = if enableTmux then { } else { program = shell; };
+    };
+
+    env = {
+      "SHELL" = shell;
+    } // lib.attrsets.optionalAttrs (theme != null) { THEME = theme; };
 
     window = {
       dimensions = {

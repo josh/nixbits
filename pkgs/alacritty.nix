@@ -3,14 +3,16 @@
   stdenvNoCC,
   makeWrapper,
   alacritty,
+  bashInteractive,
   lndir,
   nixbits,
   theme ? "tokyonight_moon",
+  interactiveShell ? bashInteractive,
   enableTmux ? true,
 }:
 let
   alacrittyConfig = nixbits.alacritty-config.override {
-    inherit theme enableTmux;
+    inherit interactiveShell theme enableTmux;
   };
 in
 stdenvNoCC.mkDerivation (_finalAttrs: {
