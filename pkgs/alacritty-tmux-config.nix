@@ -1,67 +1,16 @@
 {
   lib,
   writers,
-  zsh,
-  nur,
   nixbits,
-  theme ? "tokyonight_moon",
+  theme ? null,
 }:
 let
   tmux = nixbits.tmux.override { inherit theme; };
   tmux-attach = nixbits.tmux-attach.override { inherit tmux; };
 
-  themeImports = {
-    "catppuccin_frappe" = "${nur.repos.josh.alacritty-catppuccin}/catppuccin-frappe.toml";
-    "catppuccin_latte" = "${nur.repos.josh.alacritty-catppuccin}/catppuccin-latte.toml";
-    "catppuccin_macchiato" = "${nur.repos.josh.alacritty-catppuccin}/catppuccin-macchiato.toml";
-    "catppuccin_mocha" = "${nur.repos.josh.alacritty-catppuccin}/catppuccin-mocha.toml";
-    "rosepine_dawn" = "${nur.repos.josh.alacritty-rose-pine}/rose-pine-dawn.toml";
-    "rosepine_moon" = "${nur.repos.josh.alacritty-rose-pine}/rose-pine-moon.toml";
-    "rosepine" = "${nur.repos.josh.alacritty-rose-pine}/rose-pine.toml";
-    "tokyonight_day" =
-      "${nur.repos.josh.tokyonight-extras}/share/tokyonight/alacritty/tokyonight_day.toml";
-    "tokyonight_moon" =
-      "${nur.repos.josh.tokyonight-extras}/share/tokyonight/alacritty/tokyonight_moon.toml";
-    "tokyonight_night" =
-      "${nur.repos.josh.tokyonight-extras}/share/tokyonight/alacritty/tokyonight_night.toml";
-    "tokyonight_storm" =
-      "${nur.repos.josh.tokyonight-extras}/share/tokyonight/alacritty/tokyonight_storm.toml";
-  };
-  themes = builtins.attrNames themeImports;
-
-  themeImport =
-    assert (lib.asserts.assertOneOf "theme" theme themes);
-    themeImports.${theme};
-
   config = {
-    general.import = [ themeImport ];
-
     terminal.shell.program = lib.getExe tmux-attach;
-
-    env = {
-      SHELL = lib.getExe zsh;
-      THEME = theme;
-    };
-
-    window = {
-      dimensions = {
-        columns = 120;
-        lines = 40;
-      };
-      padding = {
-        x = 10;
-        y = 10;
-      };
-      decorations = "Buttonless";
-      resize_increments = true;
-      option_as_alt = "Both";
-    };
-
-    font = {
-      normal.family = "BerkeleyMono Nerd Font Mono";
-      size = 19;
-    };
-
+    # env.SHELL = lib.getExe zsh;
     keyboard.bindings = [
       # tmux leader alias: Ctrl-b
       {
@@ -188,10 +137,11 @@ let
     ];
   };
 in
-(writers.writeTOML "alacritty.toml" config).overrideAttrs {
+(writers.writeTOML "tmux.toml" config).overrideAttrs {
   name = "alacritty-tmux-config";
   meta = {
     description = "Alacritty macOS tmux config";
+    # TODO: Add linux keybindings
     platforms = lib.platforms.darwin;
   };
 }
