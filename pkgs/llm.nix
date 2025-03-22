@@ -19,6 +19,7 @@ let
         llm
         llm-anthropic
         llm-cmd
+        llm-gemini
         llm-gguf
         llm-jq
         llm-ollama
