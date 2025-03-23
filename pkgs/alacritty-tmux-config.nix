@@ -108,6 +108,9 @@ let
 
   config = {
     terminal.shell.program = lib.getExe tmux-attach;
+
+    window.decorations = if stdenv.hostPlatform.isDarwin then "Buttonless" else "Full";
+
     keyboard.bindings =
       (lib.lists.optionals stdenv.hostPlatform.isDarwin macKeyboardBindings)
       ++ (lib.lists.optionals stdenv.hostPlatform.isLinux linuxKeyboardBindings);

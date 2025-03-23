@@ -64,11 +64,7 @@ let
   };
 
   macosConfig = {
-    window = {
-      decorations = "Buttonless";
-      option_as_alt = "Both";
-    };
-
+    window.option_as_alt = "Both";
     font = {
       normal.family = "BerkeleyMono Nerd Font Mono";
       size = 19;
