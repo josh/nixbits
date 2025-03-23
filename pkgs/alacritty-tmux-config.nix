@@ -9,133 +9,98 @@ let
   tmux = nixbits.tmux.override { inherit theme; };
   tmux-attach = nixbits.tmux-attach.override { inherit tmux; };
 
-  # C-Space
-  leader-char = "\\u0000";
+  tmux-command = command: tmux-command-with command [ ];
+  tmux-command-with = command: args: {
+    program = "${lib.getExe tmux}";
+    args = [ command ] ++ args;
+  };
 
   macKeyboardBindings = [
-    # tmux leader alias: <leader>
-    {
-      mods = "Command";
-      key = "B";
-      chars = leader-char;
-    }
-
     # tmux create window: <leader> c
     {
       mods = "Command";
       key = "T";
-      chars = "${leader-char}c";
+      command = tmux-command "new-window";
     }
 
     # tmux close window: <leader> & y
     {
       mods = "Command";
       key = "W";
-      chars = "${leader-char}&y";
+      command = tmux-command "kill-window";
     }
 
     # tmux split horizontal: <leader> "
     {
       mods = "Command";
       key = "D";
-      chars = "${leader-char}\"";
+      command = tmux-command-with "split-window" [ "-v" ];
     }
     {
       mods = "Option|Shift|Command";
       key = "H";
-      chars = "${leader-char}\"";
+      command = tmux-command-with "split-window" [ "-v" ];
     }
 
     # tmux split vertical: <leader> %
     # {
     #   mods = "Command";
     #   key = "";
-    #   chars = "${leader-char}%";
+    #   command = tmux-command-with "split-window" [ "-h" ];
     # }
     {
       mods = "Option|Shift|Command";
       key = "V";
-      chars = "${leader-char}%";
+      command = tmux-command-with "split-window" [ "-h" ];
     }
 
     # tmux close split: <leader> x
     {
       mods = "Command|Shift";
       key = "D";
-      chars = "${leader-char}x";
+      command = tmux-command "kill-pane";
     }
 
     # tmux next window: <leader> n
     {
       mods = "Command|Shift";
       key = "}";
-      chars = "${leader-char}n";
+      command = tmux-command "next-window";
     }
     {
       mods = "Control";
       key = "Tab";
-      chars = "${leader-char}n";
+      command = tmux-command "next-window";
     }
 
     # tmux previous window: <leader> p
     {
       mods = "Command|Shift";
       key = "{";
-      chars = "${leader-char}p";
+      command = tmux-command "previous-window";
     }
     {
       mods = "Control|Shift";
       key = "Tab";
-      chars = "${leader-char}p";
+      command = tmux-command "previous-window";
     }
+  ] ++ macSelectWindowBindings;
 
-    # tmux go to window number
+  # tmux go to window number
+  macSelectWindowBindings = builtins.genList (
+    i:
+    let
+      n = builtins.toString (i + 1);
+    in
     {
       mods = "Command";
-      key = "Key1";
-      chars = "${leader-char}1";
+      key = "Key${n}";
+      command = tmux-command-with "select-window" [
+        "-t"
+        n
+      ];
     }
-    {
-      mods = "Command";
-      key = "Key2";
-      chars = "${leader-char}2";
-    }
-    {
-      mods = "Command";
-      key = "Key3";
-      chars = "${leader-char}3";
-    }
-    {
-      mods = "Command";
-      key = "Key4";
-      chars = "${leader-char}4";
-    }
-    {
-      mods = "Command";
-      key = "Key5";
-      chars = "${leader-char}5";
-    }
-    {
-      mods = "Command";
-      key = "Key6";
-      chars = "${leader-char}6";
-    }
-    {
-      mods = "Command";
-      key = "Key7";
-      chars = "${leader-char}7";
-    }
-    {
-      mods = "Command";
-      key = "Key8";
-      chars = "${leader-char}8";
-    }
-    {
-      mods = "Command";
-      key = "Key9";
-      chars = "${leader-char}9";
-    }
-  ];
+  ) 8;
 
   linuxKeyboardBindings = [
     # TODO
