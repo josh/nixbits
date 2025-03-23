@@ -1,7 +1,9 @@
 {
   lib,
+  stdenvNoCC,
   writers,
   bashInteractive,
+  yq,
   nur,
   nixbits,
   interactiveShell ? bashInteractive,
@@ -35,13 +37,14 @@ let
 
   shell = lib.getExe interactiveShell;
 
-  config = {
-    general.import =
-      (lib.lists.optional (theme != null) themeImport) ++ (lib.lists.optional enableTmux tmuxConfig);
+  configs =
+    [ (writers.writeTOML "alacritty.toml" config) ]
+    ++ [ (writers.writeTOML "alacritty-macos.toml" macosConfig) ]
+    ++ (lib.lists.optional (theme != null) themeImport)
+    ++ (lib.lists.optional enableTmux tmuxConfig);
 
-    terminal = {
-      shell = if enableTmux then { } else { program = shell; };
-    };
+  config = {
+    terminal.shell.program = shell;
 
     env = {
       "SHELL" = shell;
@@ -56,23 +59,43 @@ let
         x = 10;
         y = 10;
       };
-      decorations = "Buttonless";
       resize_increments = true;
+    };
+  };
+
+  macosConfig = {
+    window = {
+      decorations = "Buttonless";
       option_as_alt = "Both";
     };
 
     font = {
-      # TODO: Don't enable this by default
       normal.family = "BerkeleyMono Nerd Font Mono";
       size = 19;
     };
   };
 in
-(writers.writeTOML "alacritty.toml" config).overrideAttrs {
+stdenvNoCC.mkDerivation {
+  __structuredAttrs = true;
+
   name = "alacritty-config";
+
+  nativeBuildInputs = [
+    yq
+  ];
+
+  inherit configs;
+
+  buildCommand = ''
+    tomlq \
+      --toml-output \
+      --slurp \
+      'reduce .[] as $item ({}; . * $item)' \
+      "''${configs[@]}" >"$out"
+  '';
+
   meta = {
-    description = "Alacritty macOS config";
-    # TODO: Improve linux support
-    platforms = lib.platforms.darwin;
+    description = "Alacritty config";
+    platforms = lib.platforms.all;
   };
 }
