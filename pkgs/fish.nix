@@ -3,7 +3,7 @@
   makeWrapper,
   fish,
   nixbits,
-  theme ? "tokyonight_night",
+  theme ? null,
 }:
 let
   fish-config-dir = nixbits.fish-config.override { inherit theme; };

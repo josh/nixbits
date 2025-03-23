@@ -3,7 +3,7 @@
   runCommand,
   writeText,
   nur,
-  theme ? "tokyonight_night",
+  theme ? null,
 }:
 let
   themes = {
@@ -17,22 +17,35 @@ let
   };
 
   themePath =
-    assert (lib.asserts.assertOneOf "theme" theme (builtins.attrNames themes));
-    themes.${theme};
+    if theme == null then
+      null
+    else
+      assert (lib.asserts.assertOneOf "theme" theme (builtins.attrNames themes));
+      themes.${theme};
+
+  themeSourceCommand =
+    if themePath != null then
+      ''
+        source '${themePath}'
+      ''
+    else
+      "";
 
   config = writeText "config.fish" ''
     if test -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
       source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
     end
 
-    source '${themePath}'
+    ${themeSourceCommand}
 
     set -g fish_greeting
   '';
-in
 
+  themeInstallCommand =
+    if themePath != null then ''cp ${themePath} $out/conf.d/${theme}.fish'' else "";
+in
 runCommand "fish-config" { } ''
   mkdir -p $out $out/conf.d
   cp ${config} $out/config.fish
-  cp ${themePath} $out/conf.d/${theme}.fish
+  ${themeInstallCommand}
 ''
