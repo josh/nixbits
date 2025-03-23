@@ -2,11 +2,10 @@
   lib,
   stdenvNoCC,
   writers,
-  bashInteractive,
   yq,
   nur,
   nixbits,
-  interactiveShell ? bashInteractive,
+  interactiveShell ? nixbits.fish,
   theme ? "tokyonight_moon",
   enableTmux ? true,
 }:

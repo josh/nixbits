@@ -3,11 +3,10 @@
   stdenvNoCC,
   makeWrapper,
   alacritty,
-  bashInteractive,
   lndir,
   nixbits,
   theme ? "tokyonight_moon",
-  interactiveShell ? bashInteractive,
+  interactiveShell ? nixbits.fish,
   enableTmux ? true,
 }:
 let
