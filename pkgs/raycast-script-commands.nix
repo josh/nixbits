@@ -44,8 +44,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   ];
 
   buildCommand = ''
-    mkdir -p $out/share/raycast
-    lndir "$scriptCommandsDir" $out/share/raycast
+    mkdir -p $out/share/raycast/script-commands
+    lndir "$scriptCommandsDir" $out/share/raycast/script-commands
 
     mkdir -p $out/share/nix/hooks/post-install.d
     makeWrapper \
