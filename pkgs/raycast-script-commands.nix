@@ -13,20 +13,20 @@ let
     raycast.icon = "🔄";
     raycast.command = nixbits.reset-launchpad;
   };
-
-  scriptCommandsDir = symlinkJoin {
-    name = "raycast-script-commands-dir";
-    paths = [
-      reset-launchpad
-    ];
-  };
 in
-stdenvNoCC.mkDerivation {
+stdenvNoCC.mkDerivation (finalAttrs: {
   name = "raycast-script-commands";
 
   __structuredAttrs = true;
 
-  inherit scriptCommandsDir;
+  scriptCommandPaths = [
+    reset-launchpad
+  ];
+
+  scriptCommandsDir = symlinkJoin {
+    name = "raycast-script-commands-dir";
+    paths = finalAttrs.scriptCommandPaths;
+  };
 
   nativeBuildInputs = [ makeWrapper ];
 
@@ -42,4 +42,4 @@ stdenvNoCC.mkDerivation {
     description = "Raycast Script Commands";
     platforms = lib.platforms.darwin;
   };
-}
+})
