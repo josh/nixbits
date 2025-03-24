@@ -6,6 +6,14 @@
   nixbits,
 }:
 let
+  bbedit-scratchpad = nixbits.raycast-script-command.overrideAttrs {
+    name = "bbedit-scratchpad";
+    raycast.title = "BBEdit Scratchpad";
+    raycast.mode = "silent";
+    raycast.icon = "📝";
+    raycast.command = nixbits.bbedit-scratchpad;
+  };
+
   reset-launchpad = nixbits.raycast-script-command.overrideAttrs {
     name = "reset-launchpad";
     raycast.title = "Reset Launchpad";
@@ -20,6 +28,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
   scriptCommandPaths = [
+    bbedit-scratchpad
     reset-launchpad
   ];
 
