@@ -28,9 +28,10 @@ fi
 for file in "$src"/*; do
   [ -e "$file" ] || continue
   name=$(basename "$file")
+  abs_src="$(readlink -f "$file")"
 
-  if [ ! -L "$dst/$name" ] || [ "$(readlink -f "$dst/$name")" != "$file" ]; then
-    x ln -fs "$file" "$dst/$name"
+  if [ ! -L "$dst/$name" ] || [ "$(readlink -f "$dst/$name")" != "$abs_src" ]; then
+    x ln -fs "$abs_src" "$dst/$name"
   fi
 done
 
