@@ -54,6 +54,11 @@ in
     hash = "sha256-d5wtaZ570M7nUABLLxt390Y8ID6+n08TZBHVDqVUUkM=";
     manpage = "brctl.1";
   };
+  defaults = mkDarwinImpureDrv {
+    command = "/usr/bin/defaults";
+    hash = "sha256-LWwmoCoOee7rSItyNAwq7qcDyHnw1kRSG2kFrtf4nNU=";
+    manpage = "defaults.1";
+  };
   dscl = mkDarwinImpureDrv {
     command = "/usr/bin/dscl";
     hash = "sha256-/sGeGnSk7qysjP/D3zu6s3CYP9k+JvuG5aRnBqMo2lQ=";
@@ -68,6 +73,11 @@ in
     command = "/sbin/ifconfig";
     hash = "sha256-6NdoRhHic/qf3oQcw9jBkbZpT8wDobOYvU/vGo/mZLA=";
     manpage = "ifconfig.8";
+  };
+  killall = mkDarwinImpureDrv {
+    command = "/usr/bin/killall";
+    hash = "sha256-Yq8vC4MYgxTsIBX2sTboQvB8ysu8X+7gOD8A2gwwKng=";
+    manpage = "killall.1";
   };
   launchctl = mkDarwinImpureDrv {
     command = "/bin/launchctl";
