@@ -1,40 +1,42 @@
 {
   lib,
   stdenvNoCC,
-  writeShellScript,
+  symlinkJoin,
+  makeWrapper,
   nixbits,
 }:
 let
-  reset-launchpad = writeShellScript "reset-launchpad.sh" ''
-    # Required parameters:
-    # @raycast.schemaVersion 1
-    # @raycast.title Reset Launchpad
-    # @raycast.mode silent
+  reset-launchpad = nixbits.raycast-script-command.overrideAttrs {
+    name = "reset-launchpad";
+    raycast.title = "Reset Launchpad";
+    raycast.mode = "silent";
+    raycast.icon = "🔄";
+    raycast.command = nixbits.reset-launchpad;
+  };
 
-    # Optional parameters:
-    # @raycast.icon 🔄
-
-    exec "${lib.getExe nixbits.reset-launchpad}"
-  '';
-
-  raycast-script-commands-post-install-hook = writeShellScript "post-install.sh" ''
-    set -o errexit
-    set -o nounset
-    set -o pipefail
-    export PATH="${nixbits.x-ln-s}/bin:$PATH"
-
-    mkdir -p $HOME/.config/raycast/script-commands
-
-    rm -f $HOME/.config/raycast/script-commands/*.sh
-
-    x-ln-s ${reset-launchpad} $HOME/.config/raycast/script-commands/reset-launchpad.sh
-  '';
+  scriptCommandsDir = symlinkJoin {
+    name = "raycast-script-commands-dir";
+    paths = [
+      reset-launchpad
+    ];
+  };
 in
 stdenvNoCC.mkDerivation {
   name = "raycast-script-commands";
+
+  __structuredAttrs = true;
+
+  inherit scriptCommandsDir;
+
+  nativeBuildInputs = [ makeWrapper ];
+
   buildCommand = ''
     mkdir -p $out/share/nix/hooks/post-install.d
-    install -m 755 ${raycast-script-commands-post-install-hook} $out/share/nix/hooks/post-install.d/raycast-script-commands
+    makeWrapper \
+      ${lib.getExe nixbits.x-lndir} \
+      $out/share/nix/hooks/post-install.d/raycast-script-commands \
+      --add-flags "$scriptCommandsDir" \
+      --add-flags '$HOME/.config/raycast/script-commands'
   '';
   meta = {
     description = "Raycast Script Commands";
