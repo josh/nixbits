@@ -3,6 +3,7 @@
   stdenvNoCC,
   symlinkJoin,
   makeWrapper,
+  lndir,
   nixbits,
 }:
 let
@@ -37,9 +38,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     paths = finalAttrs.scriptCommandPaths;
   };
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [
+    makeWrapper
+    lndir
+  ];
 
   buildCommand = ''
+    mkdir -p $out/share/raycast
+    lndir "$scriptCommandsDir" $out/share/raycast
+
     mkdir -p $out/share/nix/hooks/post-install.d
     makeWrapper \
       ${lib.getExe nixbits.x-lndir} \
