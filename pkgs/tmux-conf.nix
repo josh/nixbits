@@ -18,43 +18,51 @@ let
   loadThemes = {
     "tokyonight_day" = ''
       set-option -g @theme_variation 'day'
-      ${tokyonightConfig}
+      ${tokyonightConfigPre}
       run-shell '${nur.repos.josh.tmux-tokyo-night}/share/tmux-plugins/tmux-tokyo-night/tmux-tokyo-night.tmux'
     '';
     "tokyonight_moon" = ''
       set-option -g @theme_variation 'moon'
-      ${tokyonightConfig}
+      ${tokyonightConfigPre}
       run-shell '${nur.repos.josh.tmux-tokyo-night}/share/tmux-plugins/tmux-tokyo-night/tmux-tokyo-night.tmux'
     '';
     "tokyonight_storm" = ''
       set-option -g @theme_variation 'storm'
-      ${tokyonightConfig}
+      ${tokyonightConfigPre}
       run-shell '${nur.repos.josh.tmux-tokyo-night}/share/tmux-plugins/tmux-tokyo-night/tmux-tokyo-night.tmux'
     '';
     "tokyonight_night" = ''
       set-option -g @theme_variation 'night'
-      ${tokyonightConfig}
+      ${tokyonightConfigPre}
       run-shell '${nur.repos.josh.tmux-tokyo-night}/share/tmux-plugins/tmux-tokyo-night/tmux-tokyo-night.tmux'
     '';
     "catppuccin_frappe" = ''
       set-option -g @catppuccin_flavor 'frappe'
-      ${catppuccinConfig}
+      set-option -g @catppuccin_status_background '#303446'
+      ${catppuccinConfigPre}
       run-shell '${nur.repos.josh.tmux-catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux'
+      ${catppuccinConfigPost}
     '';
     "catppuccin_latte" = ''
       set-option -g @catppuccin_flavor 'latte'
-      ${catppuccinConfig}
+      set-option -g @catppuccin_status_background '#eff1f5'
+      ${catppuccinConfigPre}
       run-shell '${nur.repos.josh.tmux-catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux'
+      ${catppuccinConfigPost}
     '';
     "catppuccin_macchiato" = ''
       set-option -g @catppuccin_flavor 'macchiato'
-      ${catppuccinConfig}
+      set-option -g @catppuccin_status_background '#24273a'
+      ${catppuccinConfigPre}
       run-shell '${nur.repos.josh.tmux-catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux'
+      ${catppuccinConfigPost}
     '';
     "catppuccin_mocha" = ''
       set-option -g @catppuccin_flavor 'mocha'
-      ${catppuccinConfig}
+      set-option -g @catppuccin_status_background '#1e1e2e'
+      ${catppuccinConfigPre}
       run-shell '${nur.repos.josh.tmux-catppuccin}/share/tmux-plugins/catppuccin/catppuccin.tmux'
+      ${catppuccinConfigPost}
     '';
     "rosepine_moon" = ''
       set-option -g @rose_pine_variant 'moon'
@@ -105,33 +113,26 @@ let
     }
   '';
 
-  tokyonightConfig = ''
+  tokyonightConfigPre = ''
     set-option -g @theme_disable_plugins '1'
   '';
 
-  catppuccinConfig = ''
-    set-option -g status-position top
+  catppuccinConfigPre = ''
+    set-option -g @catppuccin_window_status_style 'rounded'
 
-    # https://github.com/catppuccin/tmux#config-3
+    # Only disable dirname for other windows
+    # set-option -g @catppuccin_window_current_text " #{b:pane_current_path}"
+    set-option -g @catppuccin_window_text " #{b:pane_current_path}"
+  '';
+  catppuccinConfigPost = ''
+    set-option -g status-right-length 100
+    set-option -g status-left-length 100
+    set-option -g status-right ""
+    set-option -g status-left ""
 
-    set-option -g @catppuccin_window_left_separator ""
-    set-option -g @catppuccin_window_right_separator " "
-    set-option -g @catppuccin_window_middle_separator " █"
-    set-option -g @catppuccin_window_number_position "right"
-
-    set-option -g @catppuccin_window_default_fill "number"
-    set-option -g @catppuccin_window_default_text "#W"
-
-    set-option -g @catppuccin_window_current_fill "number"
-    set-option -g @catppuccin_window_current_text "#W"
-
-    set-option -g @catppuccin_status_modules_right "directory session"
-    set-option -g @catppuccin_status_left_separator  " "
-    set-option -g @catppuccin_status_right_separator ""
-    set-option -g @catppuccin_status_fill "icon"
-    set-option -g @catppuccin_status_connect_separator "no"
-
-    set-option -g @catppuccin_directory_text "#{pane_current_path}"
+    set-option -ag status-right "#{E:@catppuccin_status_application}"
+    set-option -ag status-right "#{E:@catppuccin_status_session}"
+    set-option -ag status-right "#{E:@catppuccin_status_uptime}"  
   '';
 in
 writeText "tmux.conf" ''
@@ -144,6 +145,9 @@ writeText "tmux.conf" ''
 
   # Share tmux clipboard with macOS
   run-shell '${tmuxPlugins.yank}/share/tmux-plugins/yank/yank.tmux'
+
+  # Theme
+  ${loadTheme}
 
   # Custom prefix key
   # Avoid conflicting with emacs bindings
@@ -186,7 +190,4 @@ writeText "tmux.conf" ''
 
   # iTerm wants this off
   set-window-option -g aggressive-resize off
-
-  # Theme
-  ${loadTheme}
 ''
