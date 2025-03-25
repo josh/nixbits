@@ -64,10 +64,6 @@ let
 
   macosConfig = {
     window.option_as_alt = "Both";
-    font = {
-      normal.family = "BerkeleyMono Nerd Font Mono";
-      size = 19;
-    };
   };
 in
 stdenvNoCC.mkDerivation {
