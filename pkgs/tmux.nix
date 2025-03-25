@@ -9,7 +9,7 @@
 let
   tmuxConf = nixbits.tmux-conf.override { inherit theme; };
 in
-stdenvNoCC.mkDerivation (_finalAttrs: {
+stdenvNoCC.mkDerivation {
   pname = if theme != null then "${tmux.pname}-${theme}" else tmux.pname;
   inherit (tmux) version;
 
@@ -37,4 +37,4 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
     inherit (tmux.meta) description license platforms;
     mainProgram = "tmux";
   };
-})
+}
