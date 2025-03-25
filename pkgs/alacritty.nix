@@ -41,7 +41,6 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
   meta = {
     inherit (alacritty.meta) description license;
     mainProgram = "alacritty";
-    # TODO: Improve linux support
-    platforms = lib.platforms.darwin;
+    platforms = lib.platforms.all;
   };
 })
