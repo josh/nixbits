@@ -6,7 +6,7 @@
   nur,
   nixbits,
   interactiveShell ? nixbits.fish,
-  theme ? "tokyonight_moon",
+  theme ? null,
   enableTmux ? true,
 }:
 let
