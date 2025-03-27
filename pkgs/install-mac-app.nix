@@ -49,11 +49,16 @@ script.overrideAttrs (_finalAttrs: {
       touch $out
     '';
 
-    install-twice = runCommand "test-install-twice" { nativeBuildInputs = [ script ]; } ''
+    install-logging = runCommand "test-install-logging" { nativeBuildInputs = [ script ]; } ''
       mkdir -p "$TMPDIR/Applications"
-      install-mac-app --appdir "$TMPDIR/Applications" ${neovide}
-      [ -d "$TMPDIR/Applications/Neovide.app" ]
-      install-mac-app --appdir "$TMPDIR/Applications" ${neovide}
+      if ! install-mac-app --appdir "$TMPDIR/Applications" ${neovide} 2>&1 | grep '+ rsync'; then
+        echo "error: rsync command not logged"
+        exit 1
+      fi
+      if install-mac-app --appdir "$TMPDIR/Applications" ${neovide} 2>&1 | grep '+ rsync'; then
+        echo "error: rsync command logged"
+        exit 1
+      fi
       touch $out
     '';
   };

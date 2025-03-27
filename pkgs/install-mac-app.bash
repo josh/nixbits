@@ -78,7 +78,7 @@ src="${src%/}"
 dst="${app_dir%/}"
 
 _has_changes() {
-  grep --quiet --invert-match 'Number of regular files transferred: 0'
+  grep --quiet 'Number of regular files transferred: [1-9]'
 }
 
 _rsync() {
