@@ -1,16 +1,28 @@
 usage() {
-  echo "usage: $0 [--dry-run] /nix/store/<drv>" >&2
-  exit 1
+  echo "usage: install-mac-app [--dry-run] [--appdir /Applications] /nix/store/<drv>" >&2
 }
 
 dry_run=false
 nix_store_path=""
+app_dir="/Applications"
 
 while [ $# -gt 0 ]; do
   case "$1" in
   --dry-run)
     dry_run=true
     shift
+    ;;
+  --appdir)
+    if [ $# -lt 2 ]; then
+      echo "error: --appdir missing path" >&2
+      exit 1
+    fi
+    app_dir="$2"
+    shift 2
+    ;;
+  -h | --help)
+    usage
+    exit 0
     ;;
   -*)
     echo "error: unknown option: $1" >&2
@@ -37,7 +49,7 @@ if [ ! -d "$nix_store_path" ]; then
   exit 1
 fi
 
-if [ "$(dirname "$nix_store_path")" != "/nix/store" ]; then
+if [[ $nix_store_path != /nix/store/* ]]; then
   echo "error: src must be a directory under /nix/store" >&2
   exit 1
 fi
@@ -59,7 +71,7 @@ fi
 
 src="${apps[0]}/"
 app_name="$(basename "$src")"
-dst="/Applications/$app_name/"
+dst="$app_dir/$app_name/"
 
 cdhash() {
   codesign --verbose=3 --display "$1" 2>&1 |
@@ -79,7 +91,7 @@ if [ "$src_hash" = "$dst_hash" ]; then
 fi
 
 if [ "$dry_run" = true ]; then
-  echo "Would install $src to /Applications/" >&2
+  echo "Would install $src to $app_dir/" >&2
   exit 0
 fi
 
