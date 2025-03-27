@@ -54,6 +54,11 @@ in
     hash = "sha256-d5wtaZ570M7nUABLLxt390Y8ID6+n08TZBHVDqVUUkM=";
     manpage = "brctl.1";
   };
+  codesign = mkDarwinImpureDrv {
+    command = "/usr/bin/codesign";
+    hash = "sha256-NhYIAniF1Bm8x2Pwl1fuRy6hljh5wAun7uJcMhWxfYc=";
+    manpage = "codesign.1";
+  };
   defaults = mkDarwinImpureDrv {
     command = "/usr/bin/defaults";
     hash = "sha256-LWwmoCoOee7rSItyNAwq7qcDyHnw1kRSG2kFrtf4nNU=";
