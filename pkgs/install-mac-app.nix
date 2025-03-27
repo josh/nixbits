@@ -37,6 +37,7 @@ script.overrideAttrs (_finalAttrs: {
       mkdir -p "$TMPDIR/Applications"
       install-mac-app --appdir "$TMPDIR/Applications" ${neovide}
       [ -d "$TMPDIR/Applications/Neovide.app" ]
+      [ ! -d "$TMPDIR/Applications/Neovide.app/Neovide.app" ]
       touch $out
     '';
 
@@ -44,6 +45,7 @@ script.overrideAttrs (_finalAttrs: {
       mkdir -p "$TMPDIR/Applications"
       install-mac-app --appdir "$TMPDIR/Applications" ${neovide}/Applications/Neovide.app
       [ -d "$TMPDIR/Applications/Neovide.app" ]
+      [ ! -d "$TMPDIR/Applications/Neovide.app/Neovide.app" ]
       touch $out
     '';
 

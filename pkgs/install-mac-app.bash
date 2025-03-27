@@ -74,7 +74,8 @@ if [[ $src != *.app ]]; then
 fi
 
 app_name="$(basename "$src")"
-dst="$app_dir/$app_name/"
+src="${src%/}"
+dst="${app_dir%/}"
 
 _has_changes() {
   grep --quiet --invert-match 'Number of regular files transferred: 0'
@@ -100,5 +101,5 @@ _rsync \
   --delete \
   --no-group \
   --no-owner \
-  "$src" \
-  "$dst"
+  "$src/" \
+  "$dst/$app_name"
