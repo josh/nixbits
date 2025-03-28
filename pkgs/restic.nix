@@ -1,6 +1,7 @@
 {
   lib,
   stdenvNoCC,
+  runtimeShell,
   writeShellScript,
   makeWrapper,
   lndir,
@@ -18,9 +19,9 @@ let
     code=0
 
     run() {
-      result=$("$@" 2>&1)
+      result=$(${runtimeShell} -c "$1" 2>&1)
       if [ $? -ne 0 ]; then
-        echo "+ $@" >&2
+        echo "+ $1" >&2
         echo "$result" >&2
         return $?
       fi
