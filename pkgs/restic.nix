@@ -74,6 +74,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
       rclone-taildrive = runCommand "test-rclone-taildrive" { nativeBuildInputs = [ restic ]; } ''
         restic --repo rclone:taildrive:foo cat config 1>out.txt 2>&1 || true
+        echo "-- out.txt --"
+        cat out.txt
+        echo "-- out.txt --"
         if grep --quiet 'Failed to create file system for "taildrive:foo"' out.txt; then
           echo "rclone:taildrive remote not configured"
           exit 1
