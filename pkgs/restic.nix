@@ -1,4 +1,5 @@
 {
+  lib,
   stdenvNoCC,
   writeShellScript,
   makeWrapper,
@@ -9,6 +10,7 @@
   nixbits,
 }:
 let
+  toExePath = path: if lib.attrsets.isDerivation path then lib.meta.getExe path else path;
   restic-age-key = nur.repos.josh.restic-age-key.override {
     age = nixbits.age-with-se-tpm;
   };
@@ -46,7 +48,7 @@ let
     exit $code
   '';
 in
-stdenvNoCC.mkDerivation {
+stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "restic";
   inherit (restic) version;
 
@@ -54,9 +56,12 @@ stdenvNoCC.mkDerivation {
 
   resticRepository = "";
   resticPasswordCommand = "";
+  resticPasswordCommandExe = toExePath finalAttrs.resticPasswordCommand;
   resticFromRepository = "";
   resticFromPasswordCommand = "";
+  resticFromPasswordCommandExe = toExePath finalAttrs.resticFromPasswordCommand;
   resticAgeIdentityCommand = "";
+  resticAgeIdentityCommandExe = toExePath finalAttrs.resticAgeIdentityCommand;
 
   nativeBuildInputs = [
     makeWrapper
@@ -103,8 +108,8 @@ stdenvNoCC.mkDerivation {
       appendToVar makeWrapperArgs "--unset" "RESTIC_REPOSITORY"
       appendToVar makeWrapperArgs "--unset" "RESTIC_REPOSITORY_FILE"
     fi
-    if [ -n "$resticPasswordCommand" ]; then
-      appendToVar makeWrapperArgs "--set" "RESTIC_PASSWORD_COMMAND" "$resticPasswordCommand"
+    if [ -n "$resticPasswordCommandExe" ]; then
+      appendToVar makeWrapperArgs "--set" "RESTIC_PASSWORD_COMMAND" "$resticPasswordCommandExe"
       appendToVar makeWrapperArgs "--unset" "RESTIC_PASSWORD_FILE"
     else
       appendToVar makeWrapperArgs "--unset" "RESTIC_PASSWORD_COMMAND"
@@ -117,15 +122,15 @@ stdenvNoCC.mkDerivation {
       appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_REPOSITORY"
       appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_REPOSITORY_FILE"
     fi
-    if [ -n "$resticFromPasswordCommand" ]; then
-      appendToVar makeWrapperArgs "--set" "RESTIC_FROM_PASSWORD_COMMAND" "$resticFromPasswordCommand"
+    if [ -n "$resticFromPasswordCommandExe" ]; then
+      appendToVar makeWrapperArgs "--set" "RESTIC_FROM_PASSWORD_COMMAND" "$resticFromPasswordCommandExe"
       appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_PASSWORD_FILE"
     else
       appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_PASSWORD_COMMAND"
       appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_PASSWORD_FILE"
     fi
-    if [ -n "$resticAgeIdentityCommand" ]; then
-      appendToVar makeWrapperArgs "--set" "RESTIC_AGE_IDENTITY_COMMAND" "$resticAgeIdentityCommand"
+    if [ -n "$resticAgeIdentityCommandExe" ]; then
+      appendToVar makeWrapperArgs "--set" "RESTIC_AGE_IDENTITY_COMMAND" "$resticAgeIdentityCommandExe"
     else
       appendToVar makeWrapperArgs "--unset" "RESTIC_AGE_IDENTITY_COMMAND"
     fi
@@ -140,4 +145,4 @@ stdenvNoCC.mkDerivation {
     inherit (restic.meta) description platforms;
     mainProgram = "restic";
   };
-}
+})
