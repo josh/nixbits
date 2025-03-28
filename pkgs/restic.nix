@@ -101,6 +101,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     lndir -silent ${restic} $out
     lndir -silent ${restic-age-key} $out
 
+    prependToVar makeWrapperArgs "--prefix" "PATH" ":" "$out/bin"
+
     if [ -n "$resticRepository" ]; then
       appendToVar makeWrapperArgs "--set" "RESTIC_REPOSITORY" "$resticRepository"
       appendToVar makeWrapperArgs "--unset" "RESTIC_REPOSITORY_FILE"
