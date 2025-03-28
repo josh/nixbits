@@ -1,5 +1,6 @@
 {
   stdenvNoCC,
+  writeShellScript,
   makeWrapper,
   lndir,
   rclone,
@@ -11,12 +12,51 @@ let
   restic-age-key = nur.repos.josh.restic-age-key.override {
     age = nixbits.age-with-se-tpm;
   };
+  restic-pre-install-hook = writeShellScript "restic-pre-install-hook" ''
+    code=0
+
+    if [ -n "$RESTIC_REPOSITORY" ] && [[ "$RESTIC_REPOSITORY" == /* ]]; then
+      if [ ! -f "$RESTIC_REPOSITORY/config" ]; then
+        echo "error: $RESTIC_REPOSITORY restic repository not initialized" >&2
+        code=1
+      fi
+    fi
+
+    if [ -n "$RESTIC_FROM_REPOSITORY" ] && [ "$RESTIC_FROM_REPOSITORY" != "$RESTIC_REPOSITORY" ] && [ -n "$RESTIC_FROM_REPOSITORY" ] && [[ "$RESTIC_FROM_REPOSITORY" == /* ]]; then
+      if [ ! -f "$RESTIC_FROM_REPOSITORY/config" ]; then
+        echo "error: $RESTIC_FROM_REPOSITORY restic repository not initialized" >&2
+        code=1
+      fi
+    fi
+
+    if [ -n "$RESTIC_PASSWORD_COMMAND" ]; then
+      if ! "$RESTIC_PASSWORD_COMMAND" 2>/dev/null 1>/dev/null; then
+        echo "error: $RESTIC_PASSWORD_COMMAND failed" >&2
+        code=1
+      fi
+    fi
+
+    if [ -n "$RESTIC_FROM_PASSWORD_COMMAND" ] && [ "$RESTIC_PASSWORD_COMMAND" != "$RESTIC_FROM_PASSWORD_COMMAND" ]; then
+      if ! "$RESTIC_FROM_PASSWORD_COMMAND" 2>/dev/null 1>/dev/null; then
+        echo "error: $RESTIC_FROM_PASSWORD_COMMAND failed" >&2
+        code=1
+      fi
+    fi
+
+    exit $code
+  '';
 in
-stdenvNoCC.mkDerivation (_finalAttrs: {
+stdenvNoCC.mkDerivation {
   pname = "restic";
   inherit (restic) version;
 
   __structuredAttrs = true;
+
+  resticRepository = "";
+  resticPasswordCommand = "";
+  resticFromRepository = "";
+  resticFromPasswordCommand = "";
+  resticAgeIdentityCommand = "";
 
   nativeBuildInputs = [
     makeWrapper
@@ -52,17 +92,52 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
     ];
 
   buildCommand = ''
-    mkdir -p $out
+    mkdir -p $out $out/share/nix/hooks/pre-install.d
     lndir -silent ${restic} $out
     lndir -silent ${restic-age-key} $out
+
+    if [ -n "$resticRepository" ]; then
+      appendToVar makeWrapperArgs "--set" "RESTIC_REPOSITORY" "$resticRepository"
+      appendToVar makeWrapperArgs "--unset" "RESTIC_REPOSITORY_FILE"
+    else
+      appendToVar makeWrapperArgs "--unset" "RESTIC_REPOSITORY"
+      appendToVar makeWrapperArgs "--unset" "RESTIC_REPOSITORY_FILE"
+    fi
+    if [ -n "$resticPasswordCommand" ]; then
+      appendToVar makeWrapperArgs "--set" "RESTIC_PASSWORD_COMMAND" "$resticPasswordCommand"
+      appendToVar makeWrapperArgs "--unset" "RESTIC_PASSWORD_FILE"
+    else
+      appendToVar makeWrapperArgs "--unset" "RESTIC_PASSWORD_COMMAND"
+      appendToVar makeWrapperArgs "--unset" "RESTIC_PASSWORD_FILE"
+    fi
+    if [ -n "$resticFromRepository" ]; then
+      appendToVar makeWrapperArgs "--set" "RESTIC_FROM_REPOSITORY" "$resticFromRepository"
+      appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_REPOSITORY_FILE"
+    else
+      appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_REPOSITORY"
+      appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_REPOSITORY_FILE"
+    fi
+    if [ -n "$resticFromPasswordCommand" ]; then
+      appendToVar makeWrapperArgs "--set" "RESTIC_FROM_PASSWORD_COMMAND" "$resticFromPasswordCommand"
+      appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_PASSWORD_FILE"
+    else
+      appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_PASSWORD_COMMAND"
+      appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_PASSWORD_FILE"
+    fi
+    if [ -n "$resticAgeIdentityCommand" ]; then
+      appendToVar makeWrapperArgs "--set" "RESTIC_AGE_IDENTITY_COMMAND" "$resticAgeIdentityCommand"
+    else
+      appendToVar makeWrapperArgs "--unset" "RESTIC_AGE_IDENTITY_COMMAND"
+    fi
 
     rm $out/bin/restic $out/bin/restic-age-key
     makeWrapper ${restic}/bin/.restic-wrapped $out/bin/restic --inherit-argv0 "''${makeWrapperArgs[@]}"
     makeWrapper ${restic-age-key}/bin/restic-age-key $out/bin/restic-age-key "''${makeWrapperArgs[@]}"
+    makeWrapper ${restic-pre-install-hook} $out/share/nix/hooks/pre-install.d/$pname "''${makeWrapperArgs[@]}"
   '';
 
   meta = {
     inherit (restic.meta) description platforms;
     mainProgram = "restic";
   };
-})
+}
