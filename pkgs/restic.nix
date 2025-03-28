@@ -77,11 +77,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         echo "-- out.txt --"
         cat out.txt
         echo "-- out.txt --"
-        if grep --quiet 'Failed to create file system for "taildrive:foo"' out.txt; then
+        if grep 'Failed to create file system for "taildrive:foo"' out.txt; then
           echo "rclone:taildrive remote not configured"
           exit 1
         fi
-        if grep --quiet 'Config file "/homeless-shelter/.rclone.conf" not found' out.txt; then
+        if grep 'Config file "/homeless-shelter/.rclone.conf" not found' out.txt; then
           echo "rclone expecting config file"
           exit 1
         fi
