@@ -4,6 +4,7 @@
   runtimeShell,
   writeShellScript,
   writeShellScriptBin,
+  runCommand,
   makeWrapper,
   lndir,
   rclone,
@@ -106,8 +107,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   makeWrapperArgs = [ ];
 
+  resticPreRunScript = ''
+    if [ "$1" = "age-key" ]; then
+      shift
+      exec ${restic-age-key}/bin/restic-age-key "$@"
+    fi
+  '';
+
   buildCommand = ''
-    mkdir -p $out $out/share/nix/hooks/pre-install.d $out/share/nix/hooks/post-install.d
+    mkdir -p $out/bin $out/share/nix/hooks/pre-install.d $out/share/nix/hooks/post-install.d
     lndir -silent ${restic} $out
     lndir -silent ${restic-age-key} $out
 
@@ -155,12 +163,30 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       appendToVar makeWrapperArgs "--set" "RCLONE_CONFIG_TAILDRIVE_VENDOR" "other"
     fi
 
+    appendToVar makeWrapperArgs "--run" "$resticPreRunScript"
+
     rm $out/bin/restic $out/bin/restic-age-key
     makeWrapper ${restic}/bin/.restic-wrapped $out/bin/restic --inherit-argv0 "''${makeWrapperArgs[@]}"
     makeWrapper ${restic-age-key}/bin/restic-age-key $out/bin/restic-age-key "''${makeWrapperArgs[@]}"
     makeWrapper ${restic-pre-install-hook} $out/share/nix/hooks/pre-install.d/$pname "''${makeWrapperArgs[@]}"
     makeWrapper ${restic-post-install-hook} $out/share/nix/hooks/post-install.d/$pname "''${makeWrapperArgs[@]}"
   '';
+
+  passthru.tests =
+    let
+      restic = finalAttrs.finalPackage;
+    in
+    {
+      key-help = runCommand "test-key-help" { nativeBuildInputs = [ restic ]; } ''
+        restic key --help
+        touch $out
+      '';
+      age-key-help = runCommand "test-age-key-help" { nativeBuildInputs = [ restic ]; } ''
+        restic-age-key --help
+        restic age-key --help
+        touch $out
+      '';
+    };
 
   meta = {
     inherit (restic.meta) description platforms;
