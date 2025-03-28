@@ -3,6 +3,7 @@
   stdenvNoCC,
   runtimeShell,
   writeShellScript,
+  writeShellScriptBin,
   makeWrapper,
   lndir,
   rclone,
@@ -16,6 +17,15 @@ let
   restic-age-key = nur.repos.josh.restic-age-key.override {
     age = nixbits.age-with-se-tpm;
   };
+
+  tmutil-exclude-volume =
+    if stdenvNoCC.isDarwin then
+      nixbits.tmutil-exclude-volume
+    else
+      (writeShellScriptBin "tmutil-exclude-volume" ''
+        echo "error: tmutil-exclude-volume is not available on this platform" >&2
+        exit 1
+      '');
 
   restic-pre-install-hook = writeShellScript "restic-pre-install-hook" ''
     code=0
@@ -35,7 +45,7 @@ let
         code=1
       fi
       if [[ "$RESTIC_REPOSITORY" == /Volumes/* ]]; then
-        ${lib.getExe nixbits.tmutil-exclude-volume} --dry-run "$RESTIC_REPOSITORY"
+        ${lib.getExe tmutil-exclude-volume} --dry-run "$RESTIC_REPOSITORY"
       fi
     fi
 
@@ -67,7 +77,7 @@ let
     code=0
 
     if [ -n "$RESTIC_REPOSITORY" ] && [[ "$RESTIC_REPOSITORY" == /Volumes/* ]]; then
-      ${lib.getExe nixbits.tmutil-exclude-volume} "$RESTIC_REPOSITORY"
+      ${lib.getExe tmutil-exclude-volume} "$RESTIC_REPOSITORY"
     fi
 
     exit $code
