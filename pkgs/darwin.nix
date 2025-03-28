@@ -129,6 +129,11 @@ in
     hash = "sha256-HZfyqd/bCCYCfFhpRwHGV7oZxKqU+E+SzBIosiHm6Xc=";
     manpage = "shortcuts.1";
   };
+  tmutil = mkDarwinImpureDrv {
+    command = "/usr/bin/tmutil";
+    hash = "sha256-GWuWMKALte+3aqMMgI60E9nLr7NYRL5YMvIoQg9XPb4=";
+    manpage = "tmutil.1";
+  };
   wait4path = mkDarwinImpureDrv {
     command = "/bin/wait4path";
     hash = "sha256-UumV34CAR80Vy99ugn9zF3HsVUl8mc5cSMqqPaGcC+E=";
