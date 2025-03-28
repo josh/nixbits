@@ -125,35 +125,21 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     if [ -n "$resticRepository" ]; then
       appendToVar makeWrapperArgs "--set" "RESTIC_REPOSITORY" "$resticRepository"
       appendToVar makeWrapperArgs "--unset" "RESTIC_REPOSITORY_FILE"
-    else
-      appendToVar makeWrapperArgs "--unset" "RESTIC_REPOSITORY"
-      appendToVar makeWrapperArgs "--unset" "RESTIC_REPOSITORY_FILE"
     fi
     if [ -n "$resticPasswordCommandExe" ]; then
       appendToVar makeWrapperArgs "--set" "RESTIC_PASSWORD_COMMAND" "$resticPasswordCommandExe"
-      appendToVar makeWrapperArgs "--unset" "RESTIC_PASSWORD_FILE"
-    else
-      appendToVar makeWrapperArgs "--unset" "RESTIC_PASSWORD_COMMAND"
       appendToVar makeWrapperArgs "--unset" "RESTIC_PASSWORD_FILE"
     fi
     if [ -n "$resticFromRepository" ]; then
       appendToVar makeWrapperArgs "--set" "RESTIC_FROM_REPOSITORY" "$resticFromRepository"
       appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_REPOSITORY_FILE"
-    else
-      appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_REPOSITORY"
-      appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_REPOSITORY_FILE"
     fi
     if [ -n "$resticFromPasswordCommandExe" ]; then
       appendToVar makeWrapperArgs "--set" "RESTIC_FROM_PASSWORD_COMMAND" "$resticFromPasswordCommandExe"
       appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_PASSWORD_FILE"
-    else
-      appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_PASSWORD_COMMAND"
-      appendToVar makeWrapperArgs "--unset" "RESTIC_FROM_PASSWORD_FILE"
     fi
     if [ -n "$resticAgeIdentityCommandExe" ]; then
       appendToVar makeWrapperArgs "--set" "RESTIC_AGE_IDENTITY_COMMAND" "$resticAgeIdentityCommandExe"
-    else
-      appendToVar makeWrapperArgs "--unset" "RESTIC_AGE_IDENTITY_COMMAND"
     fi
 
     appendToVar makeWrapperArgs "--set-default" "RCLONE_CONFIG" ""
