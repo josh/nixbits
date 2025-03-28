@@ -17,6 +17,15 @@ let
   restic-pre-install-hook = writeShellScript "restic-pre-install-hook" ''
     code=0
 
+    run() {
+      result=$("$@" 2>&1)
+      if [ $? -ne 0 ]; then
+        echo "+ $@" >&2
+        echo "$result" >&2
+        return $?
+      fi
+    }
+
     if [ -n "$RESTIC_REPOSITORY" ] && [[ "$RESTIC_REPOSITORY" == /* ]]; then
       if [ ! -f "$RESTIC_REPOSITORY/config" ]; then
         echo "error: $RESTIC_REPOSITORY restic repository not initialized" >&2
@@ -32,14 +41,14 @@ let
     fi
 
     if [ -n "$RESTIC_PASSWORD_COMMAND" ]; then
-      if ! "$RESTIC_PASSWORD_COMMAND" 2>/dev/null 1>/dev/null; then
+      if ! run "$RESTIC_PASSWORD_COMMAND"; then
         echo "error: $RESTIC_PASSWORD_COMMAND failed" >&2
         code=1
       fi
     fi
 
     if [ -n "$RESTIC_FROM_PASSWORD_COMMAND" ] && [ "$RESTIC_PASSWORD_COMMAND" != "$RESTIC_FROM_PASSWORD_COMMAND" ]; then
-      if ! "$RESTIC_FROM_PASSWORD_COMMAND" 2>/dev/null 1>/dev/null; then
+      if ! run "$RESTIC_FROM_PASSWORD_COMMAND"; then
         echo "error: $RESTIC_FROM_PASSWORD_COMMAND failed" >&2
         code=1
       fi
@@ -62,44 +71,22 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   resticFromPasswordCommandExe = toExePath finalAttrs.resticFromPasswordCommand;
   resticAgeIdentityCommand = "";
   resticAgeIdentityCommandExe = toExePath finalAttrs.resticAgeIdentityCommand;
+  rcloneTaildrive = true;
 
   nativeBuildInputs = [
     makeWrapper
     lndir
   ];
 
-  makeWrapperArgs =
-    [
-      "--prefix"
-      "PATH"
-      ":"
-      "${rclone}/bin"
-    ]
-    ++ [
-      "--set-default"
-      "RCLONE_CONFIG"
-      ""
-    ]
-    ++ [
-      "--set"
-      "RCLONE_CONFIG_TAILDRIVE_TYPE"
-      "webdav"
-    ]
-    ++ [
-      "--set"
-      "RCLONE_CONFIG_TAILDRIVE_URL"
-      "http://100.100.100.100:8080"
-    ]
-    ++ [
-      "--set"
-      "RCLONE_CONFIG_TAILDRIVE_VENDOR"
-      "other"
-    ];
+  makeWrapperArgs = [ ];
 
   buildCommand = ''
     mkdir -p $out $out/share/nix/hooks/pre-install.d
     lndir -silent ${restic} $out
     lndir -silent ${restic-age-key} $out
+
+    appendToVar makeWrapperArgs "--prefix" "PATH" ":" "${rclone}/bin"
+    appendToVar makeWrapperArgs "--prefix" "PATH" ":" "${restic-age-key}/bin"
 
     if [ -n "$resticRepository" ]; then
       appendToVar makeWrapperArgs "--set" "RESTIC_REPOSITORY" "$resticRepository"
@@ -133,6 +120,13 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       appendToVar makeWrapperArgs "--set" "RESTIC_AGE_IDENTITY_COMMAND" "$resticAgeIdentityCommandExe"
     else
       appendToVar makeWrapperArgs "--unset" "RESTIC_AGE_IDENTITY_COMMAND"
+    fi
+
+    appendToVar makeWrapperArgs "--set-default" "RCLONE_CONFIG" ""
+    if [ -n "$rcloneTaildrive" ]; then
+      appendToVar makeWrapperArgs "--set" "RCLONE_CONFIG_TAILDRIVE_TYPE" "webdav"
+      appendToVar makeWrapperArgs "--set" "RCLONE_CONFIG_TAILDRIVE_URL" "http://100.100.100.100:8080"
+      appendToVar makeWrapperArgs "--set" "RCLONE_CONFIG_TAILDRIVE_VENDOR" "other"
     fi
 
     rm $out/bin/restic $out/bin/restic-age-key
