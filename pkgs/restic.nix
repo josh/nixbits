@@ -12,9 +12,11 @@
 }:
 let
   toExePath = path: if lib.attrsets.isDerivation path then lib.meta.getExe path else path;
+
   restic-age-key = nur.repos.josh.restic-age-key.override {
     age = nixbits.age-with-se-tpm;
   };
+
   restic-pre-install-hook = writeShellScript "restic-pre-install-hook" ''
     code=0
 
@@ -31,6 +33,9 @@ let
       if [ ! -f "$RESTIC_REPOSITORY/config" ]; then
         echo "error: $RESTIC_REPOSITORY restic repository not initialized" >&2
         code=1
+      fi
+      if [[ "$RESTIC_REPOSITORY" == /Volumes/* ]]; then
+        ${lib.getExe nixbits.tmutil-exclude-volume} --dry-run "$RESTIC_REPOSITORY"
       fi
     fi
 
@@ -53,6 +58,16 @@ let
         echo "error: $RESTIC_FROM_PASSWORD_COMMAND failed" >&2
         code=1
       fi
+    fi
+
+    exit $code
+  '';
+
+  restic-post-install-hook = writeShellScript "restic-post-install-hook" ''
+    code=0
+
+    if [ -n "$RESTIC_REPOSITORY" ] && [[ "$RESTIC_REPOSITORY" == /Volumes/* ]]; then
+      ${lib.getExe nixbits.tmutil-exclude-volume} "$RESTIC_REPOSITORY"
     fi
 
     exit $code
@@ -82,7 +97,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   makeWrapperArgs = [ ];
 
   buildCommand = ''
-    mkdir -p $out $out/share/nix/hooks/pre-install.d
+    mkdir -p $out $out/share/nix/hooks/pre-install.d $out/share/nix/hooks/post-install.d
     lndir -silent ${restic} $out
     lndir -silent ${restic-age-key} $out
 
@@ -134,6 +149,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     makeWrapper ${restic}/bin/.restic-wrapped $out/bin/restic --inherit-argv0 "''${makeWrapperArgs[@]}"
     makeWrapper ${restic-age-key}/bin/restic-age-key $out/bin/restic-age-key "''${makeWrapperArgs[@]}"
     makeWrapper ${restic-pre-install-hook} $out/share/nix/hooks/pre-install.d/$pname "''${makeWrapperArgs[@]}"
+    makeWrapper ${restic-post-install-hook} $out/share/nix/hooks/post-install.d/$pname "''${makeWrapperArgs[@]}"
   '';
 
   meta = {
