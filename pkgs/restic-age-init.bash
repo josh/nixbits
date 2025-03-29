@@ -43,8 +43,10 @@ while [[ $# -gt 0 ]]; do
 done
 
 x() {
-  echo "+" "$@" >&2
-  "$@"
+  (
+    set -o xtrace
+    "$@"
+  )
 }
 
 RESTIC_PASSWORD_FILE=$(mktemp)
