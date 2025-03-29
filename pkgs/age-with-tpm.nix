@@ -13,8 +13,10 @@ symlinkJoin {
   ];
   buildInputs = [ makeWrapper ];
   postBuild = ''
-    rm $out/bin/age
+    rm $out/bin/age $out/bin/age-keygen
     makeWrapper ${age}/bin/age $out/bin/age \
+      --prefix PATH : "${age-plugin-tpm}/bin"
+    makeWrapper ${age}/bin/age-keygen $out/bin/age-keygen \
       --prefix PATH : "${age-plugin-tpm}/bin"
   '';
 
