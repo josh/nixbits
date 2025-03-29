@@ -108,6 +108,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   makeWrapperArgs = [ ];
 
   resticPreRunScript = ''
+    flag=""
+    for arg in "$@"; do
+      if [ "$flag" == "--repo" ]; then
+        export RESTIC_REPOSITORY="$arg"
+      fi
+      flag="$arg"
+    done
+
     if [ "$1" = "age-key" ]; then
       shift
       exec ${restic-age-key}/bin/restic-age-key "$@"
