@@ -113,6 +113,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       if [ "$flag" == "--repo" ]; then
         export RESTIC_REPOSITORY="$arg"
       fi
+      if [ "$flag" == "--from-repo" ]; then
+        export RESTIC_FROM_REPOSITORY="$arg"
+      fi
       flag="$arg"
     done
 
