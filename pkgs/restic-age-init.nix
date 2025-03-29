@@ -2,14 +2,15 @@
   lib,
   writeShellApplication,
   runCommand,
-  age,
   coreutils,
   jq,
   openssl,
   restic,
   nur,
+  nixbits,
 }:
 let
+  inherit (nixbits) age;
   restic-age-init = writeShellApplication {
     name = "restic-age-init";
     runtimeEnv = {
@@ -17,9 +18,9 @@ let
         age
         coreutils
         jq
+        nur.repos.josh.restic-age-key
         openssl
         restic
-        nur.repos.josh.restic-age-key
       ];
     };
     text = builtins.readFile ./restic-age-init.bash;
