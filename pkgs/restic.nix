@@ -8,6 +8,7 @@
   restic,
   nur,
   nixbits,
+  taildriveSupport ? true,
 }:
 let
   toExePath = path: if lib.attrsets.isDerivation path then lib.meta.getExe path else path;
@@ -20,6 +21,8 @@ let
   restic-age-key = nur.repos.josh.restic-age-key.override {
     inherit age;
   };
+
+  rclone' = if taildriveSupport then nixbits.rclone-taildrive else rclone;
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "restic";
@@ -35,7 +38,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   resticFromPasswordCommandExe = toExePath finalAttrs.resticFromPasswordCommand;
   resticAgeIdentityCommand = "";
   resticAgeIdentityCommandExe = toExePath finalAttrs.resticAgeIdentityCommand;
-  rcloneTaildrive = true;
 
   nativeBuildInputs = [
     makeWrapper
@@ -79,7 +81,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     lndir -silent ${restic} $out
     lndir -silent ${restic-age-key} $out
 
-    appendToVar makeWrapperArgs "--prefix" "PATH" ":" "${rclone}/bin"
+    appendToVar makeWrapperArgs "--prefix" "PATH" ":" "${rclone'}/bin"
     appendToVar makeWrapperArgs "--prefix" "PATH" ":" "${restic-age-key}/bin"
 
     if [ -n "$resticRepository" ]; then
@@ -100,13 +102,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     fi
     if [ -n "$resticAgeIdentityCommandExe" ]; then
       appendToVar makeWrapperArgs "--set" "RESTIC_AGE_IDENTITY_COMMAND" "$resticAgeIdentityCommandExe"
-    fi
-
-    appendToVar makeWrapperArgs "--set-default" "RCLONE_CONFIG" ""
-    if [ -n "$rcloneTaildrive" ]; then
-      appendToVar makeWrapperArgs "--set" "RCLONE_CONFIG_TAILDRIVE_TYPE" "webdav"
-      appendToVar makeWrapperArgs "--set" "RCLONE_CONFIG_TAILDRIVE_URL" "http://100.100.100.100:8080"
-      appendToVar makeWrapperArgs "--set" "RCLONE_CONFIG_TAILDRIVE_VENDOR" "other"
     fi
 
     appendToVar makeWrapperArgs "--run" "$resticPreRunScript"
