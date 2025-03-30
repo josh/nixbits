@@ -30,11 +30,7 @@ writeShellApplication {
       tmutil-exclude-volume --dry-run "${resticRepository}"
     '')
     + (lib.strings.optionalString (isPresent resticPasswordCommand) ''
-      if ! result=$(${resticPasswordCommand} 2>&1); then
-        echo "+ ${resticPasswordCommand}" >&2
-        echo "$result" >&2
-        exit 1
-      fi
+      ${nixbits.x-quiet}/bin/x-quiet -- ${resticPasswordCommand}
     '');
   meta = {
     description = "Run pre-install hooks on restic repository";
