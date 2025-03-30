@@ -3,11 +3,15 @@
   stdenv,
   writeShellApplication,
   nixbits,
-  resticRepository ? "",
+  resticRepository ? null,
 }:
 let
   inherit (nixbits) tmutil-exclude-volume;
-  hasLocalVolumeRepository = stdenv.isDarwin && lib.strings.hasPrefix "/Volumes/" resticRepository;
+  isPresent = s: s != null && s != "";
+  hasLocalVolumeRepository =
+    stdenv.isDarwin
+    && (isPresent resticRepository)
+    && lib.strings.hasPrefix "/Volumes/" resticRepository;
 in
 writeShellApplication {
   name = "restic-post-install";

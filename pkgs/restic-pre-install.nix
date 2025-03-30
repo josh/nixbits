@@ -3,14 +3,18 @@
   stdenv,
   writeShellApplication,
   nixbits,
-  resticRepository ? "",
-  resticPasswordCommand ? "",
+  resticRepository ? null,
+  resticPasswordCommand ? null,
 }:
 let
   inherit (nixbits) tmutil-exclude-volume;
+  isPresent = s: s != null && s != "";
 
-  hasLocalRepository = lib.strings.hasPrefix "/" resticRepository;
-  hasLocalVolumeRepository = stdenv.isDarwin && lib.strings.hasPrefix "/Volumes/" resticRepository;
+  hasLocalRepository = (isPresent resticRepository) && !lib.strings.hasPrefix "/" resticRepository;
+  hasLocalVolumeRepository =
+    stdenv.isDarwin
+    && (isPresent resticRepository)
+    && lib.strings.hasPrefix "/Volumes/" resticRepository;
 in
 writeShellApplication {
   name = "restic-pre-install";
@@ -25,7 +29,7 @@ writeShellApplication {
     + (lib.strings.optionalString hasLocalVolumeRepository ''
       tmutil-exclude-volume --dry-run "${resticRepository}"
     '')
-    + (lib.strings.optionalString (resticPasswordCommand != "") ''
+    + (lib.strings.optionalString (isPresent resticPasswordCommand) ''
       if ! result=$(${resticPasswordCommand} 2>&1); then
         echo "+ ${resticPasswordCommand}" >&2
         echo "$result" >&2
