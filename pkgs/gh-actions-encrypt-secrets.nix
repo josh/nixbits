@@ -7,7 +7,11 @@
   nixbits,
 }:
 let
-  age = nixbits.age-with-se-tpm;
+  age = nixbits.age.override {
+    seSupport = true;
+    tpmSupport = true;
+  };
+
   git = nixbits.git-bot;
 
   script = writeShellApplication {

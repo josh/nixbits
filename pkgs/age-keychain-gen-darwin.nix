@@ -2,10 +2,11 @@
   lib,
   writeShellApplication,
   coreutils,
-  age,
-  age-plugin-se ? null,
   nixbits,
 }:
+let
+  age = nixbits.age.override { seSupport = true; };
+in
 writeShellApplication {
   name = "age-keychain-gen";
 
@@ -13,7 +14,6 @@ writeShellApplication {
     PATH = lib.strings.makeBinPath [
       coreutils
       age
-      age-plugin-se
       nixbits.darwin.security
     ];
   };

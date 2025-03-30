@@ -3,9 +3,13 @@
   writeShellScript,
   makeWrapper,
   runCommand,
-  age,
+  nixbits,
 }:
 let
+  age = nixbits.age.override {
+    seSupport = true;
+    tpmSupport = true;
+  };
   preinstallHook = writeShellScript "age-decrypt-preinstall-hook" ''
     if ! "$1" --output /dev/null; then
       echo "$1 failed to decrypt data" >&2

@@ -15,8 +15,13 @@
 let
   toExePath = path: if lib.attrsets.isDerivation path then lib.meta.getExe path else path;
 
+  age = nixbits.age.override {
+    seSupport = true;
+    tpmSupport = true;
+  };
+
   restic-age-key = nur.repos.josh.restic-age-key.override {
-    age = nixbits.age-with-se-tpm;
+    inherit age;
   };
 
   tmutil-exclude-volume =

@@ -10,7 +10,10 @@
   nixbits,
 }:
 let
-  inherit (nixbits) age;
+  age = nixbits.age.override {
+    seSupport = true;
+    tpmSupport = true;
+  };
   restic-age-init = writeShellApplication {
     name = "restic-age-init";
     runtimeEnv = {

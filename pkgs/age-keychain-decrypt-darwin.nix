@@ -2,9 +2,6 @@
   lib,
   writeShellApplication,
   coreutils,
-  age,
-  age-plugin-se ? nur.repos.josh.age-plugin-se,
-  nur,
   nixbits,
   name ? "age-keychain-decrypt",
   age-filename ? "",
@@ -14,6 +11,9 @@
   age-recipient ? "",
   age-recipient-command ? "",
 }:
+let
+  age = nixbits.age.override { seSupport = true; };
+in
 writeShellApplication {
   inherit name;
 
@@ -21,7 +21,6 @@ writeShellApplication {
     PATH = lib.strings.makeBinPath [
       coreutils
       age
-      age-plugin-se
       nixbits.darwin.security
     ];
     AGE_KEYCHAIN_FILENAME = age-filename;
