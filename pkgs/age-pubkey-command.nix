@@ -2,17 +2,11 @@
   stdenvNoCC,
   runtimeShell,
   writeShellScript,
-  coreutils,
-  nixbits,
-  age-pubkey-file ? nixbits.age-pubkey-file,
 }:
 let
   script = writeShellScript "age-pubkey-command" ''
-    if [ ! -s ${age-pubkey-file} ]; then
-      echo "No age pubkey configured" >&2
-      exit 1
-    fi
-    exec ${coreutils}/bin/cat ${age-pubkey-file}
+    echo "No age pubkey configured" >&2
+    exit 1
   '';
 in
 stdenvNoCC.mkDerivation {
@@ -34,9 +28,6 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Print system age pubkey";
-    longDescription = ''
-      Overloadable stub that reads `nixbits.age-pubkey-file`.
-    '';
     mainProgram = "age-pubkey-command";
   };
 }
