@@ -12,13 +12,6 @@ let
   };
 in
 config.overrideAttrs {
-  allowedReferences = [ ];
-  allowedRequisites = [ ];
-
-  outputHash = "sha256-7JJhlHh3vjnvnD/h7o/KUTKL66yo02f0svG4DWcBUU8=";
-  outputHashAlgo = "sha256";
-  outputHashMode = "nar";
-
   meta = {
     name = "rclone-taildrive-config";
     description = "rclone config for Tailscale Taildrive";
