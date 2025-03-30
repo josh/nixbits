@@ -1,9 +1,6 @@
 {
   lib,
   stdenvNoCC,
-  runtimeShell,
-  writeShellScript,
-  writeShellScriptBin,
   runCommand,
   makeWrapper,
   lndir,
@@ -23,71 +20,6 @@ let
   restic-age-key = nur.repos.josh.restic-age-key.override {
     inherit age;
   };
-
-  tmutil-exclude-volume =
-    if stdenvNoCC.isDarwin then
-      nixbits.tmutil-exclude-volume
-    else
-      (writeShellScriptBin "tmutil-exclude-volume" ''
-        echo "error: tmutil-exclude-volume is not available on this platform" >&2
-        exit 1
-      '');
-
-  restic-pre-install-hook = writeShellScript "restic-pre-install-hook" ''
-    code=0
-
-    run() {
-      result=$(${runtimeShell} -c "$1" 2>&1)
-      if [ $? -ne 0 ]; then
-        echo "+ $1" >&2
-        echo "$result" >&2
-        return $?
-      fi
-    }
-
-    if [ -n "$RESTIC_REPOSITORY" ] && [[ "$RESTIC_REPOSITORY" == /* ]]; then
-      if [ ! -f "$RESTIC_REPOSITORY/config" ]; then
-        echo "error: $RESTIC_REPOSITORY restic repository not initialized" >&2
-        code=1
-      fi
-      if [[ "$RESTIC_REPOSITORY" == /Volumes/* ]]; then
-        ${lib.getExe tmutil-exclude-volume} --dry-run "$RESTIC_REPOSITORY"
-      fi
-    fi
-
-    if [ -n "$RESTIC_FROM_REPOSITORY" ] && [ "$RESTIC_FROM_REPOSITORY" != "$RESTIC_REPOSITORY" ] && [ -n "$RESTIC_FROM_REPOSITORY" ] && [[ "$RESTIC_FROM_REPOSITORY" == /* ]]; then
-      if [ ! -f "$RESTIC_FROM_REPOSITORY/config" ]; then
-        echo "error: $RESTIC_FROM_REPOSITORY restic repository not initialized" >&2
-        code=1
-      fi
-    fi
-
-    if [ -n "$RESTIC_PASSWORD_COMMAND" ]; then
-      if ! run "$RESTIC_PASSWORD_COMMAND"; then
-        echo "error: $RESTIC_PASSWORD_COMMAND failed" >&2
-        code=1
-      fi
-    fi
-
-    if [ -n "$RESTIC_FROM_PASSWORD_COMMAND" ] && [ "$RESTIC_PASSWORD_COMMAND" != "$RESTIC_FROM_PASSWORD_COMMAND" ]; then
-      if ! run "$RESTIC_FROM_PASSWORD_COMMAND"; then
-        echo "error: $RESTIC_FROM_PASSWORD_COMMAND failed" >&2
-        code=1
-      fi
-    fi
-
-    exit $code
-  '';
-
-  restic-post-install-hook = writeShellScript "restic-post-install-hook" ''
-    code=0
-
-    if [ -n "$RESTIC_REPOSITORY" ] && [[ "$RESTIC_REPOSITORY" == /Volumes/* ]]; then
-      ${lib.getExe tmutil-exclude-volume} "$RESTIC_REPOSITORY"
-    fi
-
-    exit $code
-  '';
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "restic";
@@ -130,6 +62,18 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     fi
   '';
 
+  resticPreInstallHook = lib.getExe (
+    nixbits.restic-pre-install.override {
+      inherit (finalAttrs) resticRepository resticPasswordCommand;
+    }
+  );
+
+  resticPostInstallHook = lib.getExe (
+    nixbits.restic-post-install.override {
+      inherit (finalAttrs) resticRepository;
+    }
+  );
+
   buildCommand = ''
     mkdir -p $out/bin $out/share/nix/hooks/pre-install.d $out/share/nix/hooks/post-install.d
     lndir -silent ${restic} $out
@@ -170,8 +114,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     rm $out/bin/restic $out/bin/restic-age-key
     makeWrapper ${restic}/bin/.restic-wrapped $out/bin/restic --inherit-argv0 "''${makeWrapperArgs[@]}"
     makeWrapper ${restic-age-key}/bin/restic-age-key $out/bin/restic-age-key "''${makeWrapperArgs[@]}"
-    makeWrapper ${restic-pre-install-hook} $out/share/nix/hooks/pre-install.d/$pname "''${makeWrapperArgs[@]}"
-    makeWrapper ${restic-post-install-hook} $out/share/nix/hooks/post-install.d/$pname "''${makeWrapperArgs[@]}"
+    ln -s $resticPreInstallHook $out/share/nix/hooks/pre-install.d/$pname
+    ln -s $resticPostInstallHook $out/share/nix/hooks/post-install.d/$pname
   '';
 
   passthru.tests =
