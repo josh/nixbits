@@ -16,6 +16,7 @@ let
   age = nixbits.age.override {
     seSupport = true;
     tpmSupport = true;
+    yubikeySupport = true;
   };
 
   restic-age-key = nur.repos.josh.restic-age-key.override {
