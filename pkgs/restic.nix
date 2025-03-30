@@ -109,8 +109,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     rm $out/bin/restic $out/bin/restic-age-key
     makeWrapper ${restic}/bin/.restic-wrapped $out/bin/restic --inherit-argv0 "''${makeWrapperArgs[@]}"
     makeWrapper ${restic-age-key}/bin/restic-age-key $out/bin/restic-age-key "''${makeWrapperArgs[@]}"
-    ln -s $resticPreInstallHook $out/share/nix/hooks/pre-install.d/$pname
-    ln -s $resticPostInstallHook $out/share/nix/hooks/post-install.d/$pname
+    makeWrapper $resticPreInstallHook $out/share/nix/hooks/pre-install.d/$pname "''${makeWrapperArgs[@]}"
+    makeWrapper $resticPostInstallHook $out/share/nix/hooks/post-install.d/$pname "''${makeWrapperArgs[@]}"
   '';
 
   passthru.tests =
