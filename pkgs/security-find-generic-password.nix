@@ -8,9 +8,7 @@
 let
   inherit (nixbits.darwin) security;
   preinstallHook = writeShellScript "security-find-generic-password-preinstall-hook" ''
-    if ! ${security}/bin/security find-generic-password "$@" >/dev/null 2>&1; then
-      echo "warn: keychain missing generic password for $@" >&2
-    fi
+    ${nixbits.x-quiet}/bin/x-quiet -- ${security}/bin/security find-generic-password "$@"
   '';
 in
 stdenvNoCC.mkDerivation (finalAttrs: {

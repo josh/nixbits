@@ -11,10 +11,7 @@ let
     tpmSupport = true;
   };
   preinstallHook = writeShellScript "age-decrypt-preinstall-hook" ''
-    if ! "$1" --output /dev/null; then
-      echo "$1 failed to decrypt data" >&2
-      exit 1
-    fi
+    ${nixbits.x-quiet}/bin/x-quiet -- "$1"
   '';
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
