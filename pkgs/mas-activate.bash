@@ -49,7 +49,7 @@ for entry in "$dir"/*; do
   name=$(cat "$entry")
   app_id=$basename
 
-  if [ -z "${installed_ids_map[$app_id]}" ]; then
+  if [ -z "${installed_ids_map[$app_id]:-}" ]; then
     if [ $dry_run -eq 1 ]; then
       echo "dry-run: + mas install $app_id # $name" >&2
     else
