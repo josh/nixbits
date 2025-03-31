@@ -22,6 +22,7 @@ symlinkJoin {
     nixpkgs.nh
     nixpkgs.nil
     nixpkgs.nix
+    nixpkgs.nix-tree
     nixpkgs.nixd
     nixpkgs.nixfmt-rfc-style
     nixpkgs.nixpkgs-review
