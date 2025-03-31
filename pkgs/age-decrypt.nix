@@ -1,18 +1,12 @@
 {
   stdenvNoCC,
-  writeShellScript,
   makeWrapper,
   runCommand,
+  coreutils,
   nixbits,
 }:
 let
-  age = nixbits.age.override {
-    seSupport = true;
-    tpmSupport = true;
-  };
-  preinstallHook = writeShellScript "age-decrypt-preinstall-hook" ''
-    ${nixbits.x-quiet}/bin/x-quiet -- "$1"
-  '';
+  inherit (nixbits) age;
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
@@ -26,8 +20,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   makeWrapperArgs = [ ];
 
   ageIdentity = "";
+  ageIdentityCommand = "";
   ageInput = "";
-  preinstallCheck = if finalAttrs.ageIdentity != "" && finalAttrs.ageInput != "" then true else false;
+  preinstallCheck =
+    if
+      (finalAttrs.ageIdentity != "" || finalAttrs.ageIdentityCommand != "") && finalAttrs.ageInput != ""
+    then
+      true
+    else
+      false;
 
   buildCommand = ''
     if [ -n "$ageIdentity" ]; then
@@ -36,6 +37,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         exit 1
       fi
       appendToVar makeWrapperArgs "--add-flags" "--identity $ageIdentity"
+    elif [ -n "$ageIdentityCommand" ]; then
+      appendToVar makeWrapperArgs "--add-flags" "--identity-command '$ageIdentityCommand'"
     fi
 
     if [ -n "$ageInput" ]; then
@@ -52,9 +55,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     if [ -n "$preinstallCheck" ]; then
       mkdir -p $out/share/nix/hooks/pre-install.d
-      makeWrapper ${preinstallHook} \
-        $out/share/nix/hooks/pre-install.d/$pname \
-        --append-flags "$out/bin/$pname"
+      (
+        echo "#!$SHELL -e"
+        echo "export PATH=${nixbits.x-quiet}/bin"
+        echo x-quiet -- "$out/bin/$pname"
+      ) >"$out/share/nix/hooks/pre-install.d/$pname"
+      chmod +x "$out/share/nix/hooks/pre-install.d/$pname"
     fi
   '';
 
@@ -86,10 +92,26 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         pname = "age-decrypt-data";
         ageInput = "${data}";
       };
+      age-decrypt-command = finalAttrs.finalPackage.overrideAttrs {
+        pname = "age-decrypt-data";
+        ageInput = "${data}";
+        ageIdentityCommand = "${coreutils}/bin/cat ${identity}";
+      };
     in
     {
       decrypt = runCommand "test-age-decrypt" { nativeBuildInputs = [ age-decrypt ]; } ''
         age-decrypt-data --identity ${identity} >data.txt
+        if [ "$(cat data.txt)" = "foo" ]; then
+          cp data.txt $out
+        else
+          echo "expected: foo"
+          echo -n "actual:"
+          cat data.txt
+          exit 1
+        fi
+      '';
+      decrypt-command = runCommand "test-age-decrypt" { nativeBuildInputs = [ age-decrypt-command ]; } ''
+        age-decrypt-data >data.txt
         if [ "$(cat data.txt)" = "foo" ]; then
           cp data.txt $out
         else
