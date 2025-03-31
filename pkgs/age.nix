@@ -1,6 +1,7 @@
 {
   lib,
   stdenvNoCC,
+  runtimeShell,
   runCommand,
   makeWrapper,
   lndir,
@@ -37,6 +38,30 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     ++ (lib.optional tpmSupport age-plugin-tpm)
     ++ (lib.optional yubikeySupport age-plugin-yubikey);
 
+  ageWrapperScript = ''
+    #!${runtimeShell}
+    set -o errexit
+    PATH="${builtins.placeholder "out"}/bin:$PATH"
+    export PATH
+
+    args=()
+    while [ $# -gt 0 ]; do
+      case "$1" in
+      --identity-command)
+        exec 3< <($2)
+        args+=("--identity" "/dev/fd/3")
+        shift 2
+        ;;
+      *)
+        args+=("$1")
+        shift
+        ;;
+      esac
+    done
+
+    exec ${age}/bin/age "''${args[@]}"
+  '';
+
   buildCommand = ''
     mkdir -p $out
     for p in "''${paths[@]}"; do
@@ -44,7 +69,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     done
 
     rm $out/bin/age
-    makeWrapper ${age}/bin/age $out/bin/age --prefix PATH : "$out/bin"
+    echo "$ageWrapperScript" >$out/bin/age
+    chmod +x $out/bin/age
   '';
 
   passthru.tests =
@@ -54,6 +80,21 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     {
       help = runCommand "test-help" { nativeBuildInputs = [ age ]; } ''
         age --help
+        touch $out
+      '';
+
+      identity-command = runCommand "test-identity-command" { nativeBuildInputs = [ age ]; } ''
+        echo "Hello World" >data-a.txt
+        age-keygen >key.txt
+        age-keygen -y key.txt >recipient.txt
+        age --encrypt --recipients-file recipient.txt data-a.txt >data.age
+        age --decrypt --identity-command 'cat key.txt' data.age >data-b.txt
+        if [ "$(cat data-a.txt)" != "$(cat data-b.txt)" ]; then
+          echo "expected: $(cat data-a.txt)"
+          echo -n "actual:"
+          cat data-b.txt
+          exit 1
+        fi
         touch $out
       '';
     }
