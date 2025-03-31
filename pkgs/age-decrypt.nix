@@ -1,4 +1,5 @@
 {
+  lib,
   stdenvNoCC,
   makeWrapper,
   runCommand,
@@ -11,8 +12,7 @@ in
 stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
-  pname = "age-decrypt";
-  inherit (age) version;
+  name = "age-decrypt";
 
   nativeBuildInputs = [ makeWrapper ];
   buildInputs = [ age ];
@@ -21,10 +21,16 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   ageIdentity = "";
   ageIdentityCommand = "";
+  ageIdentityCommandBin =
+    if lib.attrsets.isDerivation finalAttrs.ageIdentityCommand then
+      lib.getExe finalAttrs.ageIdentityCommand
+    else
+      finalAttrs.ageIdentityCommand;
   ageInput = "";
   preinstallCheck =
     if
-      (finalAttrs.ageIdentity != "" || finalAttrs.ageIdentityCommand != "") && finalAttrs.ageInput != ""
+      (finalAttrs.ageIdentity != "" || finalAttrs.ageIdentityCommandBin != "")
+      && finalAttrs.ageInput != ""
     then
       true
     else
@@ -37,8 +43,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         exit 1
       fi
       appendToVar makeWrapperArgs "--add-flags" "--identity $ageIdentity"
-    elif [ -n "$ageIdentityCommand" ]; then
-      appendToVar makeWrapperArgs "--add-flags" "--identity-command '$ageIdentityCommand'"
+    elif [ -n "$ageIdentityCommandBin" ]; then
+      appendToVar makeWrapperArgs "--add-flags" "--identity-command '$ageIdentityCommandBin'"
     fi
 
     if [ -n "$ageInput" ]; then
@@ -51,16 +57,16 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     mkdir -p $out/bin
     prependToVar makeWrapperArgs "--add-flags" "--decrypt"
-    makeWrapper ${age}/bin/age $out/bin/$pname "''${makeWrapperArgs[@]}"
+    makeWrapper ${age}/bin/age $out/bin/$name "''${makeWrapperArgs[@]}"
 
     if [ -n "$preinstallCheck" ]; then
       mkdir -p $out/share/nix/hooks/pre-install.d
       (
         echo "#!$SHELL -e"
         echo "export PATH=${nixbits.x-quiet}/bin"
-        echo x-quiet -- "$out/bin/$pname"
-      ) >"$out/share/nix/hooks/pre-install.d/$pname"
-      chmod +x "$out/share/nix/hooks/pre-install.d/$pname"
+        echo x-quiet -- "$out/bin/$name"
+      ) >"$out/share/nix/hooks/pre-install.d/$name"
+      chmod +x "$out/share/nix/hooks/pre-install.d/$name"
     fi
   '';
 
@@ -71,7 +77,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       license
       platforms
       ;
-    mainProgram = finalAttrs.pname;
+    mainProgram = finalAttrs.name;
   };
 
   passthru.tests =
@@ -89,12 +95,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         -----END AGE ENCRYPTED FILE-----
       '';
       age-decrypt = finalAttrs.finalPackage.overrideAttrs {
-        pname = "age-decrypt-data";
+        name = "age-decrypt-data";
         ageInput = "${data}";
+        ageIdentity = null;
+        ageIdentityCommand = null;
       };
       age-decrypt-command = finalAttrs.finalPackage.overrideAttrs {
-        pname = "age-decrypt-data";
+        name = "age-decrypt-data";
         ageInput = "${data}";
+        ageIdentity = null;
         ageIdentityCommand = "${coreutils}/bin/cat ${identity}";
       };
     in
