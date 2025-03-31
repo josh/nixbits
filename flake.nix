@@ -80,22 +80,24 @@
 
       formatter = eachSystem (system: treefmt-nix.${system}.wrapper);
 
-      checks = eachSystem (
-        system:
+      checks = eachPkgs (
+        pkgs:
         let
+          inherit (pkgs) system;
           addAttrsetPrefix = prefix: lib.attrsets.concatMapAttrs (n: v: { "${prefix}${n}" = v; });
+          buildPkg = pkg: pkgs.runCommand "${pkg.name}-build" { env.PKG = pkg; } "touch $out";
           localTests = lib.attrsets.concatMapAttrs (
             pkgName: pkg:
             if (builtins.hasAttr "tests" pkg) then
               (
                 {
-                  "${pkgName}-build" = pkg;
+                  "${pkgName}-build" = buildPkg pkg;
                 }
                 // (addAttrsetPrefix "${pkgName}-tests-" pkg.tests)
               )
             else
               {
-                "${pkgName}-build" = pkg;
+                "${pkgName}-build" = buildPkg pkg;
               }
           ) self.packages.${system};
         in
