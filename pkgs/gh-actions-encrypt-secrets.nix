@@ -50,13 +50,15 @@ script.overrideAttrs (
               env.AGE_RECIPIENT = "age1yavtje8vqkaglu73js0njpda8a42w94hresma43h4u8y4p95pajqnrjuly";
             }
             ''
-              mkdir $out
-              cd $out
+              mkdir repo
+              cd repo
               git init --initial-branch secrets
 
               export GITHUB_OUTPUT="$TMPDIR/result"
               gh-actions-encrypt-secrets
               [ "$(cat $GITHUB_OUTPUT)" == "committed=false" ]
+
+              touch $out
             '';
 
         add =
@@ -71,8 +73,8 @@ script.overrideAttrs (
               env.AGE_RECIPIENT = "age1yavtje8vqkaglu73js0njpda8a42w94hresma43h4u8y4p95pajqnrjuly";
             }
             ''
-              mkdir $out
-              cd $out
+              mkdir repo
+              cd repo
               git init --initial-branch secrets
 
               export GITHUB_OUTPUT="$TMPDIR/result"
@@ -80,6 +82,8 @@ script.overrideAttrs (
               [ "$(cat $GITHUB_OUTPUT)" == "committed=true" ]
               [ -f FOO.age ]
               [ -f FOO.hash ]
+
+              touch $out
             '';
 
         skip =
@@ -94,8 +98,8 @@ script.overrideAttrs (
               env.AGE_RECIPIENT = "age1yavtje8vqkaglu73js0njpda8a42w94hresma43h4u8y4p95pajqnrjuly";
             }
             ''
-              mkdir $out
-              cd $out
+              mkdir repo
+              cd repo
               git init --initial-branch secrets
 
               export GITHUB_OUTPUT="$TMPDIR/result-1"
@@ -109,6 +113,8 @@ script.overrideAttrs (
               [ "$(cat $GITHUB_OUTPUT)" == "committed=false" ]
               [ -f FOO.age ]
               [ -f FOO.hash ]
+
+              touch $out
             '';
 
         remove =
@@ -122,8 +128,8 @@ script.overrideAttrs (
               env.AGE_RECIPIENT = "age1yavtje8vqkaglu73js0njpda8a42w94hresma43h4u8y4p95pajqnrjuly";
             }
             ''
-              mkdir $out
-              cd $out
+              mkdir repo
+              cd repo
               git init --initial-branch secrets
 
               export GITHUB_OUTPUT="$TMPDIR/result-1"
@@ -141,6 +147,8 @@ script.overrideAttrs (
               [ -f FOO.hash ]
               [ ! -f BAR.age ]
               [ ! -f BAR.hash ]
+
+              touch $out
             '';
 
       };
