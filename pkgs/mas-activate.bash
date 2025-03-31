@@ -19,17 +19,13 @@ if [ ! -d "$dir" ]; then
   exit 1
 fi
 
-mapfile -t installed_ids < <(mas list | awk '{print $1}')
+mas_output=$(mas list)
 
-is_installed() {
-  local app_id=$1
-  for id in "${installed_ids[@]}"; do
-    if [[ $id == "$app_id" ]]; then
-      return 0
-    fi
-  done
-  return 1
-}
+declare -A installed_ids_map
+while read -r line; do
+  id=$(echo "$line" | awk '{print $1}')
+  [[ $id =~ ^[0-9]+$ ]] && installed_ids_map["$id"]=1
+done <<<"$mas_output"
 
 for entry in "$dir"/*; do
   [ -e "$entry" ] || continue
@@ -53,7 +49,7 @@ for entry in "$dir"/*; do
   name=$(cat "$entry")
   app_id=$basename
 
-  if ! is_installed "$app_id"; then
+  if [ -z "${installed_ids_map[$app_id]}" ]; then
     if [ $dry_run -eq 1 ]; then
       echo "dry-run: + mas install $app_id # $name" >&2
     else
