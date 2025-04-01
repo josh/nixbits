@@ -5,6 +5,10 @@ let
       name = "Joshua Peek";
       email = "josh@users.noreply.github.com";
     };
+
+    ui = {
+      paginate = "never";
+    };
   };
 in
 config.overrideAttrs {
