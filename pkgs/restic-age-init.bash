@@ -1,3 +1,6 @@
+# shellcheck source=/dev/null
+source "$XTRACE_PATH/share/bash/xtrace.bash"
+
 RESTIC_REPOSITORY="${RESTIC_REPOSITORY:-}"
 unset RESTIC_PASSWORD_FILE
 unset RESTIC_PASSWORD_COMMAND
@@ -43,13 +46,6 @@ while [[ $# -gt 0 ]]; do
     ;;
   esac
 done
-
-x() {
-  (
-    set -o xtrace
-    "$@"
-  )
-}
 
 RESTIC_PASSWORD_FILE=$(mktemp)
 openssl rand -base64 32 >"$RESTIC_PASSWORD_FILE"

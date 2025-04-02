@@ -1,3 +1,6 @@
+# shellcheck source=/dev/null
+source "$XTRACE_PATH/share/bash/xtrace.bash"
+
 if [ $# -eq 0 ]; then
   echo "usage: launchctl-user-activate NEW [OLD]" >&2
   exit 1
@@ -7,11 +10,6 @@ if [ -z "$UID" ]; then
   echo "error: UID is not set" >&2
   exit 1
 fi
-
-x() {
-  echo + "$@"
-  "$@"
-}
 
 labels() {
   find "$1" -maxdepth 1 -name "*.plist" -exec basename {} .plist \; | sort

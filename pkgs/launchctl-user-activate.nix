@@ -13,6 +13,7 @@ writeShellApplication {
       findutils
       nixbits.darwin.launchctl
     ];
+    XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./launchctl-user-activate.bash;
   meta = {

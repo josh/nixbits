@@ -1,7 +1,5 @@
-x() {
-  echo "+" "$@" >&2
-  "$@"
-}
+# shellcheck source=/dev/null
+source "$XTRACE_PATH/share/bash/xtrace.bash"
 
 src="$1"
 dst="$2"

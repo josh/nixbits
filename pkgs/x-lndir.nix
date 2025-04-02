@@ -3,6 +3,7 @@
   writeShellApplication,
   coreutils,
   findutils,
+  nixbits,
 }:
 writeShellApplication {
   name = "x-lndir";
@@ -11,6 +12,7 @@ writeShellApplication {
       coreutils
       findutils
     ];
+    XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./x-lndir.bash;
   meta = {

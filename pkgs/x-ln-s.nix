@@ -2,6 +2,7 @@
   lib,
   writeShellApplication,
   coreutils,
+  nixbits,
 }:
 writeShellApplication {
   name = "x-ln-s";
@@ -9,6 +10,7 @@ writeShellApplication {
     "PATH" = lib.strings.makeBinPath [
       coreutils
     ];
+    XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./x-ln-s.bash;
   meta = {

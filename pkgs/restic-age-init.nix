@@ -25,6 +25,7 @@ let
         openssl
         restic
       ];
+      XTRACE_PATH = nixbits.xtrace;
     };
     text = builtins.readFile ./restic-age-init.bash;
     meta = {
