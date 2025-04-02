@@ -1,3 +1,6 @@
+# shellcheck source=/dev/null
+source "$XTRACE_PATH/share/bash/xtrace.bash"
+
 DRY_RUN=0
 
 while [[ $# -gt 0 ]]; do
@@ -26,10 +29,7 @@ fix_permissions() {
 
   current_perms=$(stat --format '%a' "$file")
   if [ "$current_perms" != "$expected_perms" ]; then
-    echo "+ chmod $expected_perms $file" >&2
-    if [ "$DRY_RUN" -eq 0 ]; then
-      chmod "$expected_perms" "$file"
-    fi
+    x-dry-run $DRY_RUN -- chmod "$expected_perms" "$file"
   fi
 }
 

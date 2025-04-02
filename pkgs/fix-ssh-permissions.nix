@@ -2,6 +2,7 @@
   lib,
   writeShellApplication,
   coreutils,
+  nixbits,
 }:
 writeShellApplication {
   name = "fix-ssh-permissions";
@@ -9,6 +10,7 @@ writeShellApplication {
     PATH = lib.strings.makeBinPath [
       coreutils
     ];
+    XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./fix-ssh-permissions.bash;
 
