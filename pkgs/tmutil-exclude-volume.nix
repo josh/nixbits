@@ -13,6 +13,7 @@ writeShellApplication {
       darwin.sudo
       nixbits.darwin.tmutil
     ];
+    XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./tmutil-exclude-volume.bash;
   meta = {

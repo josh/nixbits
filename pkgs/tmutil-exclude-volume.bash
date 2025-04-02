@@ -1,3 +1,6 @@
+# shellcheck source=/dev/null
+source "$XTRACE_PATH/share/bash/xtrace.bash"
+
 usage() {
   echo "usage: tmutil-exclude-volume [--dry-run] <volume-path>" >&2
 }
@@ -29,8 +32,4 @@ if [[ $($tmutil_path isexcluded "$volume_path") == *"[Excluded]"* ]]; then
   exit 0
 fi
 
-if [[ $dry_run == true ]]; then
-  echo "[DRY RUN] + sudo $tmutil_path addexclusion -v \"$volume_path\"" >&2
-else
-  sudo "$tmutil_path" addexclusion -v "$volume_path"
-fi
+x-dry-run $dry_run -- sudo "$tmutil_path" addexclusion -v "$volume_path"
