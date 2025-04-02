@@ -1,12 +1,19 @@
+# TODO: Deprecate this
 {
   lib,
   writeShellApplication,
   runCommand,
+  nixbits,
 }:
 let
   x-quiet = writeShellApplication {
     name = "x-quiet";
-    text = builtins.readFile ./x-quiet.bash;
+    text = ''
+      # shellcheck disable=SC1091
+      source ${nixbits.xtrace}/share/bash/xtrace.bash
+      [ "$1" == "--" ] && shift
+      x-silent "$@"
+    '';
     meta = {
       description = "Runs command, if succesful is silent, else log to stderr";
       platforms = lib.platforms.all;
@@ -40,7 +47,7 @@ x-quiet.overrideAttrs (
             {
               __structuredAttrs = true;
               nativeBuildInputs = [ x-quiet ];
-              env.expectedErr = "+ missing-command\nbash: line 1: missing-command: command not found";
+              env.expectedErr = "+ missing-command\n/nix/store/lhasjk6ib3kwx69w2yjh38rv36ws6khl-xtrace/share/bash/xtrace.bash: line 43: missing-command: command not found";
             }
             ''
               if x-quiet missing-command 2>err.txt; then
@@ -60,7 +67,7 @@ x-quiet.overrideAttrs (
             {
               __structuredAttrs = true;
               nativeBuildInputs = [ x-quiet ];
-              env.expectedErr = "+ hello -m 'hello world'\nbash: line 1: hello: command not found";
+              env.expectedErr = "+ hello -m 'hello world'\n/nix/store/lhasjk6ib3kwx69w2yjh38rv36ws6khl-xtrace/share/bash/xtrace.bash: line 43: hello: command not found";
             }
             ''
               if x-quiet hello -m 'hello world' 2>err.txt; then
