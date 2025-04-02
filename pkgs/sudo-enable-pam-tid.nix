@@ -5,6 +5,7 @@
   coreutils,
   diffutils,
   which,
+  nixbits,
 }:
 writeShellApplication {
   name = "sudo-enable-pam-tid";
@@ -16,6 +17,7 @@ writeShellApplication {
       which
     ];
     SUDO_LOCAL_TEMPLATE = "${./sudo_local}";
+    XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./sudo-enable-pam-tid.bash;
   meta = {
