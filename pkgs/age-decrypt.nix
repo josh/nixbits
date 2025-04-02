@@ -63,8 +63,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       mkdir -p $out/share/nix/hooks/pre-install.d
       (
         echo "#!$SHELL -e"
-        echo "export PATH=${nixbits.x-quiet}/bin"
-        echo x-quiet -- "$out/bin/$name"
+        echo "export PATH=${nixbits.xtrace}/bin"
+        echo x -s -- "$out/bin/$name"
       ) >"$out/share/nix/hooks/pre-install.d/$name"
       chmod +x "$out/share/nix/hooks/pre-install.d/$name"
     fi

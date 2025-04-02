@@ -8,7 +8,7 @@
 let
   inherit (nixbits.darwin) security;
   preinstallHook = writeShellScript "security-find-generic-password-preinstall-hook" ''
-    ${nixbits.x-quiet}/bin/x-quiet -- ${security}/bin/security find-generic-password "$@"
+    ${nixbits.xtrace}/bin/x -s -- ${security}/bin/security find-generic-password "$@"
   '';
 in
 stdenvNoCC.mkDerivation (finalAttrs: {

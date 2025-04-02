@@ -35,12 +35,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     mkdir -p $out/share/nix/hooks/pre-install.d
     (
       echo "#!$SHELL -e"
-      echo "export PATH='${nixbits.x-quiet}/bin:$out/bin'"
+      echo "export PATH='${nixbits.xtrace}/bin:$out/bin'"
       for path in "''${secretsPath[@]}"; do
         for age_file in "$path"/*.age; do
           [ -e "$age_file" ] || continue
           name="$(basename "$age_file" ".age")"
-          echo x-quiet -- secret "$name"
+          echo x -s -- secret "$name"
         done
       done
     ) >$out/share/nix/hooks/pre-install.d/secrets
