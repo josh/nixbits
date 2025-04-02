@@ -31,13 +31,16 @@ x-dry-run() {
   local dry_run=$1
   shift
   [ "$1" = "--" ] && shift
-  if [ "$dry_run" -eq 1 ] || [ "$dry_run" = "true" ]; then
+  case "$dry_run" in
+  1 | true)
     printf "[DRY RUN] " >&2
     x-fmt "$@" >&2
-  else
+    ;;
+  *)
     x-fmt "$@" >&2
     "$@"
-  fi
+    ;;
+  esac
 }
 
 # Always print command, but only log stdout/err on failure
