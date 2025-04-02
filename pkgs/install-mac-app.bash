@@ -1,8 +1,9 @@
 usage() {
-  echo "usage: install-mac-app [--dry-run] [--appdir /Applications] /nix/store/<drv>" >&2
+  echo "usage: install-mac-app [--dry-run] [--skip-update] [--appdir /Applications] /nix/store/<drv>" >&2
 }
 
 dry_run=false
+skip_update=false
 src=""
 app_dir="/Applications"
 
@@ -10,6 +11,10 @@ while [ $# -gt 0 ]; do
   case "$1" in
   --dry-run)
     dry_run=true
+    shift
+    ;;
+  --skip-update)
+    skip_update=true
     shift
     ;;
   --appdir)
@@ -76,6 +81,10 @@ fi
 app_name="$(basename "$src")"
 src="${src%/}"
 dst="${app_dir%/}"
+
+if [ "$skip_update" = true ] && [ -d "$dst/$app_name" ]; then
+  exit 0
+fi
 
 _has_changes() {
   grep --quiet 'Number of regular files transferred: [1-9]'
