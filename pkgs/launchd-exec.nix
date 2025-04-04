@@ -1,27 +1,22 @@
 {
-  system,
   lib,
-  writeShellScript,
-  coreutils,
-  llvmPackages_19,
+  stdenv,
 }:
-derivation {
-  system = "aarch64-darwin";
-  name = "launchd-exec";
-  builder = writeShellScript "launchd-exec-builder" ''
-    ${llvmPackages_19.clang}/bin/clang ${./launchd-exec.c} -o launchd-exec
-    ${coreutils}/bin/install -D launchd-exec $out/bin/launchd-exec
+stdenv.mkDerivation {
+  pname = "launchd-exec";
+  version = "0.1.0";
+
+  buildCommand = ''
+    substituteAll ${./launchd-exec.c} launchd-exec.c
+    mkdir -p $out/bin
+    clang launchd-exec.c -o $out/bin/launchd-exec
   '';
+
   allowedReferences = [ ];
-  allowedRequisites = [ ];
-}
-// {
+
   meta = {
-    name = "launchd-exec";
     description = "launchd exec permissions wrapper";
     mainProgram = "launchd-exec";
-    platforms = [ "aarch64-darwin" ];
-    sourceProvenance = lib.sourceTypes.fromSource;
-    available = system == "aarch64-darwin";
+    platforms = lib.platforms.darwin;
   };
 }

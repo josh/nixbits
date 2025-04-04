@@ -2,7 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 
-static const char *version = "0.1.0";
+static const char *version = "@version@";
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {
