@@ -18,6 +18,7 @@ let
     programs.shellcheck.enable = true;
     programs.shfmt.enable = true;
     programs.statix.enable = true;
+    programs.stylua.enable = true;
     programs.taplo.enable = true;
     # keep-sorted end
   };
