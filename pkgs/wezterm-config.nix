@@ -1,18 +1,9 @@
 {
   lib,
   stdenvNoCC,
-  fetchFromGitHub,
   theme ? null,
 }:
 let
-  # TODO: Extract to nurpkgs
-  tabline = fetchFromGitHub {
-    owner = "michaelbrusegard";
-    repo = "tabline.wez";
-    tag = "v1.6.0";
-    hash = "sha256-1/lA0wjkvpIRauuhDhaV3gzCFSql+PH39/Kpwzrbk54=";
-  };
-
   colorSchemes = {
     "catppuccin_frappe" = "Catppuccin Frappe";
     "catppuccin_latte" = "Catppuccin Latte";
@@ -45,7 +36,6 @@ stdenvNoCC.mkDerivation {
   env = {
     theme = if theme == null then "" else theme;
     colorScheme = if theme == null then "" else colorScheme;
-    inherit tabline;
   };
 
   buildCommand = ''

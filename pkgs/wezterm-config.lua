@@ -16,7 +16,8 @@ config.font_size = 16
 
 config.tab_bar_at_bottom = true
 
-local tabline = wezterm.plugin.require("file://@tabline@")
+-- TODO: Load from nix store
+local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")
 tabline.setup({
 	options = {
 		theme = config.color_scheme,
