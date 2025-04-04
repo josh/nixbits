@@ -18,6 +18,13 @@ let
     "catppuccin_latte" = "Catppuccin Latte";
     "catppuccin_macchiato" = "Catppuccin Macchiato";
     "catppuccin_mocha" = "Catppuccin Mocha";
+    "rosepine_dawn" = "rose-pine-dawn";
+    "rosepine_moon" = "rose-pine-moon";
+    "rosepine" = "rose-pine";
+    "tokyonight_day" = "Tokyo Night Day";
+    "tokyonight_moon" = "Tokyo Night Moon";
+    "tokyonight_night" = "Tokyo Night";
+    "tokyonight_storm" = "Tokyo Night Storm";
   };
   validThemes = builtins.attrNames colorSchemes;
 
