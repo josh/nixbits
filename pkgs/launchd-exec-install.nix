@@ -14,11 +14,11 @@ let
   tcc-system-policy = writers.writeJSON "launch-exec-tccpolicy.json" {
     "SystemPolicyAllFiles" = true;
   };
-  tcc-user-policy = writers.writeJSON "launch-exec-tccpolicy.json" {
-    "AppleEvents" = [
-      "com.apple.systemevents"
-    ];
-  };
+  # tcc-user-policy = writers.writeJSON "launch-exec-tccpolicy.json" {
+  #   "AppleEvents" = [
+  #     "com.apple.systemevents"
+  #   ];
+  # };
 in
 writeShellApplication {
   name = "launchd-exec-install";
@@ -33,7 +33,7 @@ writeShellApplication {
     INSTALL_PATH = "/usr/local/bin/launchd-exec";
     INSTALL_DIR = "/usr/local/bin";
     SYSTEM_POLICY_FILE = tcc-system-policy;
-    USER_POLICY_FILE = tcc-user-policy;
+    # USER_POLICY_FILE = tcc-user-policy;
     VERSION = nixbits.launchd-exec.version;
   };
   text = ''
@@ -54,10 +54,10 @@ writeShellApplication {
       exit 1
     fi
 
-    if ! x-silent tccpolicy check --client "$INSTALL_PATH" --policy "$USER_POLICY_FILE"; then
-      x launchctl-spawn -- "$INSTALL_PATH" ${tccpolicy}/bin/tccpolicy request --policy "$USER_POLICY_FILE"
-      exit 1
-    fi
+    # if ! x-silent tccpolicy check --client "$INSTALL_PATH" --policy "$USER_POLICY_FILE"; then
+    #   x launchctl-spawn -- "$INSTALL_PATH" ${tccpolicy}/bin/tccpolicy request --policy "$USER_POLICY_FILE"
+    #   exit 1
+    # fi
   '';
   meta = {
     description = "Install launchd-exec wrapper";
