@@ -25,7 +25,7 @@ jq --raw-output 'keys[]' <"$secrets_tmpfile" | while read -r name; do
   fi
   value=$(jq --raw-output ".$name" <"$secrets_tmpfile")
 
-  hash=$(echo -n "$value" | sha256sum | cut -d' ' -f1)
+  hash=$(echo "${value}${AGE_RECIPIENT}" | sha256sum | cut -d' ' -f1)
   if [ -f "$name.hash" ] && [ "$(cat "$name.hash")" = "$hash" ]; then
     echo "skip $name" >&2
     continue
