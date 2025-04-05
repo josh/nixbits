@@ -4,8 +4,10 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 secrets_tmpfile=$(mktemp -t gh-actions-secrets.XXXXXX)
-trap 'rm -f "$secrets_tmpfile"' EXIT
+recipients_tmpfile=$(mktemp -t age-recipients.XXXXXX)
+trap 'rm -f "$secrets_tmpfile" "$recipients_tmpfile"' EXIT
 chmod 600 "$secrets_tmpfile"
+chmod 600 "$recipients_tmpfile"
 
 if [ -n "${SECRETS_JSON:-}" ]; then
   echo "$SECRETS_JSON" >"$secrets_tmpfile"
@@ -14,8 +16,15 @@ else
   cat >"$secrets_tmpfile"
 fi
 
-if [ -z "${AGE_RECIPIENT:-}" ]; then
-  echo "error: AGE_RECIPIENT is not set" >&2
+if [ -n "${AGE_RECIPIENT:-}" ]; then
+  echo "$AGE_RECIPIENT" >>"$recipients_tmpfile"
+fi
+if [ -n "${AGE_RECIPIENTS:-}" ]; then
+  echo "$AGE_RECIPIENTS" >>"$recipients_tmpfile"
+fi
+
+if [ ! -s "$recipients_tmpfile" ]; then
+  echo "error: no recipients given" >&2
   exit 1
 fi
 
@@ -25,14 +34,14 @@ jq --raw-output 'keys[]' <"$secrets_tmpfile" | while read -r name; do
   fi
   value=$(jq --raw-output ".$name" <"$secrets_tmpfile")
 
-  hash=$(echo "${value}${AGE_RECIPIENT}" | sha256sum | cut -d' ' -f1)
+  hash=$(echo -n "$value" | cat - "$recipients_tmpfile" | sha256sum | cut -d' ' -f1)
   if [ -f "$name.hash" ] && [ "$(cat "$name.hash")" = "$hash" ]; then
     echo "skip $name" >&2
     continue
   fi
 
   echo "encrypt $name" >&2
-  echo -n "$value" | age --encrypt --armor --recipient "$AGE_RECIPIENT" --output "$name.age"
+  echo -n "$value" | age --encrypt --armor --recipients-file "$recipients_tmpfile" --output "$name.age"
   echo "$hash" >"$name.hash"
   git add "$name.age" "$name.hash"
 done

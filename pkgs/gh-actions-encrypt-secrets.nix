@@ -86,6 +86,34 @@ script.overrideAttrs (
               touch $out
             '';
 
+        add-recipients =
+          runCommand "test-add-multiple"
+            {
+              __structuredAttrs = true;
+              nativeBuildInputs = [
+                git
+                gh-actions-encrypt-secrets
+              ];
+              env.SECRETS_JSON = ''{ "FOO": "bar" }'';
+              env.AGE_RECIPIENTS = ''
+                age1yavtje8vqkaglu73js0njpda8a42w94hresma43h4u8y4p95pajqnrjuly
+                age15590tm622uhayjqnayvzupukzh4e2t2f6g2rnx230v655z0fwv9sqn5zud
+              '';
+            }
+            ''
+              mkdir repo
+              cd repo
+              git init --initial-branch secrets
+
+              export GITHUB_OUTPUT="$TMPDIR/result"
+              gh-actions-encrypt-secrets
+              [ "$(cat $GITHUB_OUTPUT)" == "committed=true" ]
+              [ -f FOO.age ]
+              [ -f FOO.hash ]
+
+              touch $out
+            '';
+
         skip =
           runCommand "test-skip"
             {
