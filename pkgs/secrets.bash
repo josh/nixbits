@@ -18,6 +18,4 @@ if [ -z "$input" ]; then
   exit 1
 fi
 
-exec age --decrypt \
-  --identity-command "$AGE_IDENTITY_COMMAND" \
-  "$input"
+age --decrypt --identity-command "$AGE_IDENTITY_COMMAND" "$input" | ensure-newline

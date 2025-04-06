@@ -8,7 +8,7 @@
   secretsPath ? [ ],
 }:
 let
-  inherit (nixbits) age;
+  inherit (nixbits) age ensure-newline;
   toExePath = path: if lib.attrsets.isDerivation path then lib.getExe path else path;
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
@@ -25,7 +25,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     mkdir -p $out/bin
     (
       echo "#!$SHELL -e"
-      echo "export PATH='${age}/bin'"
+      echo "export PATH='${age}/bin:${ensure-newline}/bin'"
       echo "SECRETS_PATH='$SECRETS_PATH'"
       echo "AGE_IDENTITY_COMMAND='$AGE_IDENTITY_COMMAND'"
       cat ${./secrets.bash}
