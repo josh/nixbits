@@ -11,7 +11,10 @@ let
     pname = "jujutsu";
     inherit (jujutsu) version;
 
-    paths = [ jujutsu ];
+    paths = [
+      jujutsu
+      nixbits.jujutsu-bookmark-set-main-origin
+    ];
     buildInputs = [ makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/jj \
