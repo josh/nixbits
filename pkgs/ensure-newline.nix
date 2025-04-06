@@ -9,7 +9,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildCommand = ''
     mkdir -p $out/bin
-    clang ${./ensure-newline.c} -o $out/bin/ensure-newline
+    $CC ${./ensure-newline.c} -o $out/bin/ensure-newline
   '';
 
   passthru.tests =

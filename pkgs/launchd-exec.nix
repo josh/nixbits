@@ -9,7 +9,7 @@ stdenv.mkDerivation {
   buildCommand = ''
     substituteAll ${./launchd-exec.c} launchd-exec.c
     mkdir -p $out/bin
-    clang launchd-exec.c -o $out/bin/launchd-exec
+    $CC launchd-exec.c -o $out/bin/launchd-exec
   '';
 
   allowedReferences = [ ];
