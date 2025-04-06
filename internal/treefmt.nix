@@ -9,6 +9,7 @@ let
     projectRootFile = "flake.nix";
     # keep-sorted start
     programs.actionlint.enable = true;
+    programs.clang-format.enable = true;
     programs.deadnix.enable = true;
     programs.keep-sorted.enable = true;
     programs.nixfmt.enable = true;
