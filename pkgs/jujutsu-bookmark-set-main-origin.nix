@@ -3,6 +3,7 @@
   writeShellApplication,
   git,
   jujutsu,
+  nixbits,
 }:
 writeShellApplication {
   name = "jj-bookmark-set-main-origin";
@@ -11,6 +12,7 @@ writeShellApplication {
       git
       jujutsu
     ];
+    JJ_CONFIG = nixbits.jujutsu-config;
   };
   text = builtins.readFile ./jujutsu-bookmark-set-main-origin.bash;
   meta = {
