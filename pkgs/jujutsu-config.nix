@@ -1,4 +1,8 @@
-{ lib, writers }:
+{
+  lib,
+  writers,
+  neovim,
+}:
 let
   config = writers.writeTOML "jj-config.toml" {
     user = {
@@ -7,6 +11,7 @@ let
     };
 
     ui = {
+      editor = lib.getExe neovim;
       paginate = "never";
     };
   };
