@@ -36,6 +36,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     else
       false;
 
+  outputs = [
+    "out"
+  ] ++ (lib.optional finalAttrs.preinstallCheck "hooks");
+
   buildCommand = ''
     if [ -n "$ageIdentity" ]; then
       if [[ "$ageIdentity" =~ ^$NIX_STORE/ ]]; then
@@ -67,6 +71,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         echo x -s -- "$out/bin/$name"
       ) >"$out/share/nix/hooks/pre-install.d/$name"
       chmod +x "$out/share/nix/hooks/pre-install.d/$name"
+      mkdir -p $hooks/share/nix/hooks/pre-install.d
+      cp "$out/share/nix/hooks/pre-install.d/$name" "$hooks/share/nix/hooks/pre-install.d/$name"
     fi
   '';
 
