@@ -2,6 +2,7 @@
   lib,
   writers,
   neovim,
+  nixbits,
 }:
 let
   config = writers.writeTOML "jj-config.toml" {
@@ -11,9 +12,16 @@ let
     };
 
     ui = {
-      default-command = ["log" "--reversed"];
+      default-command = [
+        "log"
+        "--reversed"
+      ];
       editor = lib.getExe neovim;
       paginate = "never";
+    };
+
+    git = {
+      executable-path = lib.getExe nixbits.git;
     };
   };
 in
