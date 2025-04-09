@@ -11,6 +11,7 @@ let
     };
 
     ui = {
+      default-command = ["log" "--reversed"];
       editor = lib.getExe neovim;
       paginate = "never";
     };
