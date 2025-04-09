@@ -3,7 +3,6 @@
   makeWrapper,
   runCommand,
   jujutsu,
-  watchman,
   nixbits,
   testers,
 }:
@@ -15,7 +14,6 @@ let
     paths = [
       jujutsu
       nixbits.jujutsu-bookmark-set-main-origin
-      watchman
     ];
     buildInputs = [ makeWrapper ];
     postBuild = ''

@@ -20,10 +20,6 @@ let
       paginate = "never";
     };
 
-    core = {
-      fsmonitor = "watchman";
-    };
-
     git = {
       executable-path = lib.getExe nixbits.git;
     };
