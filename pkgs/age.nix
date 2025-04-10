@@ -1,7 +1,6 @@
 {
   lib,
   stdenvNoCC,
-  runtimeShell,
   runCommand,
   makeWrapper,
   lndir,
@@ -38,30 +37,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     ++ (lib.optional tpmSupport age-plugin-tpm)
     ++ (lib.optional yubikeySupport age-plugin-yubikey);
 
-  ageWrapperScript = ''
-    #!${runtimeShell}
-    set -o errexit
-    PATH="${builtins.placeholder "out"}/bin:$PATH"
-    export PATH
-
-    args=()
-    while [ $# -gt 0 ]; do
-      case "$1" in
-      --identity-command)
-        exec 3< <($2)
-        args+=("--identity" "/dev/fd/3")
-        shift 2
-        ;;
-      *)
-        args+=("$1")
-        shift
-        ;;
-      esac
-    done
-
-    exec ${age}/bin/age "''${args[@]}"
-  '';
-
   buildCommand = ''
     mkdir -p $out
     for p in "''${paths[@]}"; do
@@ -69,7 +44,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     done
 
     rm $out/bin/age
-    echo "$ageWrapperScript" >$out/bin/age
+    substitute ${./age-wrapper.bash} $out/bin/age \
+      --replace-fail "@shebang@" "!$shell" \
+      --replace-fail "@out@" "$out" \
+      --replace-fail "@age@" "${age}"
     chmod +x $out/bin/age
   '';
 
