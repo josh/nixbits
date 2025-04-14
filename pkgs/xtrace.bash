@@ -66,3 +66,9 @@ x-silent() {
     return $code
   fi
 }
+
+# Print command to stderr and exec it, replacing current process
+x-exec() {
+  x-fmt "$@" >&2
+  exec "$@"
+}
