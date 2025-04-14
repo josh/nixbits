@@ -14,6 +14,8 @@ symlinkJoin {
     nixbits.jujutsu
     nixbits.lazygit
     nixpkgs.gh
+    nixpkgs.jj-fzf
+    nixpkgs.jjui
     # keep-sorted end
   ];
   meta.description = "Favorite VCS development tools";
