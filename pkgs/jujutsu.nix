@@ -15,6 +15,7 @@ let
       jujutsu
       nixbits.jujutsu-bookmark-set-main-origin
       nixbits.jujutsu-clone
+      nixbits.jujutsu-pull
     ];
     buildInputs = [ makeWrapper ];
     postBuild = ''
