@@ -2,6 +2,7 @@
   lib,
   writeShellApplication,
   gh,
+  gum,
   nixpkgs-review,
 }:
 writeShellApplication {
@@ -9,6 +10,7 @@ writeShellApplication {
   runtimeEnv = {
     PATH = lib.strings.makeBinPath [
       gh
+      gum
       nixpkgs-review
     ];
   };
