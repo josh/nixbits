@@ -12,10 +12,7 @@ let
     };
 
     ui = {
-      default-command = [
-        "log"
-        "--reversed"
-      ];
+      default-command = [ "log" ];
       editor = lib.getExe neovim;
       paginate = "never";
     };
