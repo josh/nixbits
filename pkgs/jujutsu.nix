@@ -13,9 +13,9 @@ let
 
     paths = [
       jujutsu
-      nixbits.jujutsu-bookmark-set-main-origin
       nixbits.jujutsu-clone
       nixbits.jujutsu-pull
+      nixbits.jujutsu-push
     ];
     buildInputs = [ makeWrapper ];
     postBuild = ''
