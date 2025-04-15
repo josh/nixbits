@@ -13,6 +13,7 @@ symlinkJoin {
     nixbits.git
     nixbits.jujutsu
     nixbits.lazygit
+    nixbits.lazyjj
     nixpkgs.gh
     nixpkgs.jj-fzf
     nixpkgs.jjui
