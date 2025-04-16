@@ -41,6 +41,7 @@
                 nurpkgs.overlays.default
                 self.overlays.default
               ];
+              config.allowUnfreePredicate = _pkg: true;
             }
           )
         );
