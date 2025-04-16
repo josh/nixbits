@@ -8,11 +8,13 @@ in
   stdenvNoCC,
   makeWrapper,
   runitor,
+  coreutils,
   healthchecksApiUrl ? null,
   healthchecksPingKey ? null,
   healthchecksApiRetries ? null,
   healthchecksApiTimeout ? null,
   checkProgram ? null,
+  checkProgramTimeout ? 0,
   checkName ? checkSlug,
   checkSlug ? null,
   checkTimeout ? null,
@@ -81,7 +83,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       "CHECK_SLUG"
       healthcheckConfig.slug
     ])
-    ++ (lib.lists.optionals (isPresent checkProgram) [
+    ++ (lib.lists.optionals ((isPresent checkProgram) && checkProgramTimeout != 0) [
+      "--append-flags"
+      "-- ${coreutils}/bin/timeout ${builtins.toString checkProgramTimeout}s ${lib.getExe checkProgram}"
+    ])
+    ++ (lib.lists.optionals ((isPresent checkProgram) && checkProgramTimeout == 0) [
       "--append-flags"
       "-- ${lib.getExe checkProgram}"
     ]);
