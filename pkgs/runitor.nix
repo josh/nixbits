@@ -11,6 +11,7 @@ in
   coreutils,
   healthchecksApiUrl ? null,
   healthchecksPingKey ? null,
+  healthchecksPingKeyCommand ? null,
   healthchecksApiRetries ? null,
   healthchecksApiTimeout ? null,
   checkProgram ? null,
@@ -23,6 +24,8 @@ in
   checkGrace ? ONE_HOUR,
 }:
 let
+  toExePath = path: if lib.attrsets.isDerivation path then lib.getExe path else path;
+
   checkSlug' =
     if (isPresent checkSlug) then
       checkSlug
@@ -77,6 +80,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       "--set"
       "HC_PING_KEY"
       healthchecksPingKey
+    ])
+    ++ (lib.lists.optionals (isPresent healthchecksPingKeyCommand) [
+      "--run"
+      "export HC_PING_KEY=$(${toExePath healthchecksPingKeyCommand})"
     ])
     ++ (lib.lists.optionals (isPresent healthcheckConfig.slug) [
       "--set"
