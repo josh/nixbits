@@ -5,7 +5,7 @@
   yq,
   nur,
   nixbits,
-  interactiveShell ? nixbits.fish,
+  interactiveShell ? nixbits.zsh,
   theme ? null,
   enableTmux ? true,
 }:

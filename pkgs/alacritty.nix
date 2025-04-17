@@ -6,7 +6,7 @@
   lndir,
   nixbits,
   theme ? "tokyonight_moon",
-  interactiveShell ? nixbits.fish,
+  interactiveShell ? nixbits.zsh,
   enableTmux ? true,
 }:
 let
