@@ -139,4 +139,9 @@ in
     hash = "sha256-UumV34CAR80Vy99ugn9zF3HsVUl8mc5cSMqqPaGcC+E=";
     manpage = "wait4path.1";
   };
+  xcrun = mkDarwinImpureDrv {
+    command = "/usr/bin/xcrun";
+    hash = "sha256-jBG5VvrqmKSt/3qCGD/8W2fsF1OtCltfOZzsBUCipeQ=";
+    manpage = "xcrun.1";
+  };
 }
