@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   makeWrapper,
+  mas,
   nixbits,
 }:
 stdenvNoCC.mkDerivation {
@@ -11,7 +12,7 @@ stdenvNoCC.mkDerivation {
 
   nativeBuildInputs = [ makeWrapper ];
 
-  masActivateBin = lib.getExe nixbits.mas-activate;
+  masActivateBin = lib.getExe (nixbits.mas-activate.override { inherit mas; });
 
   buildCommand = ''
     mkdir -p $out/share/nix/hooks/pre-install.d $out/share/nix/hooks/post-install.d
