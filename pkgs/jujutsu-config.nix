@@ -1,7 +1,10 @@
 {
   lib,
   writers,
+  kdiff3,
+  meld,
   neovim,
+  vim,
   nixbits,
 }:
 let
@@ -15,10 +18,24 @@ let
       default-command = [ "log" ];
       editor = lib.getExe neovim;
       paginate = "never";
+      # diff-editor = ":builtin";
+      diff-editor = "meld";
     };
 
     git = {
       executable-path = lib.getExe nixbits.git;
+    };
+
+    merge-tools.kdiff3 = {
+      program = lib.getExe kdiff3;
+    };
+
+    merge-tools.meld = {
+      program = lib.getExe meld;
+    };
+
+    merge-tools.vimdiff = {
+      program = lib.getExe vim;
     };
   };
 in
