@@ -19,7 +19,7 @@ let
       editor = lib.getExe neovim;
       paginate = "never";
       # diff-editor = ":builtin";
-      diff-editor = "meld";
+      diff-editor = "kdiff3";
     };
 
     git = {
