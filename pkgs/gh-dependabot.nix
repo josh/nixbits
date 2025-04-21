@@ -3,6 +3,7 @@
   stdenv,
   writeShellApplication,
   coreutils,
+  findutils,
   gh,
   jq,
   nixbits,
@@ -13,6 +14,7 @@ writeShellApplication {
     PATH = lib.strings.makeBinPath (
       [
         coreutils
+        findutils
         gh
         jq
       ]
