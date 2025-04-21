@@ -2,6 +2,7 @@
   pkgs,
   symlinkJoin,
   claude-code,
+  codex,
   nixbits,
   llm,
 }:
@@ -13,6 +14,7 @@ symlinkJoin {
   paths = [
     # keep-sorted start
     claude-code
+    codex
     llm'
     # keep-sorted end
   ];
