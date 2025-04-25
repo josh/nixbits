@@ -1,7 +1,6 @@
 {
   lib,
   writers,
-  kdiff3,
   meld,
   neovim,
   vim,
@@ -18,17 +17,17 @@ let
       default-command = [ "log" ];
       editor = lib.getExe neovim;
       paginate = "never";
-      # diff-editor = ":builtin";
-      diff-editor = "kdiff3";
+      diff-editor = ":builtin";
     };
 
     git = {
       executable-path = lib.getExe nixbits.git;
     };
 
-    merge-tools.kdiff3 = {
-      program = lib.getExe kdiff3;
-    };
+    # No longer supported on darwin
+    # merge-tools.kdiff3 = {
+    #   program = lib.getExe kdiff3;
+    # };
 
     merge-tools.meld = {
       program = lib.getExe meld;
