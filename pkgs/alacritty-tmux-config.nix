@@ -3,10 +3,11 @@
   stdenv,
   writers,
   nixbits,
+  interactiveShell ? "${nixbits.zsh}/bin/zsh",
   theme ? null,
 }:
 let
-  tmux = nixbits.tmux.override { inherit theme; };
+  tmux = nixbits.tmux.override { inherit interactiveShell theme; };
   tmux-attach = nixbits.tmux-attach.override { inherit tmux; };
 
   tmux-command = command: tmux-command-with command [ ];

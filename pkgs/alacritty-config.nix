@@ -5,12 +5,12 @@
   yq,
   nur,
   nixbits,
-  interactiveShell ? nixbits.zsh,
+  interactiveShell ? "${nixbits.zsh}/bin/zsh",
   theme ? null,
   enableTmux ? true,
 }:
 let
-  tmuxConfig = nixbits.alacritty-tmux-config.override { inherit theme; };
+  tmuxConfig = nixbits.alacritty-tmux-config.override { inherit interactiveShell theme; };
 
   themeImports = {
     "catppuccin_frappe" = "${nur.repos.josh.alacritty-catppuccin}/catppuccin-frappe.toml";
@@ -34,7 +34,7 @@ let
     assert (lib.asserts.assertOneOf "theme" theme validThemes);
     themeImports.${theme};
 
-  shell = lib.getExe interactiveShell;
+  shell = interactiveShell;
 
   configs =
     [ (writers.writeTOML "alacritty.toml" config) ]

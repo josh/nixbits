@@ -2,12 +2,14 @@
   stdenvNoCC,
   makeWrapper,
   lndir,
+  bash,
   tmux,
   nixbits,
+  interactiveShell ? "${bash}/bin/bash",
   theme ? null,
 }:
 let
-  tmuxConf = nixbits.tmux-conf.override { inherit theme; };
+  tmuxConf = nixbits.tmux-conf.override { inherit interactiveShell theme; };
 in
 stdenvNoCC.mkDerivation {
   pname = if theme != null then "${tmux.pname}-${theme}" else tmux.pname;

@@ -1,8 +1,10 @@
 {
   lib,
   stdenvNoCC,
+  bash,
   tmuxPlugins,
   nixbits,
+  interactiveShell ? "${bash}/bin/bash",
   theme ? null,
 }:
 let
@@ -95,6 +97,7 @@ stdenvNoCC.mkDerivation {
   env = {
     inherit (tmuxPlugins) sensible yank;
     inherit sourceTheme;
+    inherit interactiveShell;
   };
 
   buildCommand = ''
