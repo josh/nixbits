@@ -2,8 +2,8 @@
   lib,
   stdenvNoCC,
   runCommand,
-  makeWrapper,
   lndir,
+  coreutils,
   age,
   age-plugin-se ? nur.repos.josh.age-plugin-se,
   age-plugin-tpm,
@@ -27,7 +27,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
   nativeBuildInputs = [
-    makeWrapper
     lndir
   ];
 
@@ -47,7 +46,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     substitute ${./age-wrapper.bash} $out/bin/age \
       --replace-fail "@shebang@" "!$shell" \
       --replace-fail "@out@" "$out" \
-      --replace-fail "@age@" "${age}"
+      --replace-fail "@age@" "${age}" \
+      --replace-fail "@coreutils@" "${coreutils}"
     chmod +x $out/bin/age
   '';
 
@@ -75,6 +75,36 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         fi
         touch $out
       '';
+
+      identity-command-failure =
+        runCommand "test-identity-command-failure" { nativeBuildInputs = [ age ]; }
+          ''
+            echo "Hello World" >data.txt
+            age-keygen >key.txt
+            age-keygen -y key.txt >recipient.txt
+            age --encrypt --recipients-file recipient.txt data.txt >data.age
+            if age --decrypt --identity-command '/bin/missing-command' data.age; then
+              echo "expected failure"
+              exit 1
+            else
+              touch $out
+            fi
+          '';
+
+      identity-command-timeout =
+        runCommand "test-identity-command-timeout" { nativeBuildInputs = [ age ]; }
+          ''
+            echo "Hello World" >data.txt
+            age-keygen >key.txt
+            age-keygen -y key.txt >recipient.txt
+            age --encrypt --recipients-file recipient.txt data.txt >data.age
+            if age --decrypt --timeout 10 --identity-command '${coreutils}/bin/sleep 30' data.age; then
+              echo "expected failure"
+              exit 1
+            else
+              touch $out
+            fi
+          '';
     }
     // (lib.attrsets.optionalAttrs tpmSupport {
       tpm-encrypt = runCommand "test-tpm-encrypt" { nativeBuildInputs = [ age ]; } ''

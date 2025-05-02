@@ -27,6 +27,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     else
       finalAttrs.ageIdentityCommand;
   ageInput = "";
+  ageTimeout = 0;
   preinstallCheck =
     if
       (finalAttrs.ageIdentity != "" || finalAttrs.ageIdentityCommandBin != "")
@@ -57,6 +58,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         exit 1
       fi
       appendToVar makeWrapperArgs "--append-flags" "$ageInput"
+    fi
+
+    if [ "$ageTimeout" -gt 0 ]; then
+      appendToVar makeWrapperArgs "--add-flags" "--timeout $ageTimeout"
     fi
 
     mkdir -p $out/bin
