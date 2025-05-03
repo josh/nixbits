@@ -36,6 +36,22 @@ let
     merge-tools.vimdiff = {
       program = lib.getExe vim;
     };
+
+    revset-aliases = {
+      "closest_bookmark(to)" = "heads(::to & bookmarks())";
+      "closest_pushable(to)" = "heads(::to & ~description(exact:\"\") & (~empty() | merges()))";
+    };
+
+    aliases = {
+      tug = [
+        "bookmark"
+        "move"
+        "--from"
+        "closest_bookmark(@)"
+        "--to"
+        "closest_pushable(@)"
+      ];
+    };
   };
 in
 config.overrideAttrs {
