@@ -209,6 +209,8 @@ def _hc_create_check(
     dry_run: bool,
 ) -> bool:
     slug = check["slug"]
+    if not check["name"]:
+        check["name"] = check["slug"]
     url = urljoin(api_url, "api/v3/checks/")
     headers = {"X-Api-Key": api_key}
     if dry_run:
