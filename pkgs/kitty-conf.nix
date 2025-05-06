@@ -13,12 +13,11 @@ stdenvNoCC.mkDerivation {
 
   __structuredAttrs = true;
 
-  env = {
-    theme = "rosepine";
-  };
+  theme = "rosepine";
 
   buildCommand = ''
-    substituteAll ${./kitty.conf} kitty.conf
+    substitute ${./kitty.conf} kitty.conf \
+      --replace-fail '@theme@' "$theme"
 
     (
       echo "# BEGIN_KITTY_THEME"

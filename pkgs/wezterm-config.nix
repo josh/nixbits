@@ -33,13 +33,13 @@ stdenvNoCC.mkDerivation {
 
   __structuredAttrs = true;
 
-  env = {
-    theme = if theme == null then "" else theme;
-    colorScheme = if theme == null then "" else colorScheme;
-  };
+  theme = if theme == null then "" else theme;
+  colorScheme = if theme == null then "" else colorScheme;
 
   buildCommand = ''
-    substituteAll "${./wezterm-config.lua}" "$out"
+    substitute "${./wezterm-config.lua}" "$out" \
+      --replace-fail '@theme@' "$theme" \
+      --replace-fail '@colorScheme@' "$colorScheme"
   '';
 
   meta = {

@@ -19,18 +19,17 @@ stdenvNoCC.mkDerivation {
 
   __structuredAttrs = true;
 
-  env = {
-    theme =
-      if zellijTheme == null then
-        "default"
-      else
-        assert (lib.asserts.assertOneOf "zellijTheme" zellijTheme validThemes);
-        zellijTheme;
-  };
+  theme =
+    if zellijTheme == null then
+      "default"
+    else
+      assert (lib.asserts.assertOneOf "zellijTheme" zellijTheme validThemes);
+      zellijTheme;
 
   buildCommand = ''
     mkdir $out
-    substituteAll ${./zellij.kdl} $out/config.kdl
+    substitute ${./zellij.kdl} $out/config.kdl \
+      --replace-fail '@theme@' "$theme"
   '';
 
   meta = {

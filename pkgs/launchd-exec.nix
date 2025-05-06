@@ -7,7 +7,8 @@ stdenv.mkDerivation {
   version = "0.1.0";
 
   buildCommand = ''
-    substituteAll ${./launchd-exec.c} launchd-exec.c
+    substitute ${./launchd-exec.c} launchd-exec.c \
+      --replace-fail '@version@' "$version"
     mkdir -p $out/bin
     $CC launchd-exec.c -o $out/bin/launchd-exec
   '';

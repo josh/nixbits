@@ -94,14 +94,16 @@ stdenvNoCC.mkDerivation {
 
   __structuredAttrs = true;
 
-  env = {
-    inherit (tmuxPlugins) sensible yank;
-    inherit sourceTheme;
-    inherit interactiveShell;
-  };
+  inherit (tmuxPlugins) sensible yank;
+  inherit sourceTheme;
+  inherit interactiveShell;
 
   buildCommand = ''
-    substituteAll ${./tmux.conf} $out
+    substitute ${./tmux.conf} $out \
+      --replace-fail '@sensible@' "$sensible" \
+      --replace-fail '@yank@' "$yank" \
+      --replace-fail '@sourceTheme@' "$sourceTheme" \
+      --replace-fail '@interactiveShell@' "$interactiveShell"
   '';
 
   meta = {
