@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   writers,
+  catppuccin,
   yq,
   nur,
   nixbits,
@@ -12,11 +13,16 @@
 let
   tmuxConfig = nixbits.alacritty-tmux-config.override { inherit interactiveShell theme; };
 
+  catppuccin-frappe = catppuccin.override { variant = "frappe"; };
+  catppuccin-latte = catppuccin.override { variant = "latte"; };
+  catppuccin-macchiato = catppuccin.override { variant = "macchiato"; };
+  catppuccin-mocha = catppuccin.override { variant = "mocha"; };
+
   themeImports = {
-    "catppuccin_frappe" = "${nur.repos.josh.alacritty-catppuccin}/catppuccin-frappe.toml";
-    "catppuccin_latte" = "${nur.repos.josh.alacritty-catppuccin}/catppuccin-latte.toml";
-    "catppuccin_macchiato" = "${nur.repos.josh.alacritty-catppuccin}/catppuccin-macchiato.toml";
-    "catppuccin_mocha" = "${nur.repos.josh.alacritty-catppuccin}/catppuccin-mocha.toml";
+    "catppuccin_frappe" = "${catppuccin-frappe}/alacritty/catppuccin-frappe.toml";
+    "catppuccin_latte" = "${catppuccin-latte}/alacritty/catppuccin-latte.toml";
+    "catppuccin_macchiato" = "${catppuccin-macchiato}/alacritty/catppuccin-macchiato.toml";
+    "catppuccin_mocha" = "${catppuccin-mocha}/alacritty/catppuccin-mocha.toml";
     "rosepine_dawn" = "${nur.repos.josh.alacritty-rose-pine}/rose-pine-dawn.toml";
     "rosepine_moon" = "${nur.repos.josh.alacritty-rose-pine}/rose-pine-moon.toml";
     "rosepine" = "${nur.repos.josh.alacritty-rose-pine}/rose-pine.toml";
