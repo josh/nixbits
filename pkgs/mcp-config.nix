@@ -7,12 +7,10 @@
   extraMCPServers ? { },
 }:
 let
-  inherit (nur.repos.josh) mcp-server-fetch;
   inherit (nixbits) github-mcp-server;
 
   config = {
     mcpServers = {
-      fetch.command = lib.getExe mcp-server-fetch;
       github.command = lib.getExe github-mcp-server;
     } // extraMCPServers;
   };
