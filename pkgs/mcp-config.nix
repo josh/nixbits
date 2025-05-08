@@ -2,7 +2,6 @@
   lib,
   stdenvNoCC,
   jq,
-  nur,
   nixbits,
   extraMCPServers ? { },
 }:
