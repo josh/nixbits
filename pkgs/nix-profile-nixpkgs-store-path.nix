@@ -1,5 +1,4 @@
 {
-  lib,
   writeShellApplication,
   nix,
   jq,
@@ -7,12 +6,11 @@
 }:
 writeShellApplication {
   name = "nix-profile-nixpkgs-store-path";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      nix
-      jq
-      nixbits.nix-profile-nixpkgs-uri
-    ];
-  };
+  runtimeInputs = [
+    nix
+    jq
+    nixbits.nix-profile-nixpkgs-uri
+  ];
+  inheritPath = false;
   text = builtins.readFile ./nix-profile-nixpkgs-store-path.bash;
 }

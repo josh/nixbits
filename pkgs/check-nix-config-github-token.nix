@@ -1,5 +1,4 @@
 {
-  lib,
   writeShellApplication,
   gh,
   gnugrep,
@@ -7,14 +6,12 @@
 }:
 writeShellApplication {
   name = "check-nix-config-github-token";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      gh
-      gnugrep
-      nix
-    ];
-  };
+  runtimeInputs = [
+    gh
+    gnugrep
+    nix
+  ];
+  inheritPath = false;
   text = builtins.readFile ./check-nix-config-github-token.bash;
-
   meta.description = "Check nix config for github.com access token";
 }

@@ -5,12 +5,11 @@
 }:
 writeShellApplication {
   name = "reset-launchpad";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      nixbits.darwin.defaults
-      nixbits.darwin.killall
-    ];
-  };
+  runtimeInputs = [
+    nixbits.darwin.defaults
+    nixbits.darwin.killall
+  ];
+  inheritPath = false;
   text = ''
     defaults write com.apple.dock ResetLaunchPad -bool true
     killall Dock

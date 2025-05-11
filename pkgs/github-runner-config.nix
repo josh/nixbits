@@ -25,14 +25,15 @@ let
 in
 writeShellApplication {
   name = "github-runner-config";
+  runtimeInputs = [
+    coreutils
+    gh
+    gnugrep
+    nixbits.github-runner-config-remove
+  ];
+  inheritPath = false;
   runtimeEnv =
     {
-      PATH = lib.strings.makeBinPath [
-        coreutils
-        gh
-        gnugrep
-        nixbits.github-runner-config-remove
-      ];
       GITHUB_RUNNER_PATH = github-runner;
     }
     // (lib.attrsets.optionalAttrs (github-runner-root != null) {

@@ -7,11 +7,12 @@
 }:
 writeShellApplication {
   name = "jj-fetch";
+  runtimeInputs = [
+    git
+    jujutsu
+  ];
+  inheritPath = false;
   runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      git
-      jujutsu
-    ];
     JJ_CONFIG = nixbits.jujutsu-config;
     XTRACE_PATH = nixbits.xtrace;
   };

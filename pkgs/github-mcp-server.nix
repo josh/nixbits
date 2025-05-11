@@ -6,12 +6,11 @@
 }:
 writeShellApplication {
   name = "github-mcp-server";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      gh
-      github-mcp-server
-    ];
-  };
+  runtimeInputs = [
+    gh
+    github-mcp-server
+  ];
+  inheritPath = false;
   text = ''
     GITHUB_PERSONAL_ACCESS_TOKEN=$(gh auth token)
     export GITHUB_PERSONAL_ACCESS_TOKEN

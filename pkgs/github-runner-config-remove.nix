@@ -10,13 +10,14 @@
 }:
 writeShellApplication {
   name = "github-runner-config-remove";
+  runtimeInputs = [
+    coreutils
+    gh
+    gnugrep
+  ];
+  inheritPath = false;
   runtimeEnv =
     {
-      PATH = lib.strings.makeBinPath [
-        coreutils
-        gh
-        gnugrep
-      ];
       GITHUB_RUNNER_PATH = github-runner;
     }
     // (lib.attrsets.optionalAttrs (github-runner-root != null) {

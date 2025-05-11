@@ -1,15 +1,11 @@
 {
-  lib,
   writeShellApplication,
   findutils,
 }:
 writeShellApplication {
   name = "deadsymlinks";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      findutils
-    ];
-  };
+  runtimeInputs = [ findutils ];
+  inheritPath = false;
   text = ''
     find . -xtype l
   '';

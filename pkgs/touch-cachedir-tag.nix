@@ -1,14 +1,12 @@
 {
-  lib,
   writeShellApplication,
   coreutils,
 }:
 writeShellApplication {
   name = "touch-cachedir-tag";
 
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [ coreutils ];
-  };
+  runtimeInputs = [ coreutils ];
+  inheritPath = false;
 
   text = ''
     cat ${./cachedir-tag.txt} >CACHEDIR.TAG

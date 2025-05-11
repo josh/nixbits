@@ -8,9 +8,8 @@
 let
   toml2json = writeShellApplication {
     name = "toml2json";
-    runtimeEnv = {
-      PATH = lib.strings.makeBinPath [ yq-go ];
-    };
+    runtimeInputs = [ yq-go ];
+    inheritPath = false;
     text = ''
       exec yq --input-format=toml --output-format=json
     '';

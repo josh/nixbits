@@ -1,5 +1,4 @@
 {
-  lib,
   writeShellApplication,
   gh,
   gum,
@@ -7,13 +6,12 @@
 }:
 writeShellApplication {
   name = "nixpkgs-review-pr";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      gh
-      gum
-      nixpkgs-review
-    ];
-  };
+  runtimeInputs = [
+    gh
+    gum
+    nixpkgs-review
+  ];
+  inheritPath = false;
   text = builtins.readFile ./nixpkgs-review-pr.bash;
   meta.description = "Review nixpkgs PRs";
 }

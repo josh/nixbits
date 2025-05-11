@@ -5,9 +5,8 @@
 }:
 writeShellApplication {
   name = "bbedit-scratchpad";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [ nixbits.darwin.osascript ];
-  };
+  runtimeInputs = [ nixbits.darwin.osascript ];
+  inheritPath = false;
   text = ''
     osascript <${./bbedit-scratchpad.applescript}
   '';

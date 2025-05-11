@@ -10,14 +10,13 @@
 let
   script = writeShellApplication {
     name = "internal-ip";
-    runtimeEnv = {
-      PATH = lib.strings.makeBinPath [
-        coreutils
-        gawk
-        gnugrep
-        nettools
-      ];
-    };
+    runtimeInputs = [
+      coreutils
+      gawk
+      gnugrep
+      nettools
+    ];
+    inheritPath = false;
     text = builtins.readFile ./internal-ip.bash;
   };
 in

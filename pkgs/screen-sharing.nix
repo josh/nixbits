@@ -9,11 +9,12 @@
 writeShellApplication {
   name =
     if screenSharingHostname != "" then "screen-sharing-${screenSharingHostname}" else "screen-sharing";
+  runtimeInputs = [
+    nixbits.darwin.open
+    nixbits.tailscale-lan-ip
+  ];
+  inheritPath = false;
   runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      nixbits.darwin.open
-      nixbits.tailscale-lan-ip
-    ];
     SCREEN_SHARING_USER = screenSharingUser;
     SCREEN_SHARING_PASSWORD = "";
     SCREEN_SHARING_PASSWORD_COMMAND =

@@ -7,11 +7,12 @@
 }:
 writeShellApplication {
   name = "jj-push";
+  runtimeInputs = [
+    git
+    jujutsu
+  ];
+  inheritPath = false;
   runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      git
-      jujutsu
-    ];
     JJ_CONFIG = nixbits.jujutsu-config;
   };
   text = builtins.readFile ./jujutsu-push.bash;

@@ -5,11 +5,8 @@
 }:
 writeShellApplication {
   name = "tailscale-lan-ip";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      tailscale
-    ];
-  };
+  runtimeInputs = [ tailscale ];
+  inheritPath = false;
   text = builtins.readFile ./tailscale-lan-ip.bash;
   meta = {
     description = "Detect Tailscale node LAN IP";

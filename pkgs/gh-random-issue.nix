@@ -8,15 +8,11 @@
 }:
 writeShellApplication {
   name = "gh-random-issue";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath (
-      [
-        gh
-        xdg-utils
-      ]
-      ++ (lib.lists.optionals stdenv.hostPlatform.isDarwin [ nixbits.darwin.open ])
-    );
-  };
+  runtimeInputs = [
+    gh
+    xdg-utils
+  ] ++ (lib.lists.optionals stdenv.hostPlatform.isDarwin [ nixbits.darwin.open ]);
+  inheritPath = false;
   text = builtins.readFile ./gh-random-issue.bash;
 
   meta = {
