@@ -10,13 +10,12 @@ in
 writeShellApplication {
   name = "age-keychain-gen";
 
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      coreutils
-      age
-      nixbits.darwin.security
-    ];
-  };
+  runtimeInputs = [
+    coreutils
+    age
+    nixbits.darwin.security
+  ];
+  inheritPath = false;
   text = builtins.readFile ./age-keychain-gen-darwin.bash;
 
   meta = {

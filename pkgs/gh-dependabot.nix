@@ -10,17 +10,13 @@
 }:
 writeShellApplication {
   name = "gh-dependabot";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath (
-      [
-        coreutils
-        findutils
-        gh
-        jq
-      ]
-      ++ (lib.lists.optional stdenv.hostPlatform.isDarwin nixbits.darwin.open)
-    );
-  };
+  runtimeInputs = [
+    coreutils
+    findutils
+    gh
+    jq
+  ] ++ (lib.lists.optional stdenv.hostPlatform.isDarwin nixbits.darwin.open);
+  inheritPath = false;
   text = builtins.readFile ./gh-dependabot.bash;
   meta = {
     description = "Open GitHub Insights -> Dependency graph -> Dependabot page";

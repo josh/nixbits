@@ -6,10 +6,9 @@
 }:
 writeShellApplication {
   name = "fix-ssh-permissions";
+  runtimeInputs = [ coreutils ];
+  inheritPath = false;
   runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      coreutils
-    ];
     XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./fix-ssh-permissions.bash;

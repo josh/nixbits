@@ -8,9 +8,8 @@
 let
   csv2json = writeShellApplication {
     name = "csv2json";
-    runtimeEnv = {
-      PATH = lib.strings.makeBinPath [ yq-go ];
-    };
+    runtimeInputs = [ yq-go ];
+    inheritPath = false;
     text = ''
       exec yq --input-format=csv --output-format=json
     '';

@@ -7,13 +7,12 @@
 }:
 writeShellApplication {
   name = "nix-flake-diff-packages";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      coreutils
-      jd-diff-patch
-      nix
-    ];
-  };
+  runtimeInputs = [
+    coreutils
+    jd-diff-patch
+    nix
+  ];
+  inheritPath = false;
   text = builtins.readFile ./nix-flake-diff-packages.bash;
   meta = {
     description = "Compare the package outputs of 2 nix flakes";

@@ -9,13 +9,14 @@
 }:
 writeShellApplication {
   name = "sudo-enable-pam-tid";
+  runtimeInputs = [
+    coreutils
+    darwin.sudo
+    diffutils
+    which
+  ];
+  inheritPath = false;
   runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      coreutils
-      darwin.sudo
-      diffutils
-      which
-    ];
     SUDO_LOCAL_TEMPLATE = "${./sudo_local}";
     XTRACE_PATH = nixbits.xtrace;
   };

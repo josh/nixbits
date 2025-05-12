@@ -1,5 +1,4 @@
 {
-  lib,
   writeShellApplication,
   runCommand,
   git,
@@ -8,12 +7,11 @@
 let
   git-branch-prune = writeShellApplication {
     name = "git-branch-prune";
-    runtimeEnv = {
-      PATH = lib.strings.makeBinPath [
-        git
-        gnugrep
-      ];
-    };
+    runtimeInputs = [
+      git
+      gnugrep
+    ];
+    inheritPath = false;
     text = builtins.readFile ./git-branch-prune.bash;
 
     meta.description = "Clean up git branches that have been merged into main";

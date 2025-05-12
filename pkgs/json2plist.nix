@@ -8,12 +8,11 @@
 let
   json2plist = writeShellApplication {
     name = "json2plist";
-    runtimeEnv = {
-      PATH = lib.strings.makeBinPath [
-        coreutils
-        xcbuild
-      ];
-    };
+    runtimeInputs = [
+      coreutils
+      xcbuild
+    ];
+    inheritPath = false;
     text = ''
       exec plutil -convert xml1 -o - -- -
     '';

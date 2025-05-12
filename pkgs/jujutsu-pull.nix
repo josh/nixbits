@@ -8,12 +8,13 @@
 }:
 writeShellApplication {
   name = "jj-pull";
+  runtimeInputs = [
+    coreutils
+    git
+    jujutsu
+  ];
+  inheritPath = false;
   runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      coreutils
-      git
-      jujutsu
-    ];
     JJ_CONFIG = nixbits.jujutsu-config;
     XTRACE_PATH = nixbits.xtrace;
   };

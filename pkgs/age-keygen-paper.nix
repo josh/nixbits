@@ -8,13 +8,14 @@
 }:
 writeShellApplication {
   name = "age-keygen-paper";
+  runtimeInputs = [
+    age
+    coreutils
+    qrencode
+    texliveMedium
+  ];
+  inheritPath = false;
   runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      age
-      coreutils
-      qrencode
-      texliveMedium
-    ];
     TEX_TEMPLATE = "${./age-keygen-paper.tex}";
   };
   text = builtins.readFile ./age-keygen-paper.bash;

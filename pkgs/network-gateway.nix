@@ -10,13 +10,12 @@
 let
   darwin-script = writeShellApplication {
     name = "network-gateway";
-    runtimeEnv = {
-      PATH = lib.strings.makeBinPath [
-        gawk
-        gnugrep
-        unixtools.route
-      ];
-    };
+    runtimeInputs = [
+      gawk
+      gnugrep
+      unixtools.route
+    ];
+    inheritPath = false;
     text = ''
       route -n get default | grep gateway | awk '{print $2}'
     '';
@@ -28,13 +27,12 @@ let
 
   linux-script = writeShellApplication {
     name = "network-gateway";
-    runtimeEnv = {
-      PATH = lib.strings.makeBinPath [
-        gawk
-        gnugrep
-        iproute2
-      ];
-    };
+    runtimeInputs = [
+      gawk
+      gnugrep
+      iproute2
+    ];
+    inheritPath = false;
     text = ''
       ip route | grep default | awk '{print $3}'
     '';

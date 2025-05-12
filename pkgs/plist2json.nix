@@ -9,12 +9,11 @@
 let
   plist2json = writeShellApplication {
     name = "plist2json";
-    runtimeEnv = {
-      PATH = lib.strings.makeBinPath [
-        coreutils
-        xcbuild
-      ];
-    };
+    runtimeInputs = [
+      coreutils
+      xcbuild
+    ];
+    inheritPath = false;
     text = ''
       exec plutil -convert json -o - -- -
     '';

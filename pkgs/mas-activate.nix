@@ -7,13 +7,12 @@
 }:
 writeShellApplication {
   name = "mas-activate";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      coreutils
-      gawk
-      mas
-    ];
-  };
+  runtimeInputs = [
+    coreutils
+    gawk
+    mas
+  ];
+  inheritPath = false;
   text = builtins.readFile ./mas-activate.bash;
 
   meta = {

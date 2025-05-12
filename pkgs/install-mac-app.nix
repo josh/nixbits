@@ -10,13 +10,12 @@
 let
   script = writeShellApplication {
     name = "install-mac-app";
-    runtimeEnv = {
-      PATH = lib.strings.makeBinPath [
-        coreutils
-        gnugrep
-        rsync
-      ];
-    };
+    runtimeInputs = [
+      coreutils
+      gnugrep
+      rsync
+    ];
+    inheritPath = false;
     text = builtins.readFile ./install-mac-app.bash;
     meta = {
       description = "Copy macOS App into /Applications";

@@ -9,13 +9,12 @@
 let
   script = writeShellApplication {
     name = "external-ip";
-    runtimeEnv = {
-      PATH = lib.strings.makeBinPath [
-        curl
-        coreutils
-        gnugrep
-      ];
-    };
+    runtimeInputs = [
+      curl
+      coreutils
+      gnugrep
+    ];
+    inheritPath = false;
     text = ''
       curl --silent https://cloudflare.com/cdn-cgi/trace | grep ip= | cut -d= -f2
     '';

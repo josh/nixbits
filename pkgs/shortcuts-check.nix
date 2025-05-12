@@ -9,12 +9,11 @@ let
 in
 writeShellApplication {
   name = "shortcuts-check";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      gnugrep
-      shortcuts
-    ];
-  };
+  runtimeInputs = [
+    gnugrep
+    shortcuts
+  ];
+  inheritPath = false;
   text = builtins.readFile ./shortcuts-check.bash;
   meta = {
     description = "Check if macOS Shortcut is available";

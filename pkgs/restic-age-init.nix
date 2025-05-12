@@ -16,15 +16,16 @@ let
   };
   restic-age-init = writeShellApplication {
     name = "restic-age-init";
+    runtimeInputs = [
+      age
+      coreutils
+      jq
+      nur.repos.josh.restic-age-key
+      openssl
+      restic
+    ];
+    inheritPath = false;
     runtimeEnv = {
-      PATH = lib.strings.makeBinPath [
-        age
-        coreutils
-        jq
-        nur.repos.josh.restic-age-key
-        openssl
-        restic
-      ];
       XTRACE_PATH = nixbits.xtrace;
     };
     text = builtins.readFile ./restic-age-init.bash;

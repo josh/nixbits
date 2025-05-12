@@ -8,9 +8,8 @@
 let
   xml2json = writeShellApplication {
     name = "xml2json";
-    runtimeEnv = {
-      PATH = lib.strings.makeBinPath [ yq-go ];
-    };
+    runtimeInputs = [ yq-go ];
+    inheritPath = false;
     text = ''
       exec yq --input-format=xml --output-format=json
     '';

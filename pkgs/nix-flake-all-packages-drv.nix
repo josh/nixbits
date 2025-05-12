@@ -6,8 +6,9 @@
 }:
 writeShellApplication {
   name = "nix-flake-all-packages-drv";
+  runtimeInputs = [ nix ];
+  inheritPath = false;
   runtimeEnv = {
-    PATH = lib.strings.makeBinPath [ nix ];
     SYSTEM = system;
     NIX_EXPR_FILE = "${./nix-flake-all-packages-drv.txt}";
   };

@@ -7,13 +7,12 @@
 }:
 writeShellApplication {
   name = "launchctl-spawn";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      coreutils
-      gnugrep
-      nixbits.darwin.launchctl
-    ];
-  };
+  runtimeInputs = [
+    coreutils
+    gnugrep
+    nixbits.darwin.launchctl
+  ];
+  inheritPath = false;
   text = builtins.readFile ./launchctl-spawn.bash;
   meta = {
     description = "Spawn a process using launchctl";

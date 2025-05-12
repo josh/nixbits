@@ -22,14 +22,15 @@ let
 in
 writeShellApplication {
   name = "launchd-exec-install";
+  runtimeInputs = [
+    coreutils
+    darwin.sudo
+    launchctl-spawn
+    nixbits.darwin.open
+    tccpolicy
+  ];
+  inheritPath = false;
   runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      coreutils
-      darwin.sudo
-      launchctl-spawn
-      nixbits.darwin.open
-      tccpolicy
-    ];
     INSTALL_PATH = "/usr/local/bin/launchd-exec";
     INSTALL_DIR = "/usr/local/bin";
     SYSTEM_POLICY_FILE = tcc-system-policy;

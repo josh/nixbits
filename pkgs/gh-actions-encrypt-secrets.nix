@@ -16,14 +16,13 @@ let
 
   script = writeShellApplication {
     name = "gh-actions-encrypt-secrets";
-    runtimeEnv = {
-      PATH = lib.strings.makeBinPath [
-        age
-        coreutils
-        git
-        jq
-      ];
-    };
+    runtimeInputs = [
+      age
+      coreutils
+      git
+      jq
+    ];
+    inheritPath = false;
     text = builtins.readFile ./gh-actions-encrypt-secrets.bash;
     meta = {
       description = "Encrypt GitHub Actions secrets using age into git repository";

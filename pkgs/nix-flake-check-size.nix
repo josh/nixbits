@@ -7,13 +7,12 @@
 }:
 writeShellApplication {
   name = "nix-flake-check-size";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      coreutils
-      nix
-      jq
-    ];
-  };
+  runtimeInputs = [
+    coreutils
+    nix
+    jq
+  ];
+  inheritPath = false;
   text = builtins.readFile ./nix-flake-check-size.bash;
   meta = {
     description = "Check NAR size of flake checks";
