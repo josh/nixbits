@@ -2,12 +2,14 @@
   lib,
   writeShellApplication,
   coreutils,
+  moreutils,
   nixbits,
 }:
 writeShellApplication {
   name = "zsh-session-prune";
   runtimeInputs = [
     coreutils
+    moreutils
     nixbits.zsh-history-merge
   ];
   inheritPath = false;
