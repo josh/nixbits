@@ -12,7 +12,8 @@ fi
 
 CLOUD_HISTFILES="$(readlink -f "$DOTFILES/../history")"
 LOCAL_HISTFILE="$HOME/.zsh_history"
-CLOUD_HISTFILE="$CLOUD_HISTFILES/$(hostname -s).history"
+HOSTNAME=$(hostname -s | tr '[:upper:]' '[:lower:]')
+CLOUD_HISTFILE="$CLOUD_HISTFILES/$HOSTNAME.history"
 LOCAL_COUNT=$(wc -l <"$LOCAL_HISTFILE")
 
 cp "$LOCAL_HISTFILE" "$CLOUD_HISTFILE"
