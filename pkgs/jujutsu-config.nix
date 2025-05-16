@@ -43,6 +43,11 @@ let
     };
 
     aliases = {
+      fetch = [
+        "git"
+        "fetch"
+        "--all-remotes"
+      ];
       tug = [
         "bookmark"
         "move"

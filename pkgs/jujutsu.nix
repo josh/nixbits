@@ -14,7 +14,6 @@ let
     paths = [
       jujutsu
       nixbits.jujutsu-clone
-      nixbits.jujutsu-fetch
       nixbits.jujutsu-pull
       nixbits.jujutsu-push
     ];
