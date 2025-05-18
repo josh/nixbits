@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   symlinkJoin,
   # keep-sorted start
@@ -58,7 +59,6 @@ symlinkJoin {
     isort
     keep-sorted
     nixfmt-rfc-style
-    nodePackages.prettier
     ruff
     shellcheck
     shfmt
@@ -71,7 +71,9 @@ symlinkJoin {
   ];
   postBuild = ''
     find $out/bin -maxdepth 1 -name ".*-wrapped" -type l -delete
-    rm -rf $out/lib/ $out/nix-support/
+
+    # Prettier's bin directory is weird
+    ln -s ${lib.getExe nodePackages.prettier} $out/bin/prettier
 
     # delete everything but bin/
     for dir in $out/*; do
