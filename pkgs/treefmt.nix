@@ -72,6 +72,13 @@ symlinkJoin {
   postBuild = ''
     find $out/bin -maxdepth 1 -name ".*-wrapped" -type l -delete
     rm -rf $out/lib/ $out/nix-support/
+
+    # delete everything but bin/
+    for dir in $out/*; do
+      if [ "$dir" != "$out/bin" ]; then
+        rm -rf "$dir"
+      fi
+    done
   '';
   meta = {
     inherit (treefmt.meta)
