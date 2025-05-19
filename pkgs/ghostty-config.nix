@@ -10,7 +10,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
   config = {
-    "font-family" = "BerkeleyMono Nerd Font Mono";
+    "font-family" = "Berkeley Mono Regular";
+    "font-family-bold" = "Berkeley Mono Bold";
+    "font-family-italic" = "Berkeley Mono Oblique";
+    "font-family-bold-italic" = "Berkeley Mono Bold Oblique";
     "font-size" = 20;
     "theme" = "tokyonight-storm";
     "window-height" = 40;
