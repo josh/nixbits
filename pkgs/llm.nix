@@ -77,6 +77,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
             ];
           }
           ''
+            export HOME=$(mktemp -d)
             llm --help
             touch $out
           '';
@@ -102,6 +103,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
             ];
           }
           ''
+            export HOME=$(mktemp -d)
             llm plugins | jq --exit-status 'map(select(.name == "llm-ollama")) | length > 0'
             touch $out
           '';
