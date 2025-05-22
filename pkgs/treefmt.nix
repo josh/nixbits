@@ -16,6 +16,7 @@
   statix,
   stylua,
   taplo,
+  ty,
 # keep-sorted end
 }:
 let
@@ -47,6 +48,7 @@ let
     programs.stylua.enable = true;
     programs.swift-format.enable = true;
     programs.taplo.enable = true;
+    # programs.ty.enable = true;
     # keep-sorted end
   };
 in
@@ -67,6 +69,7 @@ symlinkJoin {
     stylua
     taplo
     treefmt
+    ty
     # keep-sorted end
   ];
   postBuild = ''
