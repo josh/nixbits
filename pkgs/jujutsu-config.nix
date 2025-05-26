@@ -62,6 +62,12 @@ let
         "--to"
         "closest_pushable(@)"
       ];
+      new-parent = [
+        "new"
+        "--no-edit"
+        "--insert-before"
+        "@"
+      ];
     };
   };
 in
