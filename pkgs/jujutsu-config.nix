@@ -23,6 +23,7 @@ let
     git = {
       executable-path = lib.getExe nixbits.git;
       push-new-bookmarks = true;
+      private-commits = "description(glob:'wip:*')";
     };
 
     # No longer supported on darwin
