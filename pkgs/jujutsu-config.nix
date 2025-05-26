@@ -22,6 +22,7 @@ let
 
     git = {
       executable-path = lib.getExe nixbits.git;
+      push-new-bookmarks = true;
     };
 
     # No longer supported on darwin
@@ -47,6 +48,10 @@ let
         "git"
         "fetch"
         "--all-remotes"
+      ];
+      push = [
+        "git"
+        "push"
       ];
       tug = [
         "bookmark"
