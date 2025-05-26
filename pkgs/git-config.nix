@@ -5,6 +5,7 @@
   diff-so-fancy,
   gh,
   less,
+  nixbits,
 }:
 let
   gitIni = formats.gitIni { };
@@ -84,6 +85,10 @@ let
       enabled = true;
       autoupdate = true;
     };
+
+    # Global ignore file
+    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#global-ignore-file>
+    core.excludesFile = "${nixbits.gitignore}";
 
     # Slightly nicer rebase
     # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#slightly-nicer-rebase>
