@@ -1,5 +1,5 @@
 set -o xtrace
 
-jj git fetch --remote origin --branch main
-jj bookmark set main --revision @
-jj git push --remote origin --bookmark main
+jj git fetch --all-remotes
+jj bookmark move --from "closest_bookmark(@)" --to "closest_pushable(@)"
+jj git push
