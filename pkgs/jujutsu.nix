@@ -20,7 +20,8 @@ let
     buildInputs = [ makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/jj \
-        --set JJ_CONFIG ${nixbits.jujutsu-config}
+        --set JJ_CONFIG ${nixbits.jujutsu-config} \
+        --set XDG_CONFIG_HOME ${nixbits.jujutsu-xdg-config-home}
     '';
 
     meta = {

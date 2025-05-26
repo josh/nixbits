@@ -19,7 +19,8 @@ let
     buildInputs = [ makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/git \
-        --set GIT_CONFIG_GLOBAL ${nixbits.git-config}
+        --set GIT_CONFIG_GLOBAL ${nixbits.git-config} \
+        --set XDG_CONFIG_HOME ${nixbits.git-xdg-config-home}
     '';
 
     meta = {
