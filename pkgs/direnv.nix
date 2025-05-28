@@ -14,6 +14,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   buildInputs = [ makeWrapper ];
 
+  # TODO: Also export $DIRENV_CONFIG in shell before `direnv hook $shell`
+
   buildCommand = ''
     mkdir -p $out
     ${lndir}/bin/lndir -silent ${direnv} $out
