@@ -39,7 +39,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       target="$HOME/Library/Application Support/com.mitchellh.ghostty/config"
     fi
 
-    exec ${nixbits.x-ln-s} "${builtins.placeholder "out"}/share/ghostty/config" "$target"
+    exec ${lib.getExe nixbits.x-ln-s} "${builtins.placeholder "out"}/share/ghostty/config" "$target"
   '';
 
   buildCommand = ''
