@@ -3,6 +3,7 @@
   stdenvNoCC,
   runtimeShell,
   runCommandLocal,
+  jq,
 }:
 let
   app = "/Applications/Zed.app";
@@ -16,6 +17,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     #!${runtimeShell} -e
     exec "${app}/Contents/MacOS/cli" "$@"
   '';
+
   preInstallHook = ''
     #!${runtimeShell} -e
     if [ ! -d '${app}' ]; then
@@ -24,12 +26,24 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     fi
   '';
 
+  tccpolicyPolicy = {
+    "dev.zed.Zed" = {
+      "SystemPolicyAllFiles" = true;
+    };
+  };
+
+  nativeBuildInputs = [ jq ];
+
   buildCommand = ''
     mkdir -p $out/bin $out/share/nix/hooks/pre-install.d
     echo "$wrapper" >$out/bin/zed
     chmod +x $out/bin/zed
+
     echo "$preInstallHook" >$out/share/nix/hooks/pre-install.d/zed
     chmod +x $out/share/nix/hooks/pre-install.d/zed
+
+    mkdir -p $out/share/tccpolicy.d
+    cat "$NIX_ATTRS_JSON_FILE" | jq --raw-output '.tccpolicyPolicy' >$out/share/tccpolicy.d/zed.json
   '';
 
   passthru.tests =
