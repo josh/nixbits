@@ -47,12 +47,10 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-RESTIC_PASSWORD_FILE=$(mktemp)
-openssl rand -base64 32 >"$RESTIC_PASSWORD_FILE"
-export RESTIC_PASSWORD_FILE
-
-x restic init "${restic_init_args[@]}"
-orig_key_id=$(restic key list --json | jq --raw-output 'map(.id)[0]')
+if [ -z "$RESTIC_REPOSITORY" ]; then
+  echo "error: please specify repository location (-r or --repository-file)" >&2
+  exit 1
+fi
 
 if [ -z "$RESTIC_AGE_RECIPIENT" ]; then
   if [ -n "$RESTIC_AGE_IDENTITY_FILE" ]; then
@@ -61,6 +59,18 @@ if [ -z "$RESTIC_AGE_RECIPIENT" ]; then
     RESTIC_AGE_RECIPIENT=$(eval "$RESTIC_AGE_IDENTITY_COMMAND" | age-keygen -y)
   fi
 fi
+
+if [ -z "$RESTIC_AGE_RECIPIENT" ]; then
+  echo "error: recipient is required (--recipient, --identity-file, or --identity-command)" >&2
+  exit 1
+fi
+
+RESTIC_PASSWORD_FILE=$(mktemp)
+openssl rand -base64 32 >"$RESTIC_PASSWORD_FILE"
+export RESTIC_PASSWORD_FILE
+
+x restic init "${restic_init_args[@]}"
+orig_key_id=$(restic key list --json | jq --raw-output 'map(.id)[0]')
 
 x restic-age-key add --recipient "$RESTIC_AGE_RECIPIENT"
 restic-age-key password >"$RESTIC_PASSWORD_FILE"
