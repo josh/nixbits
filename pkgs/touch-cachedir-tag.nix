@@ -15,6 +15,6 @@ writeShellApplication {
   meta = {
     description = "Create a CACHEDIR.TAG file in the current directory";
     homepage = "http://www.brynosaurus.com/cachedir/";
-    mainProgram = "touch-cachdir-tag";
+    mainProgram = "touch-cachedir-tag";
   };
 }
