@@ -4,6 +4,7 @@
   runCommand,
   direnv,
   starship,
+  zoxide,
   zsh,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
@@ -17,9 +18,20 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       exit 1
     fi
 
+    if [ -d "$XDG_CACHE_HOME" ]; then
+      autoload -Uz compinit
+      mkdir -p "$XDG_CACHE_HOME/zsh"
+      compinit -d "$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
+    else
+      autoload -Uz compinit
+      compinit
+    fi
+
     eval "$(${lib.getExe starship} init zsh)"
 
     eval "$(${lib.getExe direnv} hook zsh)"
+
+    eval "$(${lib.getExe zoxide} init zsh)"
   '';
 
   buildCommand = ''
