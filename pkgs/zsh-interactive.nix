@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   runCommand,
+  direnv,
   starship,
   zsh,
 }:
@@ -17,6 +18,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     fi
 
     eval "$(${lib.getExe starship} init zsh)"
+
+    eval "$(${lib.getExe direnv} hook zsh)"
   '';
 
   buildCommand = ''

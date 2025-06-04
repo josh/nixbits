@@ -3,6 +3,7 @@
   stdenvNoCC,
   runCommand,
   bash,
+  direnv,
   shellcheck-minimal,
   starship,
 }:
@@ -18,6 +19,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     fi
 
     eval -- "$(${lib.getExe starship} init bash --print-full-init)"
+
+    eval "$(${lib.getExe direnv} hook bash)"
   '';
 
   nativeBuildInputs = [
