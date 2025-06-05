@@ -36,8 +36,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         exit 1
       fi
 
-      if [ -d "$XDG_STATE_HOME/bash" ]; then
-        HISTFILE="$XDG_STATE_HOME/bash/history"
+      if [ -d "''${XDG_STATE_HOME:-$HOME/.local/state}/bash" ]; then
+        HISTFILE="''${XDG_STATE_HOME:-$HOME/.local/state}/bash/history"
       fi
 
       source ${direnv-init}
