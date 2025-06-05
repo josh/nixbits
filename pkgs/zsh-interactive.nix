@@ -4,6 +4,7 @@
   direnv,
   starship,
   zoxide,
+  zsh-autosuggestions,
   zsh,
 }:
 let
@@ -36,6 +37,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       autoload -Uz compinit
       compinit
     fi
+
+    source ${zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+    bindkey '\t\t' autosuggest-accept
 
     source ${starship-init}
     source ${direnv-init}
