@@ -2,6 +2,7 @@
   stdenvNoCC,
   runCommand,
   direnv,
+  fzf,
   starship,
   zoxide,
   zsh-autosuggestions,
@@ -9,11 +10,14 @@
   zsh,
 }:
 let
+  direnv-init = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
+    direnv hook zsh >$out
+  '';
   starship-init = runCommand "starship-init" { nativeBuildInputs = [ starship ]; } ''
     starship init zsh >$out
   '';
-  direnv-init = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
-    direnv hook zsh >$out
+  fzf-init = runCommand "fzf-init" { nativeBuildInputs = [ fzf ]; } ''
+    fzf --zsh >$out
   '';
   zoxide-init = runCommand "zoxide-init" { nativeBuildInputs = [ zoxide ]; } ''
     zoxide init zsh >$out
@@ -44,8 +48,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     source ${zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-    source ${starship-init}
     source ${direnv-init}
+    source ${fzf-init}
+    source ${starship-init}
     source ${zoxide-init}
   '';
 
