@@ -5,6 +5,7 @@
   starship,
   zoxide,
   zsh-autosuggestions,
+  zsh-syntax-highlighting,
   zsh,
 }:
 let
@@ -40,6 +41,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     source ${zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
     bindkey '\t\t' autosuggest-accept
+
+    source ${zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
     source ${starship-init}
     source ${direnv-init}
