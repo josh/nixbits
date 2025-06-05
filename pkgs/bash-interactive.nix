@@ -6,9 +6,11 @@
   shellcheck-minimal,
   starship,
   nixbits,
+  nur,
 }:
 let
   inherit (nixbits) direnv;
+  inherit (nur.repos.josh) iterm2-shell-integration;
 
   direnv-init = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
     direnv hook bash >$out
@@ -34,6 +36,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     source ${direnv-init}
     source ${fzf-init}
     source ${starship-init}
+
+    if [ -n "$ITERM_SESSION_ID" ]; then
+      PATH="${iterm2-shell-integration}/bin:$PATH"
+      ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=1 source ${iterm2-shell-integration}/share/iterm2-shell-integration/iterm2_shell_integration.zsh
+      it2tip
+    fi
   '';
 
   nativeBuildInputs = [
