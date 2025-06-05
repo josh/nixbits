@@ -35,6 +35,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         exit 1
       fi
 
+      if [ -d "$XDG_STATE_HOME/bash" ]; then
+        HISTFILE="$XDG_STATE_HOME/bash/history"
+      fi
+
       source ${direnv-init}
       source ${fzf-init}
       source ${starship-init}
