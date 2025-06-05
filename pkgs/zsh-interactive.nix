@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   runCommand,
+  eza,
   fzf,
   starship,
   zoxide,
@@ -61,6 +62,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       source ${fzf-init}
       source ${starship-init}
       source ${zoxide-init}
+
+      alias ls='${lib.getExe eza}'
+      alias ll='${lib.getExe eza} --long'
+      alias la='${lib.getExe eza} --all'
+      alias lt='${lib.getExe eza} --tree'
+      alias lla='${lib.getExe eza} --long --all'      
     ''
     + (lib.strings.optionalString stdenvNoCC.isDarwin ''
       if [ -d "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Terminal/history" ]; then

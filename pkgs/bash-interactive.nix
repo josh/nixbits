@@ -3,6 +3,7 @@
   stdenvNoCC,
   runCommand,
   bash,
+  eza,
   fzf,
   shellcheck-minimal,
   starship,
@@ -42,6 +43,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       source ${direnv-init}
       source ${fzf-init}
       source ${starship-init}
+
+      alias ls='${lib.getExe eza}'
+      alias ll='${lib.getExe eza} --long'
+      alias la='${lib.getExe eza} --all'
+      alias lt='${lib.getExe eza} --tree'
+      alias lla='${lib.getExe eza} --long --all'
     ''
     + (lib.strings.optionalString stdenvNoCC.isDarwin ''
       if [ -n "$ITERM_SESSION_ID" ]; then
