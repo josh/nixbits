@@ -63,13 +63,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       source ${zoxide-init}
     ''
     + (lib.strings.optionalString stdenvNoCC.isDarwin ''
-      __sync_history() {
-        echo "...syncing history"
-        ${lib.getExe nixbits.zsh-session-prune}
-        ${lib.getExe nixbits.zsh-history-sync}
-      }
-      autoload -Uz add-zsh-hook
-      add-zsh-hook zshexit __sync_history
+      if [ -d "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Terminal/history" ]; then
+        __sync_history() {
+          echo "...syncing history"
+          ${lib.getExe nixbits.zsh-session-prune}
+          ${lib.getExe nixbits.zsh-history-sync}
+        }
+        autoload -Uz add-zsh-hook
+        add-zsh-hook zshexit __sync_history
+      fi
 
       if [ -n "$ITERM_SESSION_ID" ]; then
         path+=(${iterm2-shell-integration}/bin)

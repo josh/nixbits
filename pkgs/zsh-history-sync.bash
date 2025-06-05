@@ -5,12 +5,7 @@ cleanup() {
 trap cleanup EXIT
 trap cleanup SIGINT
 
-if [ -z "${DOTFILES:-}" ]; then
-  echo "error: DOTFILES must be set" >&2
-  exit 1
-fi
-
-CLOUD_HISTFILES="$(readlink -f "$DOTFILES/../history")"
+CLOUD_HISTFILES="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Terminal/history"
 LOCAL_HISTFILE="$HOME/.zsh_history"
 HOSTNAME=$(hostname -s | tr '[:upper:]' '[:lower:]')
 CLOUD_HISTFILE="$CLOUD_HISTFILES/$HOSTNAME.history"
