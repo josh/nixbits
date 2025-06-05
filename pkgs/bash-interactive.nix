@@ -1,5 +1,4 @@
 {
-  lib,
   stdenvNoCC,
   runCommand,
   bash,
@@ -7,6 +6,14 @@
   shellcheck-minimal,
   starship,
 }:
+let
+  starship-init = runCommand "starship-init" { nativeBuildInputs = [ starship ]; } ''
+    starship init bash --print-full-init >$out
+  '';
+  direnv-init = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
+    direnv hook bash >$out
+  '';
+in
 stdenvNoCC.mkDerivation (finalAttrs: {
   name = "bash-interactive";
 
@@ -18,9 +25,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       exit 1
     fi
 
-    eval -- "$(${lib.getExe starship} init bash --print-full-init)"
-
-    eval "$(${lib.getExe direnv} hook bash)"
+    source ${starship-init}
+    source ${direnv-init}
   '';
 
   nativeBuildInputs = [
@@ -32,7 +38,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     runHook preCheck
     ${bash}/bin/bash -n "$out"
-    shellcheck --shell=bash "$out"
+    shellcheck --shell=bash "$out" --external-sources
     runHook postCheck
   '';
 

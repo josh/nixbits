@@ -1,5 +1,4 @@
 {
-  lib,
   stdenvNoCC,
   runCommand,
   direnv,
@@ -7,6 +6,17 @@
   zoxide,
   zsh,
 }:
+let
+  starship-init = runCommand "starship-init" { nativeBuildInputs = [ starship ]; } ''
+    starship init zsh >$out
+  '';
+  direnv-init = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
+    direnv hook zsh >$out
+  '';
+  zoxide-init = runCommand "zoxide-init" { nativeBuildInputs = [ zoxide ]; } ''
+    zoxide init zsh >$out
+  '';
+in
 stdenvNoCC.mkDerivation (finalAttrs: {
   name = "zsh-interactive";
 
@@ -27,11 +37,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       compinit
     fi
 
-    eval "$(${lib.getExe starship} init zsh)"
-
-    eval "$(${lib.getExe direnv} hook zsh)"
-
-    eval "$(${lib.getExe zoxide} init zsh)"
+    source ${starship-init}
+    source ${direnv-init}
+    source ${zoxide-init}
   '';
 
   buildCommand = ''
