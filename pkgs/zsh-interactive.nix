@@ -1,4 +1,5 @@
 {
+  lib,
   stdenvNoCC,
   runCommand,
   fzf,
@@ -22,7 +23,8 @@ let
     fzf --zsh >$out
   '';
   zoxide-init = runCommand "zoxide-init" { nativeBuildInputs = [ zoxide ]; } ''
-    zoxide init zsh >$out
+    zoxide init zsh >out
+    substitute out $out --replace-fail '\command zoxide' '${lib.getExe zoxide}'
   '';
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
