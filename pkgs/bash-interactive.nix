@@ -2,12 +2,14 @@
   stdenvNoCC,
   runCommand,
   bash,
-  direnv,
   fzf,
   shellcheck-minimal,
   starship,
+  nixbits,
 }:
 let
+  inherit (nixbits) direnv;
+
   direnv-init = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
     direnv hook bash >$out
   '';

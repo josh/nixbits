@@ -1,15 +1,17 @@
 {
   stdenvNoCC,
   runCommand,
-  direnv,
   fzf,
   starship,
   zoxide,
   zsh-autosuggestions,
   zsh-syntax-highlighting,
   zsh,
+  nixbits,
 }:
 let
+  inherit (nixbits) direnv;
+
   direnv-init = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
     direnv hook zsh >$out
   '';
