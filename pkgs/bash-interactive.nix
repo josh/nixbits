@@ -3,15 +3,19 @@
   runCommand,
   bash,
   direnv,
+  fzf,
   shellcheck-minimal,
   starship,
 }:
 let
-  starship-init = runCommand "starship-init" { nativeBuildInputs = [ starship ]; } ''
-    starship init bash --print-full-init >$out
-  '';
   direnv-init = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
     direnv hook bash >$out
+  '';
+  fzf-init = runCommand "fzf-init" { nativeBuildInputs = [ fzf ]; } ''
+    fzf --bash >$out
+  '';
+  starship-init = runCommand "starship-init" { nativeBuildInputs = [ starship ]; } ''
+    starship init bash --print-full-init >$out
   '';
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
@@ -25,8 +29,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       exit 1
     fi
 
-    source ${starship-init}
     source ${direnv-init}
+    source ${fzf-init}
+    source ${starship-init}
   '';
 
   nativeBuildInputs = [
