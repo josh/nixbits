@@ -63,6 +63,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       source ${zoxide-init}
     ''
     + (lib.strings.optionalString stdenvNoCC.isDarwin ''
+      __sync_history() {
+        echo "...syncing history"
+        ${lib.getExe nixbits.zsh-session-prune}
+        ${lib.getExe nixbits.zsh-history-sync}
+      }
+      autoload -Uz add-zsh-hook
+      add-zsh-hook zshexit __sync_history
+
       if [ -n "$ITERM_SESSION_ID" ]; then
         path+=(${iterm2-shell-integration}/bin)
         ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=1 source ${iterm2-shell-integration}/share/iterm2-shell-integration/iterm2_shell_integration.bash
