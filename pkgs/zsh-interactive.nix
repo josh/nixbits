@@ -34,39 +34,41 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   __structuredAttrs = true;
 
-  text = ''
-    if [[ ! -o interactive ]]; then
-      echo "Error: This script must be run in an interactive shell"
-      exit 1
-    fi
+  text =
+    ''
+      if [[ ! -o interactive ]]; then
+        echo "Error: This script must be run in an interactive shell"
+        exit 1
+      fi
 
-    typeset -U path
+      typeset -U path
 
-    if [ -d "$XDG_CACHE_HOME" ]; then
-      autoload -Uz compinit
-      mkdir -p "$XDG_CACHE_HOME/zsh"
-      compinit -d "$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
-    else
-      autoload -Uz compinit
-      compinit
-    fi
+      if [ -d "$XDG_CACHE_HOME" ]; then
+        autoload -Uz compinit
+        mkdir -p "$XDG_CACHE_HOME/zsh"
+        compinit -d "$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
+      else
+        autoload -Uz compinit
+        compinit
+      fi
 
-    source ${zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-    bindkey '\t\t' autosuggest-accept
+      source ${zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+      bindkey '\t\t' autosuggest-accept
 
-    source ${zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+      source ${zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-    source ${direnv-init}
-    source ${fzf-init}
-    source ${starship-init}
-    source ${zoxide-init}
-
-    if [ -n "$ITERM_SESSION_ID" ]; then
-      path+=(${iterm2-shell-integration}/bin)
-      ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=1 source ${iterm2-shell-integration}/share/iterm2-shell-integration/iterm2_shell_integration.bash
-      it2tip
-    fi
-  '';
+      source ${direnv-init}
+      source ${fzf-init}
+      source ${starship-init}
+      source ${zoxide-init}
+    ''
+    + (lib.strings.optionalString stdenvNoCC.isDarwin ''
+      if [ -n "$ITERM_SESSION_ID" ]; then
+        path+=(${iterm2-shell-integration}/bin)
+        ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=1 source ${iterm2-shell-integration}/share/iterm2-shell-integration/iterm2_shell_integration.bash
+        it2tip
+      fi
+    '');
 
   buildCommand = ''
     echo -n "$text" >"$out"

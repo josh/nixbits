@@ -1,4 +1,5 @@
 {
+  lib,
   stdenvNoCC,
   runCommand,
   bash,
@@ -27,22 +28,24 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   __structuredAttrs = true;
 
-  text = ''
-    if [[ $- != *i* ]]; then
-      echo "Error: This script must be run in an interactive shell"
-      exit 1
-    fi
+  text =
+    ''
+      if [[ $- != *i* ]]; then
+        echo "Error: This script must be run in an interactive shell"
+        exit 1
+      fi
 
-    source ${direnv-init}
-    source ${fzf-init}
-    source ${starship-init}
-
-    if [ -n "$ITERM_SESSION_ID" ]; then
-      PATH="${iterm2-shell-integration}/bin:$PATH"
-      ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=1 source ${iterm2-shell-integration}/share/iterm2-shell-integration/iterm2_shell_integration.zsh
-      it2tip
-    fi
-  '';
+      source ${direnv-init}
+      source ${fzf-init}
+      source ${starship-init}
+    ''
+    + (lib.strings.optionalString stdenvNoCC.isDarwin ''
+      if [ -n "$ITERM_SESSION_ID" ]; then
+        PATH="${iterm2-shell-integration}/bin:$PATH"
+        ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=1 source ${iterm2-shell-integration}/share/iterm2-shell-integration/iterm2_shell_integration.zsh
+        it2tip
+      fi
+    '');
 
   nativeBuildInputs = [
     shellcheck-minimal
