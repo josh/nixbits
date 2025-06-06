@@ -1,19 +1,27 @@
 {
+  lib,
   stdenvNoCC,
   runCommand,
   zsh,
+  nixbits,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   name = "zsh-login";
 
   __structuredAttrs = true;
 
-  text = ''
-    if [[ ! -o login ]]; then
-      echo "Error: This script must be run as a login shell" >&2
-      exit 1
-    fi
-  '';
+  text =
+    ''
+      if [[ ! -o login ]]; then
+        echo "Error: This script must be run as a login shell" >&2
+        exit 1
+      fi
+    ''
+    + (lib.strings.optionalString stdenvNoCC.isDarwin ''
+      if [ -n "$ZED_TERM" ]; then
+      	export EDITOR="${nixbits.zed-cli}/bin/zed --wait"
+      fi
+    '');
 
   buildCommand = ''
     echo -n "$text" >"$out"

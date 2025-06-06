@@ -1,20 +1,28 @@
 {
+  lib,
   stdenvNoCC,
   runCommand,
   bash,
   shellcheck-minimal,
+  nixbits,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   name = "bash-login";
 
   __structuredAttrs = true;
 
-  text = ''
-    if ! shopt -q login_shell; then
-      echo "Error: This script must be run as a login shell" >&2
-      exit 1
-    fi
-  '';
+  text =
+    ''
+      if ! shopt -q login_shell; then
+        echo "Error: This script must be run as a login shell" >&2
+        exit 1
+      fi
+    ''
+    + (lib.strings.optionalString stdenvNoCC.isDarwin ''
+      if [ -n "$ZED_TERM" ]; then
+      	export EDITOR="${nixbits.zed-cli}/bin/zed --wait"
+      fi
+    '');
 
   nativeBuildInputs = [
     shellcheck-minimal
