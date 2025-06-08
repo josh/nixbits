@@ -17,6 +17,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         echo "Error: This script must be run as a login shell" >&2
         exit 1
       fi
+
+      if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+        . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+      fi
     ''
     + (lib.strings.optionalString stdenvNoCC.isDarwin ''
       if [ -n "$ZED_TERM" ]; then
