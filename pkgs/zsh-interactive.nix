@@ -64,6 +64,22 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         compinit
       fi
 
+      HISTSIZE=50000
+      SAVEHIST=50000
+
+      setopt EXTENDED_HISTORY
+      setopt APPEND_HISTORY
+      setopt HIST_FIND_NO_DUPS
+      setopt HIST_IGNORE_DUPS
+      setopt HIST_IGNORE_SPACE
+
+      # force emacs bindings
+      bindkey -e
+
+      # bash navigation
+      autoload -U select-word-style
+      select-word-style bash
+
       source ${zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
       bindkey '\t\t' autosuggest-accept
 
