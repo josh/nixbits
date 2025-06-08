@@ -10,7 +10,6 @@
 let
   inherit (python3.pkgs.llm) version;
 
-  inherit (nur.repos.josh) llm-sentence-transformers;
   inherit (nur.repos.josh) llm-ttok;
 
   venv =
