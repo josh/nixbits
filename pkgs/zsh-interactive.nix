@@ -4,6 +4,7 @@
   runCommand,
   eza,
   fzf,
+  neovim,
   starship,
   zoxide,
   zsh-autosuggestions,
@@ -94,8 +95,19 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       alias ll='${lib.getExe eza} --long'
       alias la='${lib.getExe eza} --all'
       alias lt='${lib.getExe eza} --tree'
-      alias lla='${lib.getExe eza} --long --all'      
+      alias lla='${lib.getExe eza} --long --all'
     ''
+    + (
+      if stdenvNoCC.isDarwin then
+        ''
+          export EDITOR="${nixbits.bbedit-mas}/bin/bbedit --wait --resume"
+        ''
+      else
+        # TODO: Use customized neovim
+        ''
+          export EDITOR="${neovim}/bin/nvim"
+        ''
+    )
     + (lib.strings.optionalString stdenvNoCC.isDarwin ''
       if [ -d "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Terminal/history" ]; then
         __sync_history() {
