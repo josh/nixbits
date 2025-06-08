@@ -42,7 +42,18 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         exit 1
       fi
 
-      typeset -U path
+      typeset -U path fpath
+
+      # TODO: statically link this path
+      if [ -d "$HOME/.local/state/nix/profiles/profile/share/zsh/site-functions" ]; then
+        FPATH="$HOME/.local/state/nix/profiles/profile/share/zsh/site-functions:$FPATH"
+      elif [ -d "$HOME/.local/state/nix/profile/share/zsh/site-functions" ]; then
+        FPATH="$HOME/.local/state/nix/profile/share/zsh/site-functions:$FPATH"
+      elif [ -d "$HOME/.nix-profile/share/zsh/site-functions" ]; then
+        FPATH="$HOME/.nix-profile/share/zsh/site-functions:$FPATH"
+      else
+        echo "WARN: $HOME/.local/state/nix/profiles/profile/share/zsh/site-functions not found" >&2
+      fi
 
       if [ -d "$XDG_CACHE_HOME" ]; then
         autoload -Uz compinit
