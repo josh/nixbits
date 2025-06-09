@@ -28,8 +28,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   postInstallText = ''
     #!${runtimeShell}
-    set -e errexit
-    set -e nounset
+    set -o errexit
+    set -o nounset
 
     target="$HOME/.config/ghostty/config"
     if [ -n "$XDG_CONFIG_HOME" ]; then

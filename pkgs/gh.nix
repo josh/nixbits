@@ -31,7 +31,7 @@ stdenvNoCC.mkDerivation {
 
   postInstallText = ''
     #!${runtimeShell}
-    set -e errexit
+    set -o errexit
     source "${nixbits.xtrace}/share/bash/xtrace.bash"
     export PATH="${builtins.placeholder "out"}/bin:$PATH"
     x-silent gh auth status --hostname github.com
