@@ -1,5 +1,6 @@
 {
   stdenvNoCC,
+  runtimeShell,
   makeWrapper,
   lndir,
   gh,
@@ -28,12 +29,24 @@ stdenvNoCC.mkDerivation {
       "1"
     ];
 
+  postInstallText = ''
+    #!${runtimeShell}
+    set -e errexit
+    source "${nixbits.xtrace}/share/bash/xtrace.bash"
+    export PATH="${builtins.placeholder "out"}/bin:$PATH"
+    x-silent gh auth status --hostname github.com
+  '';
+
   buildCommand = ''
     mkdir $out
     ${lndir}/bin/lndir -silent ${gh} $out
 
     rm $out/bin/gh
     makeWrapper ${gh}/bin/gh $out/bin/gh "''${makeWrapperArgs[@]}"
+
+    mkdir -p $out/share/nix/hooks/post-install.d
+    echo -n "$postInstallText" >"$out/share/nix/hooks/post-install.d/gh"
+    chmod +x "$out/share/nix/hooks/post-install.d/gh"
   '';
 
   inherit (gh) meta;
