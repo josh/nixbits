@@ -1,35 +1,48 @@
 {
   symlinkJoin,
-  pkgs,
   nixbits,
+  # keep-sorted start
+  cachix,
+  deadnix,
+  fh,
+  gh,
+  nh,
+  nil,
+  nix,
+  nix-tree,
+  nixd,
+  nixfmt-rfc-style,
+  nixpkgs-review,
+  shellcheck,
+  shfmt,
+  statix,
+  tree,
+# keep-sorted end
 }:
-let
-  nixpkgs = pkgs;
-in
 symlinkJoin {
   name = "nix-dev-path";
   paths = [
     # keep-sorted start
+    cachix
+    deadnix
+    fh
+    gh
+    nh
+    nil
+    nix
+    nix-tree
     nixbits.git
     nixbits.nix-flake-diff-packages
     nixbits.nix-flake-rebuild
     nixbits.nix-profile-upgrade
     nixbits.nixpkgs-review-pr
-    nixpkgs.cachix
-    nixpkgs.deadnix
-    nixpkgs.fh
-    nixpkgs.gh
-    nixpkgs.nh
-    nixpkgs.nil
-    nixpkgs.nix
-    nixpkgs.nix-tree
-    nixpkgs.nixd
-    nixpkgs.nixfmt-rfc-style
-    nixpkgs.nixpkgs-review
-    nixpkgs.shellcheck
-    nixpkgs.shfmt
-    nixpkgs.statix
-    nixpkgs.tree
+    nixd
+    nixfmt-rfc-style
+    nixpkgs-review
+    shellcheck
+    shfmt
+    statix
+    tree
     # keep-sorted end
   ];
   meta.description = "Favorite nix development tools";
