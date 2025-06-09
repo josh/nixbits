@@ -32,7 +32,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     set -o nounset
 
     target="$HOME/.config/ghostty/config"
-    if [ -n "$XDG_CONFIG_HOME" ]; then
+    if [ -n "''${XDG_CONFIG_HOME:-}" ]; then
       target="$XDG_CONFIG_HOME/ghostty/config"
     fi
     if [ -d "$HOME/Library/Application Support/com.mitchellh.ghostty" ]; then
