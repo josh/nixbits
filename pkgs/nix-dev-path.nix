@@ -26,11 +26,11 @@ symlinkJoin {
     cachix
     deadnix
     fh
-    gh
     nh
     nil
     nix
     nix-tree
+    nixbits.gh
     nixbits.git
     nixbits.nix-flake-diff-packages
     nixbits.nix-flake-rebuild
