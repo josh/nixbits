@@ -114,6 +114,11 @@ in
     hash = "sha256-6o+n0SQWJ0TsOG477BEn9vAPa22JLF+Gmp3CT64EJlQ=";
     manpage = "route.8";
   };
+  scutil = mkDarwinImpureDrv {
+    command = "/usr/sbin/scutil";
+    hash = "sha256-9APm3GmGIJWiYmjz8MdpZrFOQ7Z8YRkEo+nvIJdCZFc=";
+    manpage = "scutil.1";
+  };
   security = mkDarwinImpureDrv {
     command = "/usr/bin/security";
     hash = "sha256-HEad7NFCDbj37e13hi1WEAlpMvYE1c4gtTm1fJa8H90=";
