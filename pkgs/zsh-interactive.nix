@@ -24,7 +24,10 @@ let
     starship init zsh >$out
   '';
   fzf-init = runCommand "fzf-init" { nativeBuildInputs = [ fzf ]; } ''
-    fzf --zsh >$out
+    fzf --zsh >out
+    substitute out $out \
+      --replace-fail 'echo "fzf"' 'echo "${fzf}/bin/fzf"' \
+      --replace-fail 'echo "fzf-tmux ' 'echo "${fzf}/bin/fzf-tmux '
   '';
   zoxide-init = runCommand "zoxide-init" { nativeBuildInputs = [ zoxide ]; } ''
     zoxide init zsh >out
