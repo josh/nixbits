@@ -2,15 +2,13 @@
   lib,
   stdenvNoCC,
   jq,
-  nixbits,
   extraMCPServers ? { },
 }:
 let
-  inherit (nixbits) github-mcp-server;
 
   config = {
     mcpServers = {
-      github.command = lib.getExe github-mcp-server;
+      # Placeholder
     } // extraMCPServers;
   };
 in
