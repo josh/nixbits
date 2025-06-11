@@ -72,6 +72,29 @@ restic-age-init.overrideAttrs (
               touch $out
             '';
 
+        init-set-recipients =
+          runCommand "test-init-set-recipients"
+            {
+              nativeBuildInputs = [
+                age
+                restic-age-init
+                jq
+              ];
+            }
+            ''
+              age-keygen --output a.txt
+              age-keygen --output b.txt
+              jq --null-input \
+                --arg a "$(age-keygen -y a.txt)" \
+                --arg b "$(age-keygen -y b.txt)" \
+                '[{host: "localhost", user: "josh", pubkey: $a}, {host: "localhost", user: "josh", pubkey: $b}]' >recipients.json
+
+              restic-age-init --repo "$TMPDIR/restic-repo" \
+                --identity-file a.txt \
+                --recipients-file recipients.json
+              touch $out
+            '';
+
         init-from-repo =
           runCommand "test-init-from-repo"
             {

@@ -6,6 +6,7 @@ unset RESTIC_PASSWORD_FILE
 unset RESTIC_PASSWORD_COMMAND
 RESTIC_AGE_IDENTITY_COMMAND="${RESTIC_AGE_IDENTITY_COMMAND:-}"
 RESTIC_AGE_IDENTITY_FILE="${RESTIC_AGE_IDENTITY_FILE:-}"
+RESTIC_AGE_RECIPIENTS_FILE="${RESTIC_AGE_RECIPIENTS_FILE:-}"
 
 restic_init_args=()
 while [[ $# -gt 0 ]]; do
@@ -27,6 +28,11 @@ while [[ $# -gt 0 ]]; do
   --recipient)
     echo "error: --recipient is not supported" >&2
     exit 1
+    ;;
+  --recipients-file)
+    RESTIC_AGE_RECIPIENTS_FILE="$2"
+    export RESTIC_AGE_RECIPIENTS_FILE
+    shift 2
     ;;
   --identity-file)
     RESTIC_AGE_IDENTITY_FILE="$2"
@@ -56,11 +62,6 @@ elif [ -n "$RESTIC_AGE_IDENTITY_COMMAND" ]; then
   RESTIC_AGE_RECIPIENT=$(eval "$RESTIC_AGE_IDENTITY_COMMAND" | age-keygen -y)
 fi
 
-if [ -z "$RESTIC_AGE_RECIPIENT" ]; then
-  echo "error: identity is required (--identity-file or --identity-command)" >&2
-  exit 1
-fi
-
 RESTIC_PASSWORD_FILE=$(mktemp)
 openssl rand -base64 32 >"$RESTIC_PASSWORD_FILE"
 export RESTIC_PASSWORD_FILE
@@ -68,7 +69,15 @@ export RESTIC_PASSWORD_FILE
 x restic init "${restic_init_args[@]}"
 orig_key_id=$(restic key list --json | jq --raw-output 'map(.id)[0]')
 
-x restic-age-key add --recipient "$RESTIC_AGE_RECIPIENT"
+if [ -n "$RESTIC_AGE_RECIPIENTS_FILE" ]; then
+  x restic-age-key set --recipients-file "$RESTIC_AGE_RECIPIENTS_FILE"
+elif [ -n "$RESTIC_AGE_RECIPIENT" ]; then
+  x restic-age-key add --recipient "$RESTIC_AGE_RECIPIENT"
+else
+  echo "error: failed to add any recipient" >&2
+  exit 1
+fi
+
 restic-age-key password >"$RESTIC_PASSWORD_FILE"
 
 x restic key remove "$orig_key_id"
