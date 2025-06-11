@@ -19,6 +19,7 @@ let
         llm
         llm-anthropic
         llm-cmd
+        llm-fragments-github
         llm-gemini
         llm-gguf
         llm-jq
