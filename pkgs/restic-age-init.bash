@@ -6,7 +6,6 @@ unset RESTIC_PASSWORD_FILE
 unset RESTIC_PASSWORD_COMMAND
 RESTIC_AGE_IDENTITY_COMMAND="${RESTIC_AGE_IDENTITY_COMMAND:-}"
 RESTIC_AGE_IDENTITY_FILE="${RESTIC_AGE_IDENTITY_FILE:-}"
-RESTIC_AGE_RECIPIENT="${RESTIC_AGE_RECIPIENT:-}"
 
 restic_init_args=()
 while [[ $# -gt 0 ]]; do
@@ -26,9 +25,8 @@ while [[ $# -gt 0 ]]; do
     exit 1
     ;;
   --recipient)
-    RESTIC_AGE_RECIPIENT="$2"
-    export RESTIC_AGE_RECIPIENT
-    shift 2
+    echo "error: --recipient is not supported" >&2
+    exit 1
     ;;
   --identity-file)
     RESTIC_AGE_IDENTITY_FILE="$2"
@@ -52,16 +50,14 @@ if [ -z "$RESTIC_REPOSITORY" ]; then
   exit 1
 fi
 
-if [ -z "$RESTIC_AGE_RECIPIENT" ]; then
-  if [ -n "$RESTIC_AGE_IDENTITY_FILE" ]; then
-    RESTIC_AGE_RECIPIENT=$(age-keygen -y "$RESTIC_AGE_IDENTITY_FILE")
-  elif [ -n "$RESTIC_AGE_IDENTITY_COMMAND" ]; then
-    RESTIC_AGE_RECIPIENT=$(eval "$RESTIC_AGE_IDENTITY_COMMAND" | age-keygen -y)
-  fi
+if [ -n "$RESTIC_AGE_IDENTITY_FILE" ]; then
+  RESTIC_AGE_RECIPIENT=$(age-keygen -y "$RESTIC_AGE_IDENTITY_FILE")
+elif [ -n "$RESTIC_AGE_IDENTITY_COMMAND" ]; then
+  RESTIC_AGE_RECIPIENT=$(eval "$RESTIC_AGE_IDENTITY_COMMAND" | age-keygen -y)
 fi
 
 if [ -z "$RESTIC_AGE_RECIPIENT" ]; then
-  echo "error: recipient is required (--recipient, --identity-file, or --identity-command)" >&2
+  echo "error: identity is required (--identity-file or --identity-command)" >&2
   exit 1
 fi
 
