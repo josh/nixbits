@@ -5,6 +5,14 @@ fi
 
 if [ -n "${RUNNER_USE_GH_TOKEN:-}" ]; then
   RUNNER_PAT=$(gh auth token)
+elif [ -n "${CREDENTIALS_DIRECTORY:-}" ]; then
+  if [ -f "${CREDENTIALS_DIRECTORY}/GITHUB_TOKEN" ]; then
+    RUNNER_PAT=$(cat "${CREDENTIALS_DIRECTORY}/GITHUB_TOKEN")
+  elif [ -f "${CREDENTIALS_DIRECTORY}/GH_TOKEN" ]; then
+    RUNNER_PAT=$(cat "${CREDENTIALS_DIRECTORY}/GH_TOKEN")
+  elif [ -f "${CREDENTIALS_DIRECTORY}/github-token" ]; then
+    RUNNER_PAT=$(cat "${CREDENTIALS_DIRECTORY}/github-token")
+  fi
 fi
 
 declare -a config_opts=(--unattended --disableupdate --replace)
