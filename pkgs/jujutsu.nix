@@ -14,6 +14,7 @@ let
     paths = [
       jujutsu
       nixbits.jujutsu-clone
+      nixbits.jujutsu-git-set-upstream
       nixbits.jujutsu-pull
       nixbits.jujutsu-push
     ];
