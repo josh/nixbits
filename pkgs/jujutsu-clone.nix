@@ -2,6 +2,7 @@
   lib,
   writeShellApplication,
   coreutils,
+  gh,
   git,
   jujutsu,
   nixbits,
@@ -10,8 +11,10 @@ writeShellApplication {
   name = "jj-clone";
   runtimeInputs = [
     coreutils
+    gh
     git
     jujutsu
+    nixbits.jujutsu-git-set-upstream
   ];
   inheritPath = false;
   runtimeEnv = {

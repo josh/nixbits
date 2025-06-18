@@ -52,5 +52,10 @@ fi
 
 source=$(parse_repo_source "$repo")
 target="${target:-$(basename "$repo" .git)}"
+is_fork=$(gh repo view "$repo" --json 'isFork' --jq '.isFork')
 
-x-exec jj git clone --colocate "$source" "$target" "${extra_args[@]}"
+x jj git clone --colocate "$source" "$target" "${extra_args[@]}"
+if [ "$is_fork" = "true" ]; then
+  cd "$target" || exit 1
+  jj-git-set-upstream
+fi
