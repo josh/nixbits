@@ -2,7 +2,7 @@
 source "$XTRACE_PATH/share/bash/xtrace.bash"
 
 origin_url=$(jj --ignore-working-copy git remote list | grep '^origin ' | cut -d' ' -f2)
-upstream_url=$(jj --ignore-working-copy git remote list | grep '^upstream ' | cut -d' ' -f2)
+upstream_url=$(jj --ignore-working-copy git remote list | grep '^upstream ' | cut -d' ' -f2 || true)
 
 is_fork=$(gh repo view "$origin_url" --json 'isFork' --jq '.isFork')
 if [ "$is_fork" = "false" ]; then
