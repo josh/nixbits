@@ -11,7 +11,7 @@ fi
 command="$1"
 shift
 
-current_profile=$(readlink -f "$HOME/.nix-profile")
+current_profile=$(readlink -f "$HOME/.local/state/nix/profile")
 
 profile_dir=$(mktemp -d)
 pushd "$profile_dir" >/dev/null || exit 1

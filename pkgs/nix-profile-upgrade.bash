@@ -12,7 +12,7 @@ build() {
     --log-format internal-json --verbose 1>&1 2> >(nom --json)
 }
 
-old_profile=$(readlink -f "$HOME/.nix-profile")
+old_profile=$(readlink -f "$HOME/.local/state/nix/profile")
 new_profile=$(build "$@")
 
 if [ "$old_profile" = "$new_profile" ]; then
