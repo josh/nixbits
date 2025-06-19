@@ -3,8 +3,13 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
+if [ "$(id -u)" -eq 0 ]; then
+  nix_profile_dir="${NIX_STATE_DIR:-/nix/var/nix}/profiles/per-user/root"
+else
+  nix_profile_dir="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles"
+fi
+
 new_profile="$1"
-nix_profile_dir="$HOME/.local/state/nix/profiles"
 old_profile=$(readlink -f "$nix_profile_dir/profile")
 
 if [ ! -f "$new_profile/manifest.json" ]; then

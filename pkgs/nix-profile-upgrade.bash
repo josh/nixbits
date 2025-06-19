@@ -12,7 +12,12 @@ build() {
     --log-format internal-json --verbose 1>&1 2> >(nom --json)
 }
 
-old_profile=$(readlink -f "$HOME/.local/state/nix/profile")
+if [ "$(id -u)" -eq 0 ]; then
+  nix_profile_dir="${NIX_STATE_DIR:-/nix/var/nix}/profiles/per-user/root"
+else
+  nix_profile_dir="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles"
+fi
+old_profile=$(readlink -f "$nix_profile_dir/profile")
 new_profile=$(build "$@")
 
 if [ "$old_profile" = "$new_profile" ]; then
