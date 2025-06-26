@@ -1,6 +1,6 @@
-from pathlib import Path
-from typing import Iterator, Iterable
 import sys
+from pathlib import Path
+from typing import Iterable, Iterator
 
 
 def read_history_lines(histfile: Path) -> Iterator[bytes]:
