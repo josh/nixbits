@@ -3,11 +3,14 @@
   writeShellApplication,
   coreutils,
   gnugrep,
-  gh,
   github-runner,
   github-runner-root ? null,
   github-runner-use-gh-token ? true,
+  nixbits,
 }:
+let
+  inherit (nixbits) gh;
+in
 writeShellApplication {
   name = "github-runner-config-remove";
   runtimeInputs = [

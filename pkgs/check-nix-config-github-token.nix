@@ -1,9 +1,12 @@
 {
   writeShellApplication,
-  gh,
   gnugrep,
   nix,
+  nixbits,
 }:
+let
+  inherit (nixbits) gh;
+in
 writeShellApplication {
   name = "check-nix-config-github-token";
   runtimeInputs = [

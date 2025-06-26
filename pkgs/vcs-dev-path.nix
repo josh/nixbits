@@ -2,7 +2,6 @@
   symlinkJoin,
   nixbits,
   # keep-sorted start
-  gh,
   jj-fzf,
   jjui,
 # keep-sorted end

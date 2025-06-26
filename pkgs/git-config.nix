@@ -3,11 +3,11 @@
   hostPlatform,
   formats,
   diff-so-fancy,
-  gh,
   less,
   nixbits,
 }:
 let
+  inherit (nixbits) gh;
   gitIni = formats.gitIni { };
   config = gitIni.generate "git-config" {
     user = {

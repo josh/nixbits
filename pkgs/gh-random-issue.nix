@@ -2,10 +2,12 @@
   lib,
   stdenv,
   writeShellApplication,
-  gh,
   xdg-utils,
   nixbits,
 }:
+let
+  inherit (nixbits) gh;
+in
 writeShellApplication {
   name = "gh-random-issue";
   runtimeInputs = [

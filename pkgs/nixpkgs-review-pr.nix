@@ -1,9 +1,12 @@
 {
   writeShellApplication,
-  gh,
   gum,
   nixpkgs-review,
+  nixbits,
 }:
+let
+  inherit (nixbits) gh;
+in
 writeShellApplication {
   name = "nixpkgs-review-pr";
   runtimeInputs = [

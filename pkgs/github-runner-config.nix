@@ -3,7 +3,6 @@
   hostPlatform,
   writeShellApplication,
   coreutils,
-  gh,
   gnugrep,
   nixbits,
   github-runner,
@@ -17,6 +16,7 @@
   github-runner-ephemeral ? false,
 }:
 let
+  inherit (nixbits) gh;
   labels =
     if github-runner-labels != null && github-runner-labels != [ ] then
       (builtins.concatStringsSep "," github-runner-labels)

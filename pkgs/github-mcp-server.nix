@@ -1,9 +1,12 @@
 {
   lib,
   writeShellApplication,
-  gh,
   github-mcp-server,
+  nixbits,
 }:
+let
+  inherit (nixbits) gh;
+in
 writeShellApplication {
   name = "github-mcp-server";
   runtimeInputs = [

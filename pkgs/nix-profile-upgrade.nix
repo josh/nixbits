@@ -1,12 +1,14 @@
 {
   writeShellApplication,
   coreutils,
-  gh,
   nix-output-monitor,
   nix,
   nvd,
   nixbits,
 }:
+let
+  inherit (nixbits) gh;
+in
 writeShellApplication {
   name = "nix-profile-upgrade";
   runtimeInputs = [

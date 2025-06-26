@@ -5,7 +5,6 @@
   cachix,
   deadnix,
   fh,
-  gh,
   nh,
   nil,
   nix,

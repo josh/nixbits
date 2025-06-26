@@ -2,11 +2,13 @@
   lib,
   writeShellApplication,
   coreutils,
-  gh,
   git,
   jujutsu,
   nixbits,
 }:
+let
+  inherit (nixbits) gh;
+in
 writeShellApplication {
   name = "jj-clone";
   runtimeInputs = [

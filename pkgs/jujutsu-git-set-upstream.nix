@@ -2,12 +2,14 @@
   lib,
   writeShellApplication,
   coreutils,
-  gh,
   git,
   gnugrep,
   jujutsu,
   nixbits,
 }:
+let
+  inherit (nixbits) gh;
+in
 writeShellApplication {
   name = "jj-git-set-upstream";
   runtimeInputs = [

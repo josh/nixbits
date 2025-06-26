@@ -4,10 +4,12 @@
   writeShellApplication,
   coreutils,
   findutils,
-  gh,
   jq,
   nixbits,
 }:
+let
+  inherit (nixbits) gh;
+in
 writeShellApplication {
   name = "gh-dependabot";
   runtimeInputs = [
