@@ -61,16 +61,17 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   '';
 
   buildCommand = ''
-    appendToVar makeWrapperArgs --add-flags "--option rclone.program=${lib.getExe rclone}"
-    appendToVar makeWrapperArgs --set RESTIC_REPOSITORY "$resticRepository"
-    appendToVar makeWrapperArgs --unset RESTIC_REPOSITORY_FILE
-    appendToVar makeWrapperArgs --set RESTIC_PASSWORD_COMMAND "$resticPasswordCommand"
-    appendToVar makeWrapperArgs --unset RESTIC_PASSWORD_FILE
-    appendToVar makeWrapperArgs --set RESTIC_FROM_PASSWORD_COMMAND "$resticFromPasswordCommand"
-    appendToVar makeWrapperArgs --unset RESTIC_FROM_PASSWORD_FILE
-    appendToVar makeWrapperArgs --set RESTIC_AGE_IDENTITY_COMMAND "$resticAgeIdentityCommandExe"
-    appendToVar makeWrapperArgs --unset RESTIC_AGE_IDENTITY_FILE
-    appendToVar makeWrapperArgs --set RCLONE_CONFIG "$rcloneConfig"
+    prependToVar makeWrapperArgs --add-flags "--option rclone.program=${lib.getExe rclone}"
+    prependToVar makeWrapperArgs --set RESTIC_REPOSITORY "$resticRepository"
+    prependToVar makeWrapperArgs --unset RESTIC_REPOSITORY_FILE
+    prependToVar makeWrapperArgs --set RESTIC_PASSWORD_COMMAND "$resticPasswordCommand"
+    prependToVar makeWrapperArgs --unset RESTIC_PASSWORD_FILE
+    prependToVar makeWrapperArgs --set RESTIC_FROM_PASSWORD_COMMAND "$resticFromPasswordCommand"
+    prependToVar makeWrapperArgs --unset RESTIC_FROM_PASSWORD_FILE
+    prependToVar makeWrapperArgs --set RESTIC_AGE_IDENTITY_COMMAND "$resticAgeIdentityCommandExe"
+    prependToVar makeWrapperArgs --unset RESTIC_AGE_IDENTITY_FILE
+    prependToVar makeWrapperArgs --set RCLONE_CONFIG "$rcloneConfig"
+
     appendToVar makeWrapperArgs --run "$resticPreRunScript"
 
     mkdir -p $out/bin
