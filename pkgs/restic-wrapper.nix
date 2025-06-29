@@ -17,7 +17,10 @@ let
   toExePath = path: if lib.attrsets.isDerivation path then lib.meta.getExe path else path;
 
   age' = if age == pkgs.age then nixbits.age else age;
-  restic-age-key' = restic-age-key.override { age = age'; };
+  restic-age-key' = restic-age-key.override {
+    age = age';
+    inherit rclone;
+  };
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
@@ -58,8 +61,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   '';
 
   buildCommand = ''
-    appendToVar makeWrapperArgs --set PATH "${rclone}/bin"
-    # TODO: restic-age-key doesn't know about this option, so we still have to set PATH
     appendToVar makeWrapperArgs --add-flags "--option rclone.program=${lib.getExe rclone}"
     appendToVar makeWrapperArgs --set RESTIC_REPOSITORY "$resticRepository"
     appendToVar makeWrapperArgs --unset RESTIC_REPOSITORY_FILE
