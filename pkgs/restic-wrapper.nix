@@ -6,6 +6,7 @@
   makeWrapper,
   lndir,
   age,
+  bash,
   rclone,
   rclone-config ? nixbits.rclone-taildrive-config,
   aws-config ? null,
@@ -79,6 +80,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     fi
     if [ -n "$awsConfig" ]; then
       prependToVar makeWrapperArgs --set AWS_CONFIG_FILE "$awsConfig"
+      # rclone needs `sh` to spawn aws config credentials process
+      prependToVar makeWrapperArgs --suffix PATH : "${bash}/bin"
     fi
 
     appendToVar makeWrapperArgs --run "$resticPreRunScript"
