@@ -83,8 +83,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     in
     {
       key-help = runCommand "test-key-help" { nativeBuildInputs = [ restic ]; } ''
-        restic-wrapper key --help
-        restic-wrapper age-key --help
+        ${lib.getExe restic} key --help
+        ${lib.getExe restic} age-key --help
         touch $out
       '';
     };
