@@ -8,6 +8,7 @@
   age,
   rclone,
   rclone-config ? nixbits.rclone-taildrive-config,
+  aws-config ? null,
   restic-age-key ? nur.repos.josh.restic-age-key,
   restic,
   nur,
@@ -33,7 +34,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   resticFromPasswordCommand = "${restic-age-key'}/bin/restic-age-key from-password";
   resticAgeIdentityCommand = "";
   resticAgeIdentityCommandExe = toExePath finalAttrs.resticAgeIdentityCommand;
+
   rcloneConfig = rclone-config;
+  awsConfig = aws-config;
 
   nativeBuildInputs = [
     lndir
@@ -70,7 +73,13 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     prependToVar makeWrapperArgs --unset RESTIC_FROM_PASSWORD_FILE
     prependToVar makeWrapperArgs --set RESTIC_AGE_IDENTITY_COMMAND "$resticAgeIdentityCommandExe"
     prependToVar makeWrapperArgs --unset RESTIC_AGE_IDENTITY_FILE
-    prependToVar makeWrapperArgs --set RCLONE_CONFIG "$rcloneConfig"
+
+    if [ -n "$rcloneConfig" ]; then
+      prependToVar makeWrapperArgs --set RCLONE_CONFIG "$rcloneConfig"
+    fi
+    if [ -n "$awsConfig" ]; then
+      prependToVar makeWrapperArgs --set AWS_CONFIG_FILE "$awsConfig"
+    fi
 
     appendToVar makeWrapperArgs --run "$resticPreRunScript"
 
