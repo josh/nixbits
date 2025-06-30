@@ -1,4 +1,5 @@
 {
+  lib,
   stdenvNoCC,
   runtimeShell,
   makeWrapper,
@@ -13,11 +14,11 @@ stdenvNoCC.mkDerivation {
 
   nativeBuildInputs = [ makeWrapper ];
   makeWrapperArgs =
-    [
+    (lib.lists.optionals stdenvNoCC.hostPlatform.isDarwin [
       "--set"
       "GH_CONFIG_DIR"
       "${nixbits.gh-config-dir}"
-    ]
+    ])
     ++ [
       "--set"
       "GH_NO_UPDATE_NOTIFIER"
