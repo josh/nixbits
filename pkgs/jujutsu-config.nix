@@ -53,6 +53,8 @@ let
       push = [
         "git"
         "push"
+        "--tracked"
+        "--deleted"
       ];
       tug = [
         "bookmark"
