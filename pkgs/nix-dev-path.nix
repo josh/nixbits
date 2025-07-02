@@ -31,6 +31,7 @@ symlinkJoin {
     nix-tree
     nixbits.gh
     nixbits.git
+    nixbits.nix-check
     nixbits.nix-flake-diff-packages
     nixbits.nix-flake-rebuild
     nixbits.nix-profile-upgrade
