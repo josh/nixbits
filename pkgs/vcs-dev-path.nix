@@ -10,8 +10,6 @@ symlinkJoin {
   name = "vcs-dev-path";
   paths = [
     # keep-sorted start
-    jj-fzf
-    jjui
     nixbits.gh
     nixbits.git
     nixbits.jujutsu
