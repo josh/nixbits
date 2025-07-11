@@ -1,10 +1,6 @@
 {
   symlinkJoin,
   nixbits,
-  # keep-sorted start
-  jj-fzf,
-  jjui,
-# keep-sorted end
 }:
 symlinkJoin {
   name = "vcs-dev-path";
