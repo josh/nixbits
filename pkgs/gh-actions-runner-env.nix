@@ -32,4 +32,5 @@ buildEnv {
     which
     # keep-sorted end
   ];
+  pathsToLink = [ "/bin" ];
 }
