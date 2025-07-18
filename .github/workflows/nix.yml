@@ -29,6 +29,7 @@ jobs:
           extra-conf: |
             accept-flake-config = true
             allow-import-from-derivation = false
+            allowed-impure-host-deps = /System/Library /bin/sh /dev /usr/lib /bin /usr/bin /usr/share/man
 
       - uses: cachix/cachix-action@v16
         with:
