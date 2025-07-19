@@ -2,6 +2,7 @@
   lib,
   runCommand,
   writeText,
+  symlinkJoin,
   nur,
   nixbits,
   theme ? null,
@@ -38,6 +39,13 @@ let
     direnv hook fish >$out
   '';
 
+  path = symlinkJoin {
+    name = "fish-path";
+    paths = [
+      direnv
+    ];
+  };
+
   config = writeText "config.fish" ''
     if test -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
       source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
@@ -46,6 +54,8 @@ let
     ${themeSourceCommand}
 
     set -g fish_greeting
+
+    set --export PATH $PATH ${path}/bin
 
     status is-login; and begin
       # Login shell initialization

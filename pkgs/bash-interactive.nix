@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   runCommand,
+  symlinkJoin,
   bash,
   eza,
   fzf,
@@ -13,6 +14,13 @@
 let
   inherit (nixbits) direnv;
   inherit (nur.repos.josh) iterm2-shell-integration;
+
+  path = symlinkJoin {
+    name = "bash-path";
+    paths = [
+      direnv
+    ];
+  };
 
   direnv-init = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
     direnv hook bash >$out
@@ -35,6 +43,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         echo "Error: This script must be run in an interactive shell"
         exit 1
       fi
+
+      export PATH=${path}/bin:$PATH
 
       if [ -d "''${XDG_STATE_HOME:-$HOME/.local/state}/bash" ]; then
         HISTFILE="''${XDG_STATE_HOME:-$HOME/.local/state}/bash/history"

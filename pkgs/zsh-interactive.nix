@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   runCommand,
+  symlinkJoin,
   eza,
   fzf,
   neovim,
@@ -16,6 +17,13 @@
 let
   inherit (nixbits) direnv;
   inherit (nur.repos.josh) iterm2-shell-integration;
+
+  path = symlinkJoin {
+    name = "zsh-path";
+    paths = [
+      direnv
+    ];
+  };
 
   direnv-init = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
     direnv hook zsh >$out
@@ -47,6 +55,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       fi
 
       typeset -U path fpath
+
+      path+=("${path}/bin")
 
       # TODO: statically link this path
       if [ -d "$HOME/.local/state/nix/profiles/profile/share/zsh/site-functions" ]; then
