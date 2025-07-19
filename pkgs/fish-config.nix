@@ -3,9 +3,12 @@
   runCommand,
   writeText,
   nur,
+  nixbits,
   theme ? null,
 }:
 let
+  inherit (nixbits) direnv;
+
   themes = {
     "tokyonight_day" = "${nur.repos.josh.tokyonight-extras}/share/tokyonight/fish/tokyonight_day.fish";
     "tokyonight_moon" =
@@ -31,6 +34,10 @@ let
     else
       "";
 
+  direnv-init = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
+    direnv hook fish >$out
+  '';
+
   config = writeText "config.fish" ''
     if test -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
       source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
@@ -39,6 +46,15 @@ let
     ${themeSourceCommand}
 
     set -g fish_greeting
+
+    status is-login; and begin
+      # Login shell initialization
+    end
+
+    status is-interactive; and begin
+      # Interactive shell initialization
+      source ${direnv-init}
+    end
   '';
 
   themeInstallCommand =
