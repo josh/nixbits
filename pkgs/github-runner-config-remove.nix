@@ -19,16 +19,15 @@ writeShellApplication {
     gnugrep
   ];
   inheritPath = false;
-  runtimeEnv =
-    {
-      GITHUB_RUNNER_PATH = github-runner;
-    }
-    // (lib.attrsets.optionalAttrs (github-runner-root != null) {
-      RUNNER_ROOT = github-runner-root;
-    })
-    // (lib.attrsets.optionalAttrs github-runner-use-gh-token {
-      RUNNER_USE_GH_TOKEN = true;
-    });
+  runtimeEnv = {
+    GITHUB_RUNNER_PATH = github-runner;
+  }
+  // (lib.attrsets.optionalAttrs (github-runner-root != null) {
+    RUNNER_ROOT = github-runner-root;
+  })
+  // (lib.attrsets.optionalAttrs github-runner-use-gh-token {
+    RUNNER_USE_GH_TOKEN = true;
+  });
   text = builtins.readFile ./github-runner-config-remove.bash;
 
   meta = {

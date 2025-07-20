@@ -38,7 +38,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   outputs = [
     "out"
-  ] ++ (lib.optional finalAttrs.preinstallCheck "hooks");
+  ]
+  ++ (lib.optional finalAttrs.preinstallCheck "hooks");
 
   buildCommand = ''
     if [ -n "$ageIdentity" ]; then

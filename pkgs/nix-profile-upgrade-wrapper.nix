@@ -16,15 +16,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [ makeWrapper ];
 
-  makeWrapperArgs =
-    [
-      "--add-flags"
-      "--all"
-    ]
-    ++ [
-      "--add-flags"
-      "--accept-flake-config"
-    ];
+  makeWrapperArgs = [
+    "--add-flags"
+    "--all"
+  ]
+  ++ [
+    "--add-flags"
+    "--accept-flake-config"
+  ];
 
   buildCommand = ''
     mkdir -p $out/bin

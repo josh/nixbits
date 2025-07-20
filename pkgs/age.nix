@@ -30,11 +30,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     lndir
   ];
 
-  paths =
-    [ age ]
-    ++ (lib.optional seSupport age-plugin-se)
-    ++ (lib.optional tpmSupport age-plugin-tpm)
-    ++ (lib.optional yubikeySupport age-plugin-yubikey);
+  paths = [
+    age
+  ]
+  ++ (lib.optional seSupport age-plugin-se)
+  ++ (lib.optional tpmSupport age-plugin-tpm)
+  ++ (lib.optional yubikeySupport age-plugin-yubikey);
 
   buildCommand = ''
     mkdir -p $out

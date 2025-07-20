@@ -9,7 +9,8 @@ let
   config = {
     mcpServers = {
       # Placeholder
-    } // extraMCPServers;
+    }
+    // extraMCPServers;
   };
 in
 stdenvNoCC.mkDerivation {

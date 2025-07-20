@@ -17,7 +17,8 @@ writeShellApplication {
     findutils
     gh
     jq
-  ] ++ (lib.lists.optional stdenv.hostPlatform.isDarwin nixbits.darwin.open);
+  ]
+  ++ (lib.lists.optional stdenv.hostPlatform.isDarwin nixbits.darwin.open);
   inheritPath = false;
   text = builtins.readFile ./gh-dependabot.bash;
   meta = {

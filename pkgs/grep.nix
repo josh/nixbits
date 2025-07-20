@@ -10,16 +10,15 @@ stdenvNoCC.mkDerivation {
   __structuredAttrs = true;
 
   nativeBuildInputs = [ makeWrapper ];
-  makeWrapperArgs =
-    [
-      "--set"
-      "GREP_COLORS"
-      "mt=1;32"
-    ]
-    ++ [
-      "--add-flags"
-      "--color=auto"
-    ];
+  makeWrapperArgs = [
+    "--set"
+    "GREP_COLORS"
+    "mt=1;32"
+  ]
+  ++ [
+    "--add-flags"
+    "--color=auto"
+  ];
 
   buildCommand = ''
     mkdir $out

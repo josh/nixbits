@@ -85,7 +85,8 @@ let
       key = "Tab";
       command = tmux-command "previous-window";
     }
-  ] ++ macSelectWindowBindings;
+  ]
+  ++ macSelectWindowBindings;
 
   # tmux go to window number
   macSelectWindowBindings = builtins.genList (

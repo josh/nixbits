@@ -42,18 +42,20 @@ let
 
   shell = interactiveShell;
 
-  configs =
-    [ (writers.writeTOML "alacritty.toml" config) ]
-    ++ [ (writers.writeTOML "alacritty-macos.toml" macosConfig) ]
-    ++ (lib.lists.optional (theme != null) themeImport)
-    ++ (lib.lists.optional enableTmux tmuxConfig);
+  configs = [
+    (writers.writeTOML "alacritty.toml" config)
+  ]
+  ++ [ (writers.writeTOML "alacritty-macos.toml" macosConfig) ]
+  ++ (lib.lists.optional (theme != null) themeImport)
+  ++ (lib.lists.optional enableTmux tmuxConfig);
 
   config = {
     terminal.shell.program = shell;
 
     env = {
       "SHELL" = shell;
-    } // lib.attrsets.optionalAttrs (theme != null) { THEME = theme; };
+    }
+    // lib.attrsets.optionalAttrs (theme != null) { THEME = theme; };
 
     window = {
       dimensions = {

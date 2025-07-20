@@ -102,14 +102,13 @@ let
     # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#better-merge-conflicts>
     # merge.conflictstyle = "zdiff3";
 
-    credential =
-      {
-        "https://github.com".helper = "${lib.getExe gh} auth git-credential";
-        "https://gist.github.com".helper = "${lib.getExe gh} auth git-credential";
-      }
-      // (lib.attrsets.optionalAttrs hostPlatform.isMacOS {
-        helper = "osxkeychain";
-      });
+    credential = {
+      "https://github.com".helper = "${lib.getExe gh} auth git-credential";
+      "https://gist.github.com".helper = "${lib.getExe gh} auth git-credential";
+    }
+    // (lib.attrsets.optionalAttrs hostPlatform.isMacOS {
+      helper = "osxkeychain";
+    });
 
     # diff-so-fancy
     core.pager = "${lib.getExe diff-so-fancy} | ${lib.getExe less} --tabs=4 -RF";

@@ -35,22 +35,21 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   inherit (lazygit) version;
 
   nativeBuildInputs = [ makeWrapper ];
-  makeWrapperArgs =
-    [
-      "--set"
-      "PATH"
-      runtimePath
-    ]
-    ++ [
-      "--set"
-      "GIT_CONFIG_GLOBAL"
-      git-config
-    ]
-    ++ [
-      "--set"
-      "LG_CONFIG_FILE"
-      config
-    ];
+  makeWrapperArgs = [
+    "--set"
+    "PATH"
+    runtimePath
+  ]
+  ++ [
+    "--set"
+    "GIT_CONFIG_GLOBAL"
+    git-config
+  ]
+  ++ [
+    "--set"
+    "LG_CONFIG_FILE"
+    config
+  ];
 
   buildCommand = ''
     mkdir -p $out/bin

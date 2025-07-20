@@ -8,22 +8,21 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   name = "gitignore";
   __structuredAttrs = true;
 
-  patterns =
-    [
-      # direnv
-      ".envrc"
-      ".direnv/"
+  patterns = [
+    # direnv
+    ".envrc"
+    ".direnv/"
 
-      # Nix
-      "result"
-      "result-*"
+    # Nix
+    "result"
+    "result-*"
 
-      # Claude code
-      "**/.claude/settings.local.json"
-    ]
-    ++ (lib.lists.optionals stdenvNoCC.hostPlatform.isDarwin [
-      ".DS_Store"
-    ]);
+    # Claude code
+    "**/.claude/settings.local.json"
+  ]
+  ++ (lib.lists.optionals stdenvNoCC.hostPlatform.isDarwin [
+    ".DS_Store"
+  ]);
 
   buildCommand = ''
     for pattern in "''${patterns[@]}"; do
