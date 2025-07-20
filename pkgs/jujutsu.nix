@@ -3,6 +3,7 @@
   makeWrapper,
   runCommand,
   jujutsu,
+  watchman,
   nixbits,
   testers,
 }:
@@ -17,6 +18,7 @@ let
       nixbits.jujutsu-git-set-upstream
       nixbits.jujutsu-pull
       nixbits.jujutsu-push
+      watchman
     ];
     buildInputs = [ makeWrapper ];
     postBuild = ''
