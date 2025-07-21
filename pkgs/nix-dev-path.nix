@@ -4,7 +4,6 @@
   # keep-sorted start
   cachix,
   deadnix,
-  fh,
   nh,
   nil,
   nix,
@@ -24,7 +23,6 @@ symlinkJoin {
     # keep-sorted start
     cachix
     deadnix
-    fh
     nh
     nil
     nix
