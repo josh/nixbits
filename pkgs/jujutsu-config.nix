@@ -70,6 +70,13 @@ let
         "--insert-before"
         "@"
       ];
+      rebase-all = [
+        "rebase"
+        "--branch"
+        "all:bookmarks()"
+        "--destination"
+        "trunk()"
+      ];
     };
   };
 in
