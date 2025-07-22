@@ -53,7 +53,7 @@ let
       push = [
         "git"
         "push"
-        "--tracked"
+        "--all"
         "--deleted"
       ];
       tug = [
