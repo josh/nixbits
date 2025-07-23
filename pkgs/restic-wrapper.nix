@@ -9,7 +9,10 @@
   bash,
   rclone,
   rclone-config ? nixbits.rclone-taildrive-config,
+  # TODO: Deprecate this alias
   aws-config ? null,
+  awsConfig ? null,
+  awsCredentials ? null,
   restic-age-key ? nur.repos.josh.restic-age-key,
   restic,
   nur,
@@ -37,7 +40,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   resticAgeIdentityCommandExe = toExePath finalAttrs.resticAgeIdentityCommand;
 
   rcloneConfig = rclone-config;
-  awsConfig = aws-config;
+  awsConfig = if awsConfig != null then awsConfig else aws-config;
+  inherit awsCredentials;
 
   nativeBuildInputs = [
     lndir
@@ -80,6 +84,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     fi
     if [ -n "$awsConfig" ]; then
       prependToVar makeWrapperArgs --set AWS_CONFIG_FILE "$awsConfig"
+    fi
+    if [ -n "$awsCredentials" ]; then
+      prependToVar makeWrapperArgs --set AWS_SHARED_CREDENTIALS_FILE "$awsCredentials"
+    fi
+    if [ -n "$awsConfig" ] || [ -n "$awsCredentials" ]; then
       # rclone needs `sh` to spawn aws config credentials process
       prependToVar makeWrapperArgs --suffix PATH : "${bash}/bin"
     fi
