@@ -50,6 +50,10 @@ let
   ++ (lib.lists.optional enableTmux tmuxConfig);
 
   config = {
+    general = {
+      live_config_reload = false;
+    };
+
     terminal.shell.program = shell;
 
     env = {
