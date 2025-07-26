@@ -14,10 +14,12 @@ let
   };
 in
 stdenvNoCC.mkDerivation {
-  name = lazyjj'.name;
-  pname = lazyjj'.pname;
-  version = lazyjj'.version;
-  meta = lazyjj'.meta;
+  inherit (lazyjj')
+    name
+    pname
+    version
+    meta
+    ;
 
   __structuredAttrs = true;
 
