@@ -1,0 +1,21 @@
+{
+  lib,
+  writeShellApplication,
+  coreutils,
+  hostname,
+  nixbits,
+}:
+writeShellApplication {
+  name = "fish-history-sync";
+  runtimeInputs = [
+    coreutils
+    hostname
+    nixbits.fish-history-export
+  ];
+  inheritPath = false;
+  text = builtins.readFile ./fish-history-sync.bash;
+  meta = {
+    description = "Sync fish history with iCloud Drive";
+    platforms = lib.platforms.darwin;
+  };
+}
