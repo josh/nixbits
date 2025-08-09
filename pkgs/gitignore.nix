@@ -19,6 +19,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     # Claude code
     "**/.claude/settings.local.json"
+
+    # Zed
+    ".ropeproject/"
   ]
   ++ (lib.lists.optionals stdenvNoCC.hostPlatform.isDarwin [
     ".DS_Store"
