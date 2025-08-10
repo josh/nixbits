@@ -2,7 +2,6 @@
   lib,
   stdenvNoCC,
   runCommand,
-  writeText,
   symlinkJoin,
   nur,
   nixbits,
@@ -27,67 +26,42 @@ let
     else
       assert (lib.asserts.assertOneOf "theme" theme (builtins.attrNames themes));
       themes.${theme};
+in
+stdenvNoCC.mkDerivation {
+  __structuredAttrs = true;
 
-  themeSourceCommand =
-    if themePath != null then
-      ''
-        source '${themePath}'
-      ''
-    else
-      "";
+  name = "fish-config";
 
-  direnv-init = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
-    direnv hook fish >$out
-  '';
-
-  path = symlinkJoin {
+  fishPath = symlinkJoin {
     name = "fish-path";
     paths = [
       direnv
     ];
   };
 
-  config = writeText "config.fish" (
-    ''
-      if test -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
-        source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.fish'
-      end
+  direnvInit = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
+    direnv hook fish >$out
+  '';
 
-      ${themeSourceCommand}
+  themeName = theme;
+  inherit themePath;
 
-      set -g fish_greeting
+  buildCommand = ''
+    mkdir -p $out $out/conf.d
 
-      set --export PATH $PATH ${path}/bin
+    cat ${./fish-config.fish} >>$out/config.fish
+    substituteInPlace $out/config.fish \
+      --replace-warn '@out@' "$out" \
+      --replace-fail '@fish-path@' "$fishPath" \
+      --replace-fail '@direnv-init@' "$direnvInit"
 
-      status is-login; and begin
-        # Login shell initialization
-      end
-
-      status is-interactive; and begin
-        # Interactive shell initialization
-        source ${direnv-init}
-      end
-    ''
-    + (lib.strings.optionalString stdenvNoCC.isDarwin ''
-
-      if begin
-          status --is-interactive
-          and status --is-login
-          and test -d "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Terminal/history"
-        end
-        function on_exit --on-event fish_exit
-          echo "...syncing history" 1>&2
-          ${lib.getExe nixbits.fish-history-sync}
-        end
-      end
-    '')
-  );
-
-  themeInstallCommand =
-    if themePath != null then ''cp ${themePath} $out/conf.d/${theme}.fish'' else "";
-in
-runCommand "fish-config" { } ''
-  mkdir -p $out $out/conf.d
-  cp ${config} $out/config.fish
-  ${themeInstallCommand}
-''
+    if [ -f "$themePath" ] && [ -n "$themeName" ]; then
+      cp $themePath $out/conf.d/$themeName.fish
+    fi
+  ''
+  + (lib.strings.optionalString stdenvNoCC.isDarwin ''
+    cat ${./fish-config-darwin.fish} >$out/conf.d/darwin.fish
+    substituteInPlace $out/conf.d/darwin.fish \
+      --replace-fail '@fish-history-sync@' ${nixbits.fish-history-sync}
+  '');
+}

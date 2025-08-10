@@ -3,10 +3,11 @@
   makeWrapper,
   fish,
   nixbits,
+  fish-config ? nixbits.fish-config,
   theme ? null,
 }:
 let
-  fish-config-dir = nixbits.fish-config.override { inherit theme; };
+  fish-config-dir = fish-config.override { inherit theme; };
 in
 symlinkJoin {
   name = "fish";
