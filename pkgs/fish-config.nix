@@ -27,7 +27,7 @@ let
       assert (lib.asserts.assertOneOf "theme" theme (builtins.attrNames themes));
       themes.${theme};
 in
-stdenvNoCC.mkDerivation {
+stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
   name = "fish-config";
@@ -39,6 +39,14 @@ stdenvNoCC.mkDerivation {
     ];
   };
 
+  fishEnvVars = { };
+
+  fishEnvVarsScript = builtins.concatStringsSep "\n" (
+    lib.attrsets.mapAttrsToList (name: value: ''
+      set --export ${builtins.toString name} "${builtins.toString value}"
+    '') finalAttrs.fishEnvVars
+  );
+
   direnvInit = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
     direnv hook fish >$out
   '';
@@ -48,6 +56,8 @@ stdenvNoCC.mkDerivation {
 
   buildCommand = ''
     mkdir -p $out $out/conf.d
+
+    echo "$fishEnvVarsScript" >>$out/conf.d/env.fish
 
     cat ${./fish-config.fish} >>$out/config.fish
     substituteInPlace $out/config.fish \
@@ -64,4 +74,4 @@ stdenvNoCC.mkDerivation {
     substituteInPlace $out/conf.d/darwin.fish \
       --replace-fail '@fish-history-sync@' ${nixbits.fish-history-sync}
   '');
-}
+})

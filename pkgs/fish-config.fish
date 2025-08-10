@@ -6,7 +6,7 @@ for file in @out@/conf.d/*.fish
   source $file
 end
 
-set -g fish_greeting
+set --global fish_greeting
 
 set --export PATH $PATH @fish-path@/bin
 
