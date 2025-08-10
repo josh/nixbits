@@ -7,7 +7,8 @@
   theme ? null,
 }:
 let
-  fish-config-dir = fish-config.override { inherit theme; };
+  fish-config-dir =
+    if theme != null then fish-config.overrideAttrs { themeName = theme; } else fish-config;
 in
 symlinkJoin {
   name = "fish";

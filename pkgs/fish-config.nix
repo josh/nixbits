@@ -5,12 +5,11 @@
   symlinkJoin,
   nur,
   nixbits,
-  theme ? null,
 }:
 let
   inherit (nixbits) direnv;
 
-  themes = {
+  availableThemes = {
     "tokyonight_day" = "${nur.repos.josh.tokyonight-extras}/share/tokyonight/fish/tokyonight_day.fish";
     "tokyonight_moon" =
       "${nur.repos.josh.tokyonight-extras}/share/tokyonight/fish/tokyonight_moon.fish";
@@ -19,13 +18,6 @@ let
     "tokyonight_storm" =
       "${nur.repos.josh.tokyonight-extras}/share/tokyonight/fish/tokyonight_storm.fish";
   };
-
-  themePath =
-    if theme == null then
-      null
-    else
-      assert (lib.asserts.assertOneOf "theme" theme (builtins.attrNames themes));
-      themes.${theme};
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
@@ -51,8 +43,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     direnv hook fish >$out
   '';
 
-  themeName = theme;
-  inherit themePath;
+  themeName = null;
+
+  themePath =
+    if finalAttrs.themeName == null then
+      null
+    else
+      assert (lib.asserts.assertOneOf "theme" finalAttrs.themeName (builtins.attrNames availableThemes));
+      availableThemes.${finalAttrs.themeName};
 
   buildCommand = ''
     mkdir -p $out $out/conf.d
