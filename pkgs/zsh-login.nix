@@ -10,6 +10,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   __structuredAttrs = true;
 
+  shellInit = "";
+
   text = ''
     if [[ ! -o login ]]; then
       echo "Error: This script must be run as a login shell" >&2
@@ -20,8 +22,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       # shellcheck disable=SC1091
       . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
     fi
+
+    ${finalAttrs.shellInit}
   ''
   + (lib.strings.optionalString stdenvNoCC.isDarwin ''
+
     if [ -n "$ZED_TERM" ]; then
     	export EDITOR="${nixbits.zed-cli}/bin/zed --wait"
     fi

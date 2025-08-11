@@ -52,6 +52,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       assert (lib.asserts.assertOneOf "theme" finalAttrs.themeName (builtins.attrNames availableThemes));
       availableThemes.${finalAttrs.themeName};
 
+  interactiveShellInit = "";
+  loginShellInit = "";
+
   buildCommand = ''
     mkdir -p $out $out/conf.d
 
@@ -61,6 +64,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     substituteInPlace $out/config.fish \
       --replace-warn '@out@' "$out" \
       --replace-fail '@fish-path@' "$fishPath" \
+      --replace-fail '@loginShellInit@' "$loginShellInit" \
+      --replace-fail '@interactiveShellInit@' "$interactiveShellInit" \
       --replace-fail '@direnv-init@' "$direnvInit"
 
     if [ -f "$themePath" ] && [ -n "$themeName" ]; then

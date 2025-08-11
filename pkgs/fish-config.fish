@@ -12,9 +12,12 @@ set --export PATH $PATH @fish-path@/bin
 
 status is-login; and begin
   # Login shell initialization
+  @loginShellInit@
 end
 
 status is-interactive; and begin
-  # Interactive shell initialization
   source @direnv-init@
+
+  # Interactive shell initialization
+  @interactiveShellInit@
 end
