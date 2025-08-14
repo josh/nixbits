@@ -25,19 +25,19 @@ let
     ];
   };
 
-  direnv-init = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
+  direnv-init = runCommand "direnv-init.zsh" { nativeBuildInputs = [ direnv ]; } ''
     direnv hook zsh >$out
   '';
-  starship-init = runCommand "starship-init" { nativeBuildInputs = [ starship ]; } ''
+  starship-init = runCommand "starship-init.zsh" { nativeBuildInputs = [ starship ]; } ''
     starship init zsh >$out
   '';
-  fzf-init = runCommand "fzf-init" { nativeBuildInputs = [ fzf ]; } ''
+  fzf-init = runCommand "fzf-init.zsh" { nativeBuildInputs = [ fzf ]; } ''
     fzf --zsh >out
     substitute out $out \
       --replace-fail 'echo "fzf"' 'echo "${fzf}/bin/fzf"' \
       --replace-fail 'echo "fzf-tmux ' 'echo "${fzf}/bin/fzf-tmux '
   '';
-  zoxide-init = runCommand "zoxide-init" { nativeBuildInputs = [ zoxide ]; } ''
+  zoxide-init = runCommand "zoxide-init.zsh" { nativeBuildInputs = [ zoxide ]; } ''
     zoxide init zsh >out
     substitute out $out --replace-fail '\command zoxide' '${lib.getExe zoxide}'
   '';

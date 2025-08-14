@@ -22,13 +22,13 @@ let
     ];
   };
 
-  direnv-init = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
+  direnv-init = runCommand "direnv-init.bash" { nativeBuildInputs = [ direnv ]; } ''
     direnv hook bash >$out
   '';
-  fzf-init = runCommand "fzf-init" { nativeBuildInputs = [ fzf ]; } ''
+  fzf-init = runCommand "fzf-init.bash" { nativeBuildInputs = [ fzf ]; } ''
     fzf --bash >$out
   '';
-  starship-init = runCommand "starship-init" { nativeBuildInputs = [ starship ]; } ''
+  starship-init = runCommand "starship-init.bash" { nativeBuildInputs = [ starship ]; } ''
     starship init bash --print-full-init >$out
   '';
 in

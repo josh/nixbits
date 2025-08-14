@@ -39,7 +39,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     '') finalAttrs.fishEnvVars
   );
 
-  direnvInit = runCommand "direnv-init" { nativeBuildInputs = [ direnv ]; } ''
+  direnvInit = runCommand "direnv-init.fish" { nativeBuildInputs = [ direnv ]; } ''
     direnv hook fish >$out
   '';
 
