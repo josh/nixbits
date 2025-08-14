@@ -58,7 +58,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   buildCommand = ''
     mkdir -p $out $out/conf.d
 
-    echo "$fishEnvVarsScript" >>$out/conf.d/env.fish
+    if [ -n "$fishEnvVarsScript" ]; then
+      echo "$fishEnvVarsScript" >>$out/conf.d/env.fish
+    fi
 
     cat ${./fish-config.fish} >>$out/config.fish
     substituteInPlace $out/config.fish \
