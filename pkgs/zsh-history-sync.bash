@@ -8,12 +8,12 @@ trap cleanup SIGINT
 CLOUD_HISTFILES="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Terminal/history"
 LOCAL_HISTFILE="$HOME/.zsh_history"
 HOSTNAME=$(hostname -s | tr '[:upper:]' '[:lower:]')
-CLOUD_HISTFILE="$CLOUD_HISTFILES/$HOSTNAME.history"
+CLOUD_HISTFILE="$CLOUD_HISTFILES/$HOSTNAME.zsh-history"
 LOCAL_COUNT=$(wc -l <"$LOCAL_HISTFILE")
 
 cp "$LOCAL_HISTFILE" "$CLOUD_HISTFILE"
 
-zsh-history-merge "$CLOUD_HISTFILES"/*.history >"$tmpfile"
+zsh-history-merge "$CLOUD_HISTFILES"/*.zsh-history >"$tmpfile"
 TMP_COUNT=$(wc -l <"$tmpfile")
 DIFF_COUNT=$((TMP_COUNT - LOCAL_COUNT))
 
