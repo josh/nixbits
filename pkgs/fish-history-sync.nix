@@ -2,17 +2,13 @@
   lib,
   writeShellApplication,
   coreutils,
-  moreutils,
   hostname,
-  nixbits,
 }:
 writeShellApplication {
   name = "fish-history-sync";
   runtimeInputs = [
     coreutils
-    moreutils
     hostname
-    nixbits.fish-history-export
   ];
   inheritPath = false;
   text = builtins.readFile ./fish-history-sync.bash;
