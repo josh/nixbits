@@ -2,6 +2,7 @@
   lib,
   writeShellApplication,
   coreutils,
+  moreutils,
   hostname,
   nixbits,
 }:
@@ -9,6 +10,7 @@ writeShellApplication {
   name = "zsh-history-sync";
   runtimeInputs = [
     coreutils
+    moreutils
     hostname
     nixbits.zsh-history-merge
   ];

@@ -11,7 +11,7 @@ HOSTNAME=$(hostname -s | tr '[:upper:]' '[:lower:]')
 CLOUD_HISTFILE="$CLOUD_HISTFILES/$HOSTNAME.zsh-history"
 LOCAL_COUNT=$(wc -l <"$LOCAL_HISTFILE")
 
-cp "$LOCAL_HISTFILE" "$CLOUD_HISTFILE"
+sponge "$CLOUD_HISTFILE" <"$LOCAL_HISTFILE"
 
 zsh-history-merge "$CLOUD_HISTFILES"/*.{zsh-history,fish-history} >"$tmpfile"
 TMP_COUNT=$(wc -l <"$tmpfile")
@@ -23,5 +23,5 @@ if [ "$DIFF_COUNT" -eq 0 ]; then
 fi
 
 echo "Adding $DIFF_COUNT new lines" >&2
-cp "$tmpfile" "$CLOUD_HISTFILE"
-cp "$tmpfile" "$LOCAL_HISTFILE"
+sponge "$CLOUD_HISTFILE" <"$tmpfile"
+sponge "$LOCAL_HISTFILE" <"$tmpfile"
