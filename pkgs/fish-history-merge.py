@@ -91,7 +91,8 @@ def _merge_history_files(histfiles: Iterable[Path]) -> list[bytes]:
     entries: set[bytes] = set()
     for histfile in histfiles:
         if (
-            histfile.name == ".zsh_history"
+            histfile.name == "zsh_history"
+            or histfile.name == ".zsh_history"
             or histfile.suffix == ".history"
             or histfile.suffix == ".zsh-history"
             or histfile.suffix == ".zsh_history"
