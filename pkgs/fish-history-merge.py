@@ -8,10 +8,15 @@ from typing import Iterable, Iterator
 def _read_zsh_history_lines(histfile: Path) -> Iterator[bytes]:
     with histfile.open("rb") as f:
         buf: bytes | None = None
+        lineno: int = 0
 
         for line in f:
+            lineno += 1
             if line.startswith(b": "):
-                assert buf is None
+                if buf is not None:
+                    sys.stderr.write(f"warn: skip bad entry {histfile}:{lineno - 1}")
+                    sys.stderr.buffer.write(buf)
+                    sys.stderr.write("\n")
                 buf = line
             else:
                 assert buf
@@ -42,7 +47,7 @@ def _parse_zsh_history_entry(entry_data: bytes) -> tuple[bytes, int] | None:
         sys.stderr.write("\n")
         return None
     when = int(match.group("when"))
-    cmd = match.group("cmd")
+    cmd = match.group("cmd").replace(b"\\\n", b"\\n")
     return (cmd, when)
 
 
@@ -86,12 +91,17 @@ def _merge_history_files(histfiles: Iterable[Path]) -> list[bytes]:
     entries: set[bytes] = set()
     for histfile in histfiles:
         if (
-            histfile.suffix == ".history"
+            histfile.name == ".zsh_history"
+            or histfile.suffix == ".history"
             or histfile.suffix == ".zsh-history"
             or histfile.suffix == ".zsh_history"
         ):
             entries.update(_read_zsh_history_entries(histfile))
-        elif histfile.suffix == ".fish-history" or histfile.suffix == ".fish_history":
+        elif (
+            histfile.name == "fish_history"
+            or histfile.suffix == ".fish-history"
+            or histfile.suffix == ".fish_history"
+        ):
             entries.update(_read_fish_history_entries(histfile))
         else:
             print(f"WARN: unknown history file format: {histfile}", file=sys.stderr)
