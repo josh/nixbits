@@ -2,7 +2,7 @@ import io
 import re
 import sys
 from pathlib import Path
-from typing import Iterable, Iterator
+from typing import Iterable, Iterator, Literal
 
 
 def _read_zsh_history_lines(histfile: Path) -> Iterator[bytes]:
@@ -85,23 +85,25 @@ def _read_fish_history_lines(histfile: Path) -> Iterator[bytes]:
 def _merge_history_files(histfiles: Iterable[Path]) -> list[bytes]:
     lines: set[bytes] = set()
     for histfile in histfiles:
-        if (
-            histfile.name == "zsh_history"
-            or histfile.name == ".zsh_history"
-            or histfile.suffix == ".history"
-            or histfile.suffix == ".zsh-history"
-            or histfile.suffix == ".zsh_history"
-        ):
+        format = _detect_history_format(histfile)
+        if format == "zsh":
             lines.update(_read_zsh_history_lines(histfile))
-        elif (
-            histfile.name == "fish_history"
-            or histfile.suffix == ".fish-history"
-            or histfile.suffix == ".fish_history"
-        ):
+        elif format == "fish":
             lines.update(_read_fish_history_lines(histfile))
         else:
             print(f"WARN: unknown history file format: {histfile}", file=sys.stderr)
     return sorted(lines)
+
+
+def _detect_history_format(histfile: Path) -> Literal["zsh", "fish", "unknown"]:
+    with histfile.open("rb") as f:
+        line = f.readline()
+        if line.startswith(b":"):
+            return "zsh"
+        elif line.startswith(b"- cmd:"):
+            return "fish"
+        else:
+            return "unknown"
 
 
 if __name__ == "__main__":
