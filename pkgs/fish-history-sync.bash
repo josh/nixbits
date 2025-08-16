@@ -1,11 +1,27 @@
-CLOUD_HISTFILES="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Terminal/history"
-HOSTNAME=$(hostname -s | tr '[:upper:]' '[:lower:]')
-cp "$HOME/.local/share/fish/fish_history" "$CLOUD_HISTFILES/${HOSTNAME}.fish-history"
+tmpfile="$(mktemp /tmp/fish_history.XXX)"
+cleanup() {
+  rm -f "$tmpfile"
+}
+trap cleanup EXIT
+trap cleanup SIGINT
 
-# Delete old file format
-if [ -f "$CLOUD_HISTFILES/${HOSTNAME}-fish.zsh-history" ]; then
-  rm "$CLOUD_HISTFILES/${HOSTNAME}-fish.zsh-history"
+CLOUD_HISTFILES="$HOME/Library/Mobile Documents/com~apple~CloudDocs/Terminal/history"
+LOCAL_HISTFILE="$HOME/.local/share/fish/fish_history"
+HOSTNAME=$(hostname -s | tr '[:upper:]' '[:lower:]')
+CLOUD_HISTFILE="$CLOUD_HISTFILES/$HOSTNAME.fish-history"
+LOCAL_COUNT=$(wc -l <"$LOCAL_HISTFILE")
+
+sponge "$CLOUD_HISTFILE" <"$LOCAL_HISTFILE"
+
+fish-history-merge "$CLOUD_HISTFILES"/*.{zsh-history,fish-history} >"$tmpfile"
+TMP_COUNT=$(wc -l <"$tmpfile")
+DIFF_COUNT=$((TMP_COUNT - LOCAL_COUNT))
+
+if [ "$DIFF_COUNT" -eq 0 ]; then
+  echo "Nothing new to sync" >&2
+  exit 0
 fi
 
-# TOOD: Import other fish history files
-# TODO: Import other zsh history files
+echo "Adding $DIFF_COUNT new lines" >&2
+sponge "$CLOUD_HISTFILE" <"$tmpfile"
+sponge "$LOCAL_HISTFILE" <"$tmpfile"
