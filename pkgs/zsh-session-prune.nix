@@ -3,14 +3,14 @@
   writeShellApplication,
   coreutils,
   moreutils,
-  nixbits,
+  nur,
 }:
 writeShellApplication {
   name = "zsh-session-prune";
   runtimeInputs = [
     coreutils
     moreutils
-    nixbits.zsh-history-merge
+    nur.repos.josh.histutils
   ];
   inheritPath = false;
   text = builtins.readFile ./zsh-session-prune.bash;

@@ -13,7 +13,7 @@ CLOUD_HISTFILE="$CLOUD_HISTFILES/$HOSTNAME.fish-history"
 
 sponge "$CLOUD_HISTFILE" <"$LOCAL_HISTFILE"
 
-fish-history-merge "$CLOUD_HISTFILES"/*.{zsh-history,fish-history} >"$tmpfile"
+histutils --format fish "$CLOUD_HISTFILES"/*.{zsh-history,fish-history} >"$tmpfile"
 # TMP_COUNT=$(wc -l <"$tmpfile")
 # DIFF_COUNT=$((TMP_COUNT - LOCAL_COUNT))
 

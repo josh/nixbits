@@ -5,7 +5,6 @@
   moreutils,
   hostname,
   nur,
-  nixbits,
 }:
 writeShellApplication {
   name = "fish-history-sync";
@@ -14,7 +13,6 @@ writeShellApplication {
     moreutils
     hostname
     nur.repos.josh.histutils
-    nixbits.fish-history-merge
   ];
   inheritPath = false;
   text = builtins.readFile ./fish-history-sync.bash;

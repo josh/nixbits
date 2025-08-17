@@ -13,7 +13,7 @@ LOCAL_COUNT=$(wc -l <"$LOCAL_HISTFILE")
 
 sponge "$CLOUD_HISTFILE" <"$LOCAL_HISTFILE"
 
-zsh-history-merge "$CLOUD_HISTFILES"/*.{zsh-history,fish-history} >"$tmpfile"
+histutils --format zsh "$CLOUD_HISTFILES"/*.{zsh-history,fish-history} >"$tmpfile"
 TMP_COUNT=$(wc -l <"$tmpfile")
 DIFF_COUNT=$((TMP_COUNT - LOCAL_COUNT))
 
