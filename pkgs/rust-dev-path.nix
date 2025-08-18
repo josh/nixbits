@@ -2,6 +2,7 @@
   symlinkJoin,
   # keep-sorted start
   cargo,
+  cargo-tarpaulin,
   clippy,
   rust-analyzer,
   rustc,
@@ -13,6 +14,7 @@ symlinkJoin {
   paths = [
     # keep-sorted start
     cargo
+    cargo-tarpaulin
     clippy
     rust-analyzer
     rustc
