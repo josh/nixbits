@@ -2,7 +2,6 @@
   lib,
   writeShellApplication,
   coreutils,
-  moreutils,
   hostname,
   nur,
 }:
@@ -10,7 +9,6 @@ writeShellApplication {
   name = "fish-history-sync";
   runtimeInputs = [
     coreutils
-    moreutils
     hostname
     nur.repos.josh.histutils
   ];

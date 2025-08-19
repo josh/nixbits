@@ -2,14 +2,12 @@
   lib,
   writeShellApplication,
   coreutils,
-  moreutils,
   nur,
 }:
 writeShellApplication {
   name = "zsh-session-prune";
   runtimeInputs = [
     coreutils
-    moreutils
     nur.repos.josh.histutils
   ];
   inheritPath = false;

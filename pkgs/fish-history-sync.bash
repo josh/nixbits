@@ -3,5 +3,7 @@ LOCAL_HISTFILE="$HOME/.local/share/fish/fish_history"
 HOSTNAME=$(hostname -s | tr '[:upper:]' '[:lower:]')
 CLOUD_HISTFILE="$CLOUD_HISTFILES/$HOSTNAME.fish-history"
 
-histutils --output-format fish "$LOCAL_HISTFILE" "$CLOUD_HISTFILES"/*.{zsh-history,fish-history} | sponge "$LOCAL_HISTFILE"
+histutils \
+  --output-format fish --output "$LOCAL_HISTFILE" \
+  "$LOCAL_HISTFILE" "$CLOUD_HISTFILES"/*.{zsh-history,fish-history}
 cp "$LOCAL_HISTFILE" "$CLOUD_HISTFILE"
