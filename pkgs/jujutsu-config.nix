@@ -73,7 +73,7 @@ let
       rebase-all = [
         "rebase"
         "--branch"
-        "all:bookmarks()"
+        "bookmarks()"
         "--destination"
         "trunk()"
       ];
