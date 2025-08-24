@@ -24,6 +24,12 @@ $ nix flake check --accept-flake-config --show-trace --print-build-logs --keep-g
 
 These flags will give you the most verbose output for debugging. When running in an offline sandox, you should append `--offline`.
 
+This full check can take quite a while. If your change doesn't impact the entire repository, try building only the specific package you're working on instead, using verbose flags:
+
+```sh
+$ nix build --accept-flake-config --show-trace --print-build-logs .#yourPackageName
+```
+
 ## Formatting
 
 `nix flake check` will also check if source files are formatted correctly. If there is a formatting issue, run `nix fmt` to fix it.
