@@ -37,9 +37,26 @@ jobs:
           nix profile install github:josh/nixbits#nix-flake-diff-packages
 
       - name: Compare head and base flake packages
+        id: diff
         if: steps.changed.outputs.only_lock_changed == 'true'
         run: |
           nix-flake-diff-packages --changes "$BASE_FLAKE" "$HEAD_FLAKE"
         env:
           BASE_FLAKE: "github:${{ github.event.pull_request.base.repo.full_name }}/${{ github.event.pull_request.base.sha }}"
           HEAD_FLAKE: "github:${{ github.event.pull_request.head.repo.full_name }}/${{ github.event.pull_request.head.sha }}"
+
+      - name: Add noop label
+        if: failure() && steps.diff.outcome == 'failure' && steps.changed.outputs.only_lock_changed == 'true'
+        run: gh pr edit "$PR_NUMBER" --add-label "noop"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+
+      - name: Remove noop label
+        if: success() && steps.changed.outputs.only_lock_changed == 'true'
+        run: gh pr edit "$PR_NUMBER" --remove-label "noop" || true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
