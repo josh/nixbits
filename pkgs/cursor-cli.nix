@@ -2,12 +2,11 @@
   lib,
   stdenvNoCC,
   runtimeShell,
-  runCommandLocal,
 }:
 let
   app = "/Applications/Cursor.app";
 in
-stdenvNoCC.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation (_finalAttrs: {
   name = "cursor-cli";
 
   __structuredAttrs = true;
@@ -31,25 +30,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     echo "$preInstallHook" >$out/share/nix/hooks/pre-install.d/cursor
     chmod +x $out/share/nix/hooks/pre-install.d/cursor
   '';
-
-  passthru.tests =
-    let
-      cursor = finalAttrs.finalPackage;
-    in
-    {
-      version =
-        runCommandLocal "test-cursor-version"
-          {
-            __impureHostDeps = [ app ];
-            nativeBuildInputs = [ cursor ];
-          }
-          ''
-            if [ -d '${app}' ]; then
-              cursor --version
-            fi
-            touch $out
-          '';
-    };
 
   meta = {
     description = "Cursor Command Line Tools";

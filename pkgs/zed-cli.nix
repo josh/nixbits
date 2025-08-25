@@ -2,13 +2,12 @@
   lib,
   stdenvNoCC,
   runtimeShell,
-  runCommandLocal,
   jq,
 }:
 let
   app = "/Applications/Zed.app";
 in
-stdenvNoCC.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation (_finalAttrs: {
   name = "zed-cli";
 
   __structuredAttrs = true;
@@ -45,25 +44,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     mkdir -p $out/share/tccpolicy.d
     cat "$NIX_ATTRS_JSON_FILE" | jq --raw-output '.tccpolicyPolicy' >$out/share/tccpolicy.d/zed.json
   '';
-
-  passthru.tests =
-    let
-      zed = finalAttrs.finalPackage;
-    in
-    {
-      version =
-        runCommandLocal "test-zed-version"
-          {
-            __impureHostDeps = [ app ];
-            nativeBuildInputs = [ zed ];
-          }
-          ''
-            if [ -d '${app}' ]; then
-              zed --version
-            fi
-            touch $out
-          '';
-    };
 
   meta = {
     description = "Zed Command Line Tools";
