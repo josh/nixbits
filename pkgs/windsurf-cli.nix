@@ -2,13 +2,12 @@
   lib,
   stdenvNoCC,
   runtimeShell,
-  runCommandLocal,
   jq,
 }:
 let
   app = "/Applications/Windsurf.app";
 in
-stdenvNoCC.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation (_finalAttrs: {
   name = "windsurf-cli";
 
   __structuredAttrs = true;
@@ -45,25 +44,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     mkdir -p $out/share/tccpolicy.d
     cat "$NIX_ATTRS_JSON_FILE" | jq --raw-output '.tccpolicyPolicy' >$out/share/tccpolicy.d/windsurf.json
   '';
-
-  passthru.tests =
-    let
-      windsurf = finalAttrs.finalPackage;
-    in
-    {
-      version =
-        runCommandLocal "test-windsurf-version"
-          {
-            __impureHostDeps = [ app ];
-            nativeBuildInputs = [ windsurf ];
-          }
-          ''
-            if [ -d '${app}' ]; then
-              windsurf --version
-            fi
-            touch $out
-          '';
-    };
 
   meta = {
     description = "Windsurf Command Line Tools";

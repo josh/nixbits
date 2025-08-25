@@ -9,9 +9,6 @@ let
     name = "ghostty-validate-config";
     text = builtins.readFile ./ghostty-validate-config-darwin.bash;
     inheritPath = false;
-    derivationArgs = {
-      __impureHostDeps = [ "/Applications/Ghostty.app" ];
-    };
     meta = {
       description = "Validate Ghostty configuration";
       platforms = lib.platforms.darwin;

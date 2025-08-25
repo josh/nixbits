@@ -1,13 +1,9 @@
 {
   lib,
   stdenvNoCC,
-  runCommandLocal,
   jq,
 }:
-let
-  app = "/Applications/BBEdit.app";
-in
-stdenvNoCC.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation (_finalAttrs: {
   name = "bbedit-mas";
 
   __structuredAttrs = true;
@@ -53,25 +49,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     mkdir -p $out/share/tccpolicy.d
     cat "$NIX_ATTRS_JSON_FILE" | jq --raw-output '.tccpolicyPolicy' >$out/share/tccpolicy.d/bbedit.json
   '';
-
-  passthru.tests =
-    let
-      bbedit = finalAttrs.finalPackage;
-    in
-    {
-      version =
-        runCommandLocal "test-bbedit-version"
-          {
-            __impureHostDeps = [ app ];
-            nativeBuildInputs = [ bbedit ];
-          }
-          ''
-            if [ -d '${app}' ]; then
-              bbedit --version
-            fi
-            touch $out
-          '';
-    };
 
   meta = {
     description = "BBEdit Command Line Tools";
