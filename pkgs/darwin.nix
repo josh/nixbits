@@ -18,10 +18,6 @@ let
     in
     runCommandLocal "${name}-impure-darwin"
       {
-        __impureHostDeps = [
-          binpath
-          manpath
-        ];
         allowedReferences = [ ];
         allowedRequisites = [ ];
 
@@ -36,11 +32,6 @@ let
         };
       }
       ''
-        if ! [ -x ${binpath} ]; then
-          echo Cannot find command ${binpath}
-          exit 1
-        fi
-
         mkdir -p $out/bin $out/share/man/man${mansection}
         ln -s "${binpath}" "$out/bin/${name}"
         ln -s "${manpath}" "$out/share/man/man${mansection}/${manpage}"
