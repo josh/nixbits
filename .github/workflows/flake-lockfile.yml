@@ -35,7 +35,7 @@ jobs:
       - name: Install nix-flake-diff-packages
         if: steps.changed.outputs.only_lock_changed == 'true'
         run: |
-          nix profile install github:josh/nixbits#nix-flake-diff-packages
+          nix profile add github:josh/nixbits#nix-flake-diff-packages
 
       - name: Compare head and base flake packages
         id: diff
