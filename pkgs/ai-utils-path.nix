@@ -3,6 +3,7 @@
   symlinkJoin,
   claude-code,
   codex,
+  cursor-cli,
   gemini-cli,
   nixbits,
   llm,
@@ -16,6 +17,7 @@ symlinkJoin {
     # keep-sorted start
     claude-code
     codex
+    cursor-cli
     gemini-cli
     llm'
     # keep-sorted end
