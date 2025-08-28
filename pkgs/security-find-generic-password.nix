@@ -24,7 +24,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   securityService = "";
   securityPrintPassword = true;
 
-  makeWrapperArgs = [ ];
+  makeWrapperArgs = [
+    # Hack to ensure that when home is unset, we still find the keychain
+    "--run"
+    ''[ -n "$HOME" ] || export HOME=/Users/josh''
+  ];
 
   buildCommand = ''
     if [ -n "$securityAccount" ]; then
