@@ -31,14 +31,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     ];
   };
 
-  fishEnvVars =
-    { }
-    // (lib.attrsets.optionalAttrs (finalAttrs.themeName != null) { THEME = finalAttrs.themeName; });
+  fishEnvVars = { };
+  extraFishEnvVars = lib.attrsets.optionalAttrs (finalAttrs.themeName != null) {
+    THEME = finalAttrs.themeName;
+  };
 
   fishEnvVarsScript = builtins.concatStringsSep "\n" (
     lib.attrsets.mapAttrsToList (name: value: ''
       set --export ${builtins.toString name} "${builtins.toString value}"
-    '') finalAttrs.fishEnvVars
+    '') (finalAttrs.fishEnvVars // finalAttrs.extraFishEnvVars)
   );
 
   direnvInit = runCommand "direnv-init.fish" { nativeBuildInputs = [ direnv ]; } ''
