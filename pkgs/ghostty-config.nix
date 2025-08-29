@@ -10,12 +10,16 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
   config = {
+    "auto-update" = "off";
     "font-family" = "Berkeley Mono Regular";
     "font-family-bold" = "Berkeley Mono Bold";
     "font-family-italic" = "Berkeley Mono Oblique";
     "font-family-bold-italic" = "Berkeley Mono Bold Oblique";
+    "font-thicken" = "true";
     "font-size" = 20;
     "theme" = "tokyonight-storm";
+    "background-opacity" = "0.95";
+    "background-blur-radius" = 20;
     "window-height" = 40;
     "window-width" = 100;
   };
