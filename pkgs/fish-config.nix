@@ -31,7 +31,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     ];
   };
 
-  fishEnvVars = { };
+  fishEnvVars =
+    { }
+    // (lib.attrsets.optionalAttrs (finalAttrs.themeName != null) { THEME = finalAttrs.themeName; });
 
   fishEnvVarsScript = builtins.concatStringsSep "\n" (
     lib.attrsets.mapAttrsToList (name: value: ''
