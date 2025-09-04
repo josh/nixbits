@@ -6,4 +6,5 @@ nix build \
   --no-link \
   --print-out-paths \
   --impure \
-  --expr "$NIX_EXPR"
+  --expr "$NIX_EXPR" \
+  "$@"
