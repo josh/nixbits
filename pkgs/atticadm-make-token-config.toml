@@ -1,0 +1,14 @@
+# Minimal dummy attic config
+
+[database]
+url = "sqlite:///tmp/attic.db"
+
+[storage]
+type = "local"
+path = "/tmp"
+
+[chunking]
+nar-size-threshold = 65536
+min-size = 16384
+avg-size = 65536
+max-size = 262144
