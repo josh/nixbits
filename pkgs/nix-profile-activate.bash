@@ -42,5 +42,6 @@ echo "Installing profile" >&2
 profile_link="profile-$(profile_n)-link"
 ln -s "$new_profile" "$nix_profile_dir/$profile_link"
 ln -sfn "$profile_link" "$nix_profile_dir/profile"
+nix-store --realise "$new_profile" --add-root "$nix_profile_dir/$profile_link" --indirect
 
 nix-profile-run-hooks post-install "$new_profile" "$old_profile"
