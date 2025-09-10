@@ -11,16 +11,17 @@ stdenvNoCC.mkDerivation {
 
   nativeBuildInputs = [ makeWrapper ];
 
-  binPath = lib.getExe nixbits.scutil-sync-hostname;
+  computerName = "";
+  binPath = lib.getExe nixbits.scutil-set-hostname;
 
   buildCommand = ''
     mkdir -p $out/share/nix/hooks/pre-install.d $out/share/nix/hooks/post-install.d
-    makeWrapper $binPath $out/share/nix/hooks/pre-install.d/hostname --add-flags "--dry-run"
-    makeWrapper $binPath $out/share/nix/hooks/post-install.d/hostname
+    makeWrapper $binPath $out/share/nix/hooks/pre-install.d/scutil --add-flags "--dry-run" --add-flags "$computerName"
+    makeWrapper $binPath $out/share/nix/hooks/post-install.d/scutil --add-flags "$computerName"
   '';
 
   meta = {
-    description = "Automatically sync hostname to the local hostname";
+    description = "Automatically update macOS computer name";
     platforms = lib.platforms.darwin;
   };
 }

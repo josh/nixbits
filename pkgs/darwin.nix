@@ -60,6 +60,11 @@ in
     hash = "sha256-3mqwwJjqpMkIf8wC1x+lPAm5kaccjaN7HnVjP1FCPgI=";
     manpage = "df.1";
   };
+  dscacheutil = mkDarwinImpureDrv {
+    command = "/usr/bin/dscacheutil";
+    hash = "sha256-HXzXMtjveqVWKw2ZNcXUmd2RIk/+z12VR9vNsGp+QQk=";
+    manpage = "dscacheutil.1";
+  };
   dscl = mkDarwinImpureDrv {
     command = "/usr/bin/dscl";
     hash = "sha256-/sGeGnSk7qysjP/D3zu6s3CYP9k+JvuG5aRnBqMo2lQ=";

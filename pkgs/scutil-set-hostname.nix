@@ -1,22 +1,23 @@
 {
   lib,
   writeShellApplication,
-  darwin,
+  coreutils,
   nixbits,
 }:
 writeShellApplication {
-  name = "scutil-sync-hostname";
+  name = "scutil-set-hostname";
   runtimeInputs = [
+    coreutils
+    nixbits.darwin.dscacheutil
     nixbits.darwin.scutil
-    darwin.sudo
   ];
   inheritPath = false;
   runtimeEnv = {
     XTRACE_PATH = nixbits.xtrace;
   };
-  text = builtins.readFile ./scutil-sync-hostname.bash;
+  text = builtins.readFile ./scutil-set-hostname.bash;
   meta = {
-    description = "Set hostname to the same as the local hostname";
+    description = "Set macOS computer name, bonjour name and unix hostname";
     platforms = lib.platforms.darwin;
   };
 }
