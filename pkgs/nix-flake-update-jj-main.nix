@@ -1,15 +1,15 @@
 {
   lib,
   writeShellApplication,
-  jujutsu,
   nix,
   nixbits,
 }:
 writeShellApplication {
   name = "nix-flake-update-jj-main";
   runtimeInputs = [
-    jujutsu
     nix
+    nixbits.git
+    nixbits.jujutsu
   ];
   inheritPath = false;
   runtimeEnv = {
