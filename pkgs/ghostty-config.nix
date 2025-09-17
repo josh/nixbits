@@ -17,7 +17,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     "font-family-bold-italic" = "Berkeley Mono Bold Oblique";
     "font-thicken" = "true";
     "font-size" = 20;
-    "theme" = "tokyonight-storm";
+    "theme" = "TokyoNight Storm";
     "background-opacity" = "0.95";
     "background-blur-radius" = 20;
     "window-height" = 40;
