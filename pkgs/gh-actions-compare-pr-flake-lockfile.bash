@@ -34,14 +34,14 @@ fi
 
 if jd -color "$a_out" "$b_out"; then
   echo "status=no-change" >>"$GITHUB_OUTPUT"
-  if ! gh pr edit "$PR_URL" --add-label "noop"; then
+  if ! gh pr edit "$PR_URL" --add-label "noop" >/dev/null; then
     echo "::warning::Error adding label" >&2
   fi
   echo "::notice::No changes detected" >&2
   exit 1
 else
   echo "status=change" >>"$GITHUB_OUTPUT"
-  if ! gh pr edit "$PR_URL" --remove-label "noop"; then
+  if ! gh pr edit "$PR_URL" --remove-label "noop" >/dev/null; then
     echo "::warning::Error removing label" >&2
   fi
   exit 0
