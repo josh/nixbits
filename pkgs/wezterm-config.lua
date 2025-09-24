@@ -11,6 +11,9 @@ config.set_environment_variables = {
 if "@colorScheme@" ~= "" then
 	config.color_scheme = "@colorScheme@"
 end
+
+config.window_background_opacity = 0.95
+
 config.font = wezterm.font({ family = "JetBrains Mono", weight = "Regular" })
 config.font_size = 16
 
