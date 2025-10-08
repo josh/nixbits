@@ -33,6 +33,7 @@ symlinkJoin {
     nixbits.nix-flake-diff-packages
     nixbits.nix-flake-rebuild
     nixbits.nix-flake-update-jj-main
+    nixbits.nix-flake-update-jj-new
     nixbits.nix-profile-upgrade
     nixbits.nixpkgs-review-pr
     nixd
