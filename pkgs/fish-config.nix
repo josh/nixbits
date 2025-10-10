@@ -17,6 +17,14 @@ let
       "${nur.repos.josh.tokyonight-extras}/share/tokyonight/fish/tokyonight_night.fish";
     "tokyonight_storm" =
       "${nur.repos.josh.tokyonight-extras}/share/tokyonight/fish/tokyonight_storm.fish";
+    "catppuccin_frappe" =
+      "${nur.repos.josh.fish-catppuccin}/share/fish/vendor_conf.d/catppuccin_frappe.fish";
+    "catppuccin_latte" =
+      "${nur.repos.josh.fish-catppuccin}/share/fish/vendor_conf.d/catppuccin_latte.fish";
+    "catppuccin_macchiato" =
+      "${nur.repos.josh.fish-catppuccin}/share/fish/vendor_conf.d/catppuccin_macchiato.fish";
+    "catppuccin_mocha" =
+      "${nur.repos.josh.fish-catppuccin}/share/fish/vendor_conf.d/catppuccin_mocha.fish";
   };
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
@@ -74,7 +82,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       --replace-fail '@direnv-init@' "$direnvInit"
 
     if [ -f "$themePath" ] && [ -n "$themeName" ]; then
-      cp $themePath $out/conf.d/$themeName.fish
+      cp "$themePath" $out/conf.d/$themeName.fish
     fi
   ''
   + (lib.strings.optionalString stdenvNoCC.isDarwin ''
