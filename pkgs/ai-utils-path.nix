@@ -1,12 +1,15 @@
 {
   pkgs,
   symlinkJoin,
+  # keep-sorted start
   claude-code,
   codex,
   cursor-cli,
   gemini-cli,
-  nixbits,
   llm,
+  opencode,
+  # keep-sorted end
+  nixbits,
 }:
 let
   llm' = if llm == pkgs.llm then nixbits.llm else llm;
@@ -20,6 +23,7 @@ symlinkJoin {
     cursor-cli
     gemini-cli
     llm'
+    opencode
     # keep-sorted end
   ];
   meta.description = "Favorite AI utilities";
