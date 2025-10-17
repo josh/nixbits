@@ -4,6 +4,7 @@
   # keep-sorted start
   claude-code,
   codex,
+  crush,
   cursor-cli,
   gemini-cli,
   llm,
@@ -20,6 +21,7 @@ symlinkJoin {
     # keep-sorted start
     claude-code
     codex
+    crush
     cursor-cli
     gemini-cli
     llm'
