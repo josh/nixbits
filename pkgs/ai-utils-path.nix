@@ -7,6 +7,7 @@
   crush,
   cursor-cli,
   gemini-cli,
+  github-copilot-cli,
   llm,
   opencode,
   # keep-sorted end
@@ -24,6 +25,7 @@ symlinkJoin {
     crush
     cursor-cli
     gemini-cli
+    github-copilot-cli
     llm'
     opencode
     # keep-sorted end
