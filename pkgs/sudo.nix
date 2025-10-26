@@ -1,8 +1,8 @@
 {
   stdenv,
   sudo,
-  darwin,
+  nixbits,
 }:
-(if stdenv.hostPlatform.isDarwin then darwin.sudo else sudo).overrideAttrs {
+(if stdenv.hostPlatform.isDarwin then nixbits.darwin.sudo else sudo).overrideAttrs {
   passthru.tests = { };
 }

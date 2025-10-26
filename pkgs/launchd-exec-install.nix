@@ -3,7 +3,6 @@
   writers,
   writeShellApplication,
   coreutils,
-  darwin,
   nur,
   nixbits,
 }:
@@ -24,9 +23,9 @@ writeShellApplication {
   name = "launchd-exec-install";
   runtimeInputs = [
     coreutils
-    darwin.sudo
     launchctl-spawn
     nixbits.darwin.open
+    nixbits.darwin.sudo
     tccpolicy
   ];
   inheritPath = false;
