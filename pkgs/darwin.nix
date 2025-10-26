@@ -135,6 +135,11 @@ in
     hash = "sha256-HZfyqd/bCCYCfFhpRwHGV7oZxKqU+E+SzBIosiHm6Xc=";
     manpage = "shortcuts.1";
   };
+  sudo = mkDarwinImpureDrv {
+    command = "/usr/bin/sudo";
+    hash = "sha256-ESWvQ0psIM9b40zPIT+h9oIA7jLalkCp4sLvkYxSjUY=";
+    manpage = "sudo.8";
+  };
   tmutil = mkDarwinImpureDrv {
     command = "/usr/bin/tmutil";
     hash = "sha256-GWuWMKALte+3aqMMgI60E9nLr7NYRL5YMvIoQg9XPb4=";
