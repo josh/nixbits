@@ -2,14 +2,13 @@
   lib,
   writeShellApplication,
   which,
-  darwin,
   nixbits,
 }:
 writeShellApplication {
   name = "tmutil-exclude-volume";
   runtimeInputs = [
     which
-    darwin.sudo
+    nixbits.darwin.sudo
     nixbits.darwin.tmutil
   ];
   inheritPath = false;

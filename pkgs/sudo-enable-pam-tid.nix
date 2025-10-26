@@ -1,7 +1,6 @@
 {
   lib,
   writeShellApplication,
-  darwin,
   coreutils,
   diffutils,
   which,
@@ -11,8 +10,8 @@ writeShellApplication {
   name = "sudo-enable-pam-tid";
   runtimeInputs = [
     coreutils
-    darwin.sudo
     diffutils
+    nixbits.darwin.sudo
     which
   ];
   inheritPath = false;
