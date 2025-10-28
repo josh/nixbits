@@ -79,6 +79,10 @@
         collectPkgs pkgs.nixbits
       );
 
+      nixosModules = {
+        healthchecks = ./modules/healthchecks.nix;
+      };
+
       formatter = eachSystem (system: treefmt-nix.${system}.wrapper);
 
       checks = eachPkgs (
