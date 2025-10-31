@@ -1,6 +1,6 @@
 {
   lib,
-  hostPlatform,
+  stdenv,
   formats,
   diff-so-fancy,
   less,
@@ -106,7 +106,7 @@ let
       "https://github.com".helper = "${lib.getExe gh} auth git-credential";
       "https://gist.github.com".helper = "${lib.getExe gh} auth git-credential";
     }
-    // (lib.attrsets.optionalAttrs hostPlatform.isMacOS {
+    // (lib.attrsets.optionalAttrs stdenv.hostPlatform.isMacOS {
       helper = "osxkeychain";
     });
 

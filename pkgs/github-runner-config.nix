@@ -1,6 +1,6 @@
 {
   lib,
-  hostPlatform,
+  stdenv,
   writeShellApplication,
   coreutils,
   gnugrep,
@@ -11,7 +11,7 @@
   github-runner-use-gh-token ? true,
   github-runner-group ? null,
   github-runner-name ? null,
-  github-runner-labels ? [ hostPlatform.system ],
+  github-runner-labels ? [ stdenv.hostPlatform.system ],
   github-runner-work ? null,
   github-runner-ephemeral ? false,
 }:
