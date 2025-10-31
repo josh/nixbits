@@ -1,10 +1,10 @@
 {
-  system,
   lib,
+  stdenv,
   coreutils,
 }:
 derivation {
-  inherit system;
+  system = stdenv.hostPlatform.system;
   name = "empty-file";
   builder = "${coreutils}/bin/touch";
   args = [ (builtins.placeholder "out") ];

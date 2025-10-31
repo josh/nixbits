@@ -1,6 +1,6 @@
 {
   lib,
-  system,
+  stdenv,
   writeShellApplication,
   nix,
 }:
@@ -9,7 +9,7 @@ writeShellApplication {
   runtimeInputs = [ nix ];
   inheritPath = false;
   runtimeEnv = {
-    SYSTEM = system;
+    SYSTEM = stdenv.hostPlatform.system;
     NIX_EXPR_FILE = "${./nix-flake-all-packages-drv.txt}";
   };
   text = builtins.readFile ./nix-flake-all-packages-drv.bash;
