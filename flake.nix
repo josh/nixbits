@@ -88,7 +88,7 @@
       checks = eachPkgs (
         pkgs:
         let
-          inherit (pkgs) system;
+          inherit (pkgs.stdenv.hostPlatform) system;
           addAttrsetPrefix = prefix: lib.attrsets.concatMapAttrs (n: v: { "${prefix}${n}" = v; });
           buildPkg = pkg: pkgs.runCommand "${pkg.name}-build" { env.PKG = pkg; } "touch $out";
           localTests = lib.attrsets.concatMapAttrs (
