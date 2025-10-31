@@ -4,7 +4,7 @@
   coreutils,
 }:
 derivation {
-  system = stdenv.hostPlatform.system;
+  inherit (stdenv.hostPlatform) system;
   name = "empty-directory";
   builder = "${coreutils}/bin/mkdir";
   args = [ (builtins.placeholder "out") ];
