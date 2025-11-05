@@ -5,6 +5,7 @@ CLOUD_HISTFILE="$CLOUD_HISTFILES/$HOSTNAME.zsh-history"
 
 histutils \
   --output-format zsh \
+  --fix \
   --tail 50000 \
   --output "$LOCAL_HISTFILE" \
   --output "$CLOUD_HISTFILE" \

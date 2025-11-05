@@ -5,6 +5,7 @@ CLOUD_HISTFILE="$CLOUD_HISTFILES/$HOSTNAME.fish-history"
 
 histutils \
   --output-format fish \
+  --fix \
   --tail 50000 \
   --output "$LOCAL_HISTFILE" \
   --output "$CLOUD_HISTFILE" \

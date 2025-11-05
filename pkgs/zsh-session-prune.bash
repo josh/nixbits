@@ -5,6 +5,7 @@ sessions=("$HOME/.zsh_sessions"/*.history)
 
 histutils \
   --output-format zsh \
+  --fix \
   --tail 50000 \
   --output "$HOME/.zsh_history" \
   "$HOME/.zsh_history" "$HOME/.zsh_sessions"/*.history
