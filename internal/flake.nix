@@ -1,7 +1,7 @@
 {
   inputs = {
-    # https://github.com/renovatebot/renovate/issues/29721
-    # "github:NixOS/nixpkgs/nixpkgs-unstable"
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     treefmt-nix.url = "github:numtide/treefmt-nix";
   };
   outputs = _inputs: { };
