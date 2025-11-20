@@ -49,12 +49,12 @@ stdenvNoCC.mkDerivation {
 
   # <https://github.com/Cretezy/lazyjj/commit/523c422e6bc4c86fffcdd68eb3900085dcf23e19>
   disableCSI =
-    assert lib.asserts.assertMsg (
-      (builtins.compareVersions "0.6.1" lazyjj.version) == 0
-    ) "lazyjj CSI patch no longer needed";
-    ''
-      printf '\033[<u'
-    '';
+    if (lib.strings.versionOlder lazyjj.version "0.6.2") then
+      ''
+        printf '\033[<u'
+      ''
+    else
+      "";
 
   buildCommand = ''
     mkdir $out
