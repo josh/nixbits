@@ -8,7 +8,6 @@
   gemini-cli,
   github-copilot-cli,
   llm,
-  opencode,
   # keep-sorted end
   nixbits,
 }:
@@ -24,7 +23,6 @@ symlinkJoin {
     gemini-cli
     github-copilot-cli
     llm'
-    opencode
     # keep-sorted end
   ]
   # FIXME: Added in nixpkgs-25.11
@@ -33,6 +31,7 @@ symlinkJoin {
     [
       crush
       cursor-cli
+      opencode
     ]
   );
   meta.description = "Favorite AI utilities";
