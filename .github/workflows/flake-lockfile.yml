@@ -14,7 +14,7 @@ jobs:
       - name: Check changed files
         id: changed
         run: |
-          files=$(gh pr diff "$PR_URL" --name-only)
+          files=$(gh pr diff "$PR_URL" --name-only | xargs -n1 basename | sort -u)
           if [ "$files" = "flake.lock" ]; then
             echo "only_lock_changed=true" | tee -a "$GITHUB_OUTPUT"
           else
