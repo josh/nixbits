@@ -67,5 +67,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Ghostty config";
+    # TODO: Busted on 25.04
+    broken = lib.strings.versionOlder lib.version "25.10";
   };
 })
