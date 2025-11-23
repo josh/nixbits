@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   lockfile-drv-changed:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
 
     steps:
       - name: Check changed files
