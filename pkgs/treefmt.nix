@@ -46,7 +46,7 @@ let
     programs.sqlfluff.enable = true;
     programs.statix.enable = true;
     programs.stylua.enable = true;
-    # programs.swift-format.enable = true;
+    programs.swift-format.enable = true;
     programs.taplo.enable = true;
     # programs.ty.enable = true;
     # keep-sorted end
