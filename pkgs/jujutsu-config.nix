@@ -22,8 +22,11 @@ let
 
     git = {
       executable-path = lib.getExe nixbits.git;
-      push-new-bookmarks = true;
       private-commits = "description(glob:'wip:*')";
+    };
+
+    remotes.origin = {
+      auto-track-bookmarks = "glob:*";
     };
 
     # No longer supported on darwin
