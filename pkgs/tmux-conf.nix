@@ -19,16 +19,16 @@ let
 
   sourceThemes = {
     "tokyonight_day" = ''
-      source-file '${nixbits.tmux-tokyonight-conf.override { tokyonightVariation = "day"; }}'
+      source-file '${nixbits.tmux-powerkit-conf.override { powerkitThemeVariation = "day"; }}'
     '';
     "tokyonight_moon" = ''
-      source-file '${nixbits.tmux-tokyonight-conf.override { tokyonightVariation = "moon"; }}'
+      source-file '${nixbits.tmux-powerkit-conf.override { powerkitThemeVariation = "moon"; }}'
     '';
     "tokyonight_storm" = ''
-      source-file '${nixbits.tmux-tokyonight-conf.override { tokyonightVariation = "storm"; }}'
+      source-file '${nixbits.tmux-powerkit-conf.override { powerkitThemeVariation = "storm"; }}'
     '';
     "tokyonight_night" = ''
-      source-file '${nixbits.tmux-tokyonight-conf.override { tokyonightVariation = "night"; }}'
+      source-file '${nixbits.tmux-powerkit-conf.override { powerkitThemeVariation = "night"; }}'
     '';
     "catppuccin_frappe" = ''
       source-file '${nixbits.tmux-catppuccin-conf.override { catppuccinFlavor = "frappe"; }}'
