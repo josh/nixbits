@@ -1,15 +1,6 @@
 {
   description = "Assorted nix scripts and bits";
 
-  nixConfig = {
-    extra-substituters = [
-      "https://josh.cachix.org"
-    ];
-    extra-trusted-public-keys = [
-      "josh.cachix.org-1:qc8IeYlP361V9CSsSVugxn3o3ZQ6w/9dqoORjm0cbXk="
-    ];
-  };
-
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nurpkgs.url = "github:josh/nurpkgs";
