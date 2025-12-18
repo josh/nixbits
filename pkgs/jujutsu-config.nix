@@ -26,7 +26,7 @@ let
     };
 
     remotes.origin = {
-      auto-track-bookmarks = "glob:*";
+      auto-track-bookmarks = "glob:push-*";
     };
 
     # No longer supported on darwin
