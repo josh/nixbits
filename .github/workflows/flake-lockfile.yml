@@ -24,7 +24,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
 
-      - uses: DeterminateSystems/determinate-nix-action@9a921d81e9a16a9ad8423a63a7b31deb601139a6 # v3.14.0
+      - uses: DeterminateSystems/determinate-nix-action@95732e95d70db3ba1e0adc26a63c5e0375aba78c # v3.15.0
         if: steps.changed.outputs.only_lock_changed == 'true'
         with:
           extra-conf: |
