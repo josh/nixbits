@@ -11,6 +11,7 @@ else
     enable-llm-jq = true;
     enable-llm-ollama = true;
     enable-llm-openai-plugin = true;
+    enable-llm-openrouter = true;
   }).overrideAttrs
     {
       passthru.tests = { };
