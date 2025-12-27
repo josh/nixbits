@@ -13,7 +13,7 @@ echo "== Namespaced =="
 echo
 
 kubectl api-resources --verbs=list --namespaced -o name | while read -r kind; do
-  if [ "$kind" = "events" ]; then
+  if [ "$kind" = "events" ] || [ "$kind" = "events.events.k8s.io" ]; then
     continue
   fi
   echo "=== $kind ==="
