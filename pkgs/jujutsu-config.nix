@@ -22,7 +22,6 @@ let
 
     git = {
       executable-path = lib.getExe nixbits.git;
-      private-commits = "description(glob:'wip:*')";
     };
 
     remotes.origin = {
