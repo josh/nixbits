@@ -5,7 +5,8 @@
   makeWrapper,
   lndir,
   sops,
-  nixbits,
+  nur,
+  age-plugin-se' ? nur.repos.josh.age-plugin-se,
   age-plugin-tpm,
   age-plugin-yubikey,
   seSupport ? true,
@@ -33,7 +34,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   paths = [
     sops
   ]
-  ++ (lib.optional seSupport nixbits.age-plugin-se)
+  ++ (lib.optional seSupport age-plugin-se')
   ++ (lib.optional tpmSupport age-plugin-tpm)
   ++ (lib.optional yubikeySupport age-plugin-yubikey);
 
