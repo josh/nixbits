@@ -84,6 +84,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         touch $out
       '';
     }
+    // (lib.attrsets.optionalAttrs (lib.strings.versionAtLeast age.version "1.3.0") {
+      tag-encrypt = runCommand "test-tag-encrypt" { nativeBuildInputs = [ age ]; } ''
+        echo "Hello World" | age --encrypt \
+          --recipient age1tag1qwe0kafsjrar4txm6heqnhpfuggzr0gvznz7fvygxrlq90u5mq2pysxtw6h \
+          --armor
+        touch $out
+      '';
+    })
     // (lib.attrsets.optionalAttrs tpmSupport {
       tpm-encrypt = runCommand "test-tpm-encrypt" { nativeBuildInputs = [ age ]; } ''
         echo "Hello World" | age --encrypt \
