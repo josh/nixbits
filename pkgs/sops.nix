@@ -1,4 +1,5 @@
 {
+  pkgs,
   lib,
   stdenvNoCC,
   runCommand,
@@ -6,7 +7,7 @@
   lndir,
   sops,
   nur,
-  age-plugin-se' ? nur.repos.josh.age-plugin-se,
+  age-plugin-se,
   age-plugin-tpm,
   age-plugin-yubikey,
   seSupport ? true,
@@ -14,6 +15,12 @@
   yubikeySupport ? true,
 }:
 let
+  age-plugin-se' =
+    if age-plugin-se == pkgs.age-plugin-se then nur.repos.josh.age-plugin-se else age-plugin-se;
+  age-plugin-tpm' =
+    if age-plugin-tpm == pkgs.age-plugin-tpm then nur.repos.josh.age-plugin-tpm else age-plugin-tpm;
+  age-plugin-yubikey' = age-plugin-yubikey;
+
   features =
     (lib.optional seSupport "se")
     ++ (lib.optional tpmSupport "tpm")
@@ -35,8 +42,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     sops
   ]
   ++ (lib.optional seSupport age-plugin-se')
-  ++ (lib.optional tpmSupport age-plugin-tpm)
-  ++ (lib.optional yubikeySupport age-plugin-yubikey);
+  ++ (lib.optional tpmSupport age-plugin-tpm')
+  ++ (lib.optional yubikeySupport age-plugin-yubikey');
 
   buildCommand = ''
     mkdir -p $out
