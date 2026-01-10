@@ -11,7 +11,7 @@
   jq,
   nix,
   which,
-# keep-sorted end
+  # keep-sorted end
 }:
 let
   inherit (nixbits) gtar;
