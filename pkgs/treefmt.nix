@@ -7,7 +7,7 @@
   deadnix,
   isort,
   keep-sorted,
-  nixfmt-rfc-style,
+  nixfmt,
   nodePackages,
   ruff,
   shellcheck,
@@ -60,7 +60,7 @@ symlinkJoin {
     deadnix
     isort
     keep-sorted
-    nixfmt-rfc-style
+    nixfmt
     ruff
     shellcheck
     shfmt
