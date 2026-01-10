@@ -9,7 +9,7 @@
   nix,
   nix-tree,
   nixd,
-  nixfmt-rfc-style,
+  nixfmt,
   nixpkgs-review,
   shellcheck,
   shfmt,
@@ -37,7 +37,7 @@ symlinkJoin {
     nixbits.nix-profile-upgrade
     nixbits.nixpkgs-review-pr
     nixd
-    nixfmt-rfc-style
+    nixfmt
     nixpkgs-review
     shellcheck
     shfmt
