@@ -17,7 +17,7 @@
   stylua,
   taplo,
   ty,
-# keep-sorted end
+  # keep-sorted end
 }:
 let
   internal-inputs = builtins.mapAttrs (

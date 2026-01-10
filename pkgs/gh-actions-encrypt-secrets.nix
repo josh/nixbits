@@ -45,7 +45,7 @@ script.overrideAttrs (
                 git
                 gh-actions-encrypt-secrets
               ];
-              env.SECRETS_JSON = ''{}'';
+              env.SECRETS_JSON = "{}";
               env.AGE_RECIPIENT = "age1yavtje8vqkaglu73js0njpda8a42w94hresma43h4u8y4p95pajqnrjuly";
             }
             ''

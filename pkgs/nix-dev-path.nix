@@ -15,7 +15,7 @@
   shfmt,
   statix,
   tree,
-# keep-sorted end
+  # keep-sorted end
 }:
 symlinkJoin {
   name = "nix-dev-path";

@@ -6,7 +6,7 @@
   rust-analyzer,
   rustc,
   rustfmt,
-# keep-sorted end
+  # keep-sorted end
 }:
 symlinkJoin {
   name = "rust-dev-path";
