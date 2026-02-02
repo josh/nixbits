@@ -7,7 +7,7 @@
 }:
 let
   pkg = callPackage ./age.nix {
-    age-plugin-se = nur.repos.josh.age-plugin-se-old;
+    age-plugin-se = nur.repos.josh.age-plugin-se;
     age-plugin-tpm = nur.repos.josh.age-plugin-tpm-old;
     inherit seSupport tpmSupport yubikeySupport;
   };
