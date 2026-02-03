@@ -1,6 +1,6 @@
 { nur, nixbits }:
 let
-  age = nixbits.age-old.override {
+  age = nixbits.age.override {
     seSupport = true;
     tpmSupport = true;
     yubikeySupport = true;
