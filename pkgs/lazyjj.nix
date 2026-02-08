@@ -38,8 +38,8 @@ stdenvNoCC.mkDerivation {
   ]
   ++ [
     "--set"
-    "XDG_CONFIG_HOME"
-    "${nixbits.jujutsu-xdg-config-home}"
+    "GIT_CONFIG_GLOBAL"
+    "${nixbits.git-config}"
   ];
 
   nativeBuildInputs = [

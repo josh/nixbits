@@ -19,8 +19,7 @@ let
     buildInputs = [ makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/git \
-        --set GIT_CONFIG_GLOBAL ${nixbits.git-config} \
-        --set XDG_CONFIG_HOME ${nixbits.git-xdg-config-home}
+        --set GIT_CONFIG_GLOBAL ${nixbits.git-config}
     '';
 
     meta = {
@@ -61,6 +60,22 @@ git'.overrideAttrs (
           git init
           if [[ "$(git branch --show-current)" != "main" ]]; then
             echo "expected, 'main' but was '$(git branch --show-current)'"
+            return 1
+          fi
+          touch $out
+        '';
+
+        ignore = runCommand "test-git-ignore" { nativeBuildInputs = [ git ]; } ''
+          git init
+          touch README.md
+          mkdir .claude
+          touch .claude/settings.local.json
+          if git check-ignore README.md; then
+            echo "expected README.md to not be ignored"
+            return 1
+          fi
+          if ! git check-ignore .claude/settings.local.json; then
+            echo "expected .claude/settings.local.json to be ignored"
             return 1
           fi
           touch $out

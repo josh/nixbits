@@ -25,7 +25,7 @@ let
     postBuild = ''
       wrapProgram $out/bin/jj \
         --set JJ_CONFIG ${nixbits.jujutsu-config} \
-        --set XDG_CONFIG_HOME ${nixbits.jujutsu-xdg-config-home}
+        --set GIT_CONFIG_GLOBAL ${nixbits.git-config}
     '';
 
     meta = {
@@ -57,6 +57,22 @@ jujutsu'.overrideAttrs (
           actual="$(jj config get user.name)"
           if [[ "$actual" != "$expected" ]]; then
             echo "expected, '$expected' but was '$actual'"
+            return 1
+          fi
+          touch $out
+        '';
+
+        ignore = runCommand "test-jj-ignore" { nativeBuildInputs = [ jujutsu ]; } ''
+          jj git init
+          touch README.md
+          mkdir .claude
+          touch .claude/settings.local.json
+          if ! jj file list | grep --quiet README.md; then
+            echo "expected README.md to be tracked"
+            return 1
+          fi
+          if jj file list | grep --quiet .claude/settings.local.json; then
+            echo "expected .claude/settings.local.json to be ignored"
             return 1
           fi
           touch $out
