@@ -85,7 +85,12 @@
       packages = eachSystem (system: mkPackages (importNixpkgs nixpkgs system));
 
       nixosModules = {
+        default = ./modules/default.nix;
+        # keep-sorted start
         healthchecks = ./modules/healthchecks.nix;
+        vlagent = ./modules/vlagent.nix;
+        vmagent = ./modules/vmagent.nix;
+        # keep-sorted end
       };
 
       formatter = eachSystem (system: treefmt-nix.${system}.wrapper);
