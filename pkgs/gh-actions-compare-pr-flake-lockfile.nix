@@ -4,7 +4,6 @@
   coreutils,
   gh,
   jd-diff-patch,
-  nix,
 }:
 writeShellApplication {
   name = "gh-actions-compare-pr-flake-lockfile";
@@ -12,9 +11,9 @@ writeShellApplication {
     coreutils
     gh
     jd-diff-patch
-    nix
+    # Use nix from environment
   ];
-  inheritPath = false;
+  inheritPath = true;
   text = builtins.readFile ./gh-actions-compare-pr-flake-lockfile.bash;
   meta = {
     description = "Compare the package outputs of 2 nix flakes for a GitHub Actions PR";
