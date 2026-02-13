@@ -7,6 +7,8 @@
 let
   runitor-wrapper = pkgs.callPackage ../pkgs/runitor-wrapper.nix { };
   healthchecks-apply = pkgs.callPackage ../pkgs/healthchecks-apply.nix { };
+  healthchecks-exec-start-pre = pkgs.callPackage ../pkgs/healthchecks-exec-start-pre.nix { };
+  healthchecks-exec-stop-post = pkgs.callPackage ../pkgs/healthchecks-exec-stop-post.nix { };
 
   cfg = config.healthchecks;
 
@@ -83,6 +85,20 @@ in
             "PING_KEY"
             cfg.pingKey
           ];
+        };
+      };
+
+      execStartPre = lib.options.mkOption {
+        type = lib.types.package;
+        default = healthchecks-exec-start-pre.overrideAttrs {
+          inherit (cfg) pingURL pingKey;
+        };
+      };
+
+      execStopPost = lib.options.mkOption {
+        type = lib.types.package;
+        default = healthchecks-exec-stop-post.overrideAttrs {
+          inherit (cfg) pingURL pingKey;
         };
       };
 
