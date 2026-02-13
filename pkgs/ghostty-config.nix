@@ -23,6 +23,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     "window-height" = 40;
     "window-width" = 100;
   };
+  # // lib.attrsets.optionalAttrs stdenvNoCC.hostPlatform.isDarwin {
+  #   "macos-icon" = "custom";
+  #   # FIXME: macos-icon-custom: unknown field
+  #   "macos-icon-custom" = "${nur.repos.josh.ghostty-theme-icons}/share/ghostty/tokyo-night-storm.icns";
+  # };
 
   text = builtins.concatStringsSep "" (
     lib.attrsets.mapAttrsToList (
