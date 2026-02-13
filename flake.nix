@@ -29,6 +29,7 @@
         import nixpkgs {
           system = "${system}";
           overlays = [
+            self.overlays.broken
             nurpkgs.overlays.default
             self.overlays.default
           ];
@@ -80,7 +81,10 @@
       treefmt-nix = eachSystem (system: import ./internal/treefmt.nix nixpkgs.legacyPackages.${system});
     in
     {
-      overlays.default = import ./overlay.nix;
+      overlays = {
+        default = import ./overlay.nix;
+        broken = import ./overlays/broken.nix;
+      };
 
       packages = eachSystem (system: mkPackages (importNixpkgs nixpkgs system));
 
