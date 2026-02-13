@@ -1,4 +1,5 @@
 {
+  lib,
   symlinkJoin,
   makeWrapper,
   runCommand,
@@ -19,8 +20,8 @@ let
       nixbits.jujutsu-git-set-upstream
       nixbits.jujutsu-new-main
       nixbits.jujutsu-pull
-      watchman
-    ];
+    ]
+    ++ (lib.lists.optional watchman.meta.available watchman);
     buildInputs = [ makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/jj \
