@@ -17,9 +17,15 @@
 }:
 let
   age-plugin-se' =
-    if age-plugin-se == pkgs.age-plugin-se then nur.repos.josh.age-plugin-se else age-plugin-se;
+    if age-plugin-se.meta == pkgs.age-plugin-se.meta then
+      nur.repos.josh.age-plugin-se
+    else
+      age-plugin-se;
   age-plugin-tpm' =
-    if age-plugin-tpm == pkgs.age-plugin-tpm then nur.repos.josh.age-plugin-tpm else age-plugin-tpm;
+    if age-plugin-tpm.meta == pkgs.age-plugin-tpm.meta then
+      nur.repos.josh.age-plugin-tpm
+    else
+      age-plugin-tpm;
   age-plugin-yubikey' = age-plugin-yubikey;
 
   features =
