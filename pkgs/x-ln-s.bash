@@ -9,7 +9,7 @@ if [ -z "$src" ] || [ -z "$dst" ]; then
   exit 1
 fi
 
-if [ ! -f "$src" ]; then
+if [ ! -e "$src" ]; then
   echo "error: $src not found" >&2
   exit 1
 fi
