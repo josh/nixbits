@@ -1,5 +1,5 @@
 ---
-name: jj
+name: jj-describe
 description: Jujutsu VCS describe workflow. Use when the user asks to commit or describe changes in a jj repository.
 allowed-tools: Bash(jj show:*), Bash(jj describe:*)
 ---
