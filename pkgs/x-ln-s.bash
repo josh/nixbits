@@ -23,7 +23,7 @@ if [ ! -d "$parent_dir" ]; then
   x mkdir -p "$parent_dir"
 fi
 
-x ln -fs "$src" "$dst"
+x ln -fns "$src" "$dst"
 
 if [ ! -L "$dst" ] || [ "$(readlink -f "$dst")" != "$src" ]; then
   echo "error: failed to create symlink" >&2
