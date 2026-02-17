@@ -11,6 +11,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   config = {
     "auto-update" = "off";
+    "clipboard-paste-protection" = "false";
     "font-family" = "Berkeley Mono Regular";
     "font-family-bold" = "Berkeley Mono Bold";
     "font-family-italic" = "Berkeley Mono Oblique";
