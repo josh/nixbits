@@ -18,7 +18,9 @@ jj show
 
 - Summarize the nature of changes (new feature, bug fix, refactoring, etc.)
 - Focus on the **why**, not the **what**
-- Keep the first line under 72 characters
+- The first line MUST be under 72 characters
+- Only write one line
+- Do NOT add "Co-authored-by"
 
 ## Step 3: Apply the message
 
@@ -33,7 +35,12 @@ jj describe --message "Commit message here"
 - Never push unless explicitly asked
 - Never use `jj commit`, `jj new`, `jj abandon`, `jj squash`, or `jj rebase`
 - If there are no changes (empty diff), inform the user instead of describing
+- Writing more than 72 characters and more than one will be rejected
 
 ## Arguments
 
 When invoked as `/jj`, describe the current working copy changes using `jj describe`.
+
+## Tip
+
+Seriously, only write a single concise one line commit message.
