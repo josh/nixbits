@@ -11,7 +11,7 @@ In jj, the working copy (`@`) is always a mutable change. There is no staging ar
 ## Step 1: Understand current state
 
 ```bash
-jj show
+jj show --git
 ```
 
 ## Step 2: Draft a commit message
