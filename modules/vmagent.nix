@@ -92,7 +92,10 @@
 
     services.prometheus.exporters.node = {
       enable = lib.modules.mkDefault config.services.vmagent.enable;
-      enabledCollectors = [ "systemd" ];
+      enabledCollectors = [
+        "processes"
+        "systemd"
+      ];
     };
   };
 }
