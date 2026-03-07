@@ -89,11 +89,11 @@
       packages = eachSystem (system: mkPackages (importNixpkgs nixpkgs system));
 
       nixosModules = {
-        default = ./modules/default.nix;
+        default = import ./modules/default.nix;
         # keep-sorted start
-        healthchecks = ./modules/healthchecks.nix;
-        vlagent = ./modules/vlagent.nix;
-        vmagent = ./modules/vmagent.nix;
+        healthchecks = import ./modules/healthchecks.nix;
+        vlagent = import ./modules/vlagent.nix;
+        vmagent = import ./modules/vmagent.nix;
         # keep-sorted end
       };
 
