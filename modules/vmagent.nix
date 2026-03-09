@@ -6,6 +6,7 @@
 {
   config = {
     services.vmagent.enable = lib.modules.mkDefault config.services.vmagent.remoteWrite.url != null;
+    services.vmagent.extraArgs = [ "-httpListenAddr=127.0.0.1:8429" ];
 
     services.vmagent.prometheusConfig.scrape_configs =
       # https://docs.victoriametrics.com/victoriametrics/vmagent/#monitoring
