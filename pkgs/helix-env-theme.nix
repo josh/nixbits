@@ -71,7 +71,7 @@ writeShellApplication {
     inherit (helix.meta)
       description
       license
-      platforms
       ;
+    platforms = lib.platforms.all;
   };
 }
