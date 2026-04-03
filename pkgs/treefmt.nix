@@ -8,7 +8,7 @@
   isort,
   keep-sorted,
   nixfmt,
-  nodePackages,
+  prettier,
   ruff,
   shellcheck,
   shfmt,
@@ -76,7 +76,7 @@ symlinkJoin {
     find $out/bin -maxdepth 1 -name ".*-wrapped" -type l -delete
 
     # Prettier's bin directory is weird
-    ln -s ${lib.getExe nodePackages.prettier} $out/bin/prettier
+    ln -s ${lib.getExe prettier} $out/bin/prettier
 
     # delete everything but bin/
     for dir in $out/*; do
