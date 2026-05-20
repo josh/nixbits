@@ -5,7 +5,6 @@
   # keep-sorted start
   claude-code,
   codex,
-  gemini-cli,
   github-copilot-cli,
   llm,
   # keep-sorted end
@@ -30,7 +29,6 @@ symlinkJoin {
     # keep-sorted start
     claude-code
     codex
-    gemini-cli
     github-copilot-cli
     llm'
     # keep-sorted end
