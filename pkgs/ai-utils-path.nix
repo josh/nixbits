@@ -5,7 +5,6 @@
   # keep-sorted start
   claude-code,
   codex,
-  github-copilot-cli,
   llm,
   # keep-sorted end
   opencode ? null,
@@ -23,7 +22,6 @@ symlinkJoin {
     # keep-sorted start
     claude-code
     codex
-    github-copilot-cli
     llm'
     # keep-sorted end
   ]
