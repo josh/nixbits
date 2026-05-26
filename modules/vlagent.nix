@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  options,
+  ...
+}:
 {
   config = lib.modules.mkMerge [
     {
@@ -12,9 +17,20 @@
       services.journald.extraConfig = ''
         MaxRetentionSec=1d
       '';
-      systemd.coredump.extraConfig = ''
-        Storage=journal
-      '';
     })
+    # Support both NixOS 25.11 and 26.05
+    # https://github.com/NixOS/nixpkgs/commit/ab076fc22ddb751249a518de8b3217e1097bcb82
+    (lib.modules.mkIf config.services.vlagent.enable (
+      if options.systemd.coredump ? settings then
+        {
+          systemd.coredump.settings.Coredump.Storage = "journal";
+        }
+      else
+        {
+          systemd.coredump.extraConfig = ''
+            Storage=journal
+          '';
+        }
+    ))
   ];
 }
