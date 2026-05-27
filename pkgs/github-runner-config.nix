@@ -17,6 +17,7 @@
 }:
 let
   inherit (nixbits) gh;
+  github-runner' = github-runner.override { nodeRuntimes = [ "node24" ]; };
   labels =
     if github-runner-labels != null && github-runner-labels != [ ] then
       (builtins.concatStringsSep "," github-runner-labels)
@@ -33,7 +34,7 @@ writeShellApplication {
   ];
   inheritPath = false;
   runtimeEnv = {
-    GITHUB_RUNNER_PATH = github-runner;
+    GITHUB_RUNNER_PATH = github-runner';
   }
   // (lib.attrsets.optionalAttrs (github-runner-root != null) {
     RUNNER_ROOT = github-runner-root;
