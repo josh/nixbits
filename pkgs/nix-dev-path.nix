@@ -2,7 +2,6 @@
   symlinkJoin,
   nixbits,
   # keep-sorted start
-  cachix,
   deadnix,
   nh,
   nil,
@@ -21,7 +20,6 @@ symlinkJoin {
   name = "nix-dev-path";
   paths = [
     # keep-sorted start
-    cachix
     deadnix
     nh
     nil
