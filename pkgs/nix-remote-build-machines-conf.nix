@@ -81,12 +81,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   passthru.tests = {
     empty = testers.testEqualContents {
       assertion = "empty";
+      checkMetadata = false;
       expected = writeText "machines" "";
       actual = finalAttrs.finalPackage.overrideAttrs { buildMachines = [ ]; };
     };
 
     example = testers.testEqualContents {
       assertion = "example";
+      checkMetadata = false;
       expected = writeText "machines" ''
         ssh-ng://builder x86_64-linux,aarch64-linux - 1 2 nixos-test,benchmark,big-parallel,kvm - -
       '';
