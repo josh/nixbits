@@ -86,7 +86,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     };
 
     example = testers.testEqualContents {
-      assertion = "onexamplee";
+      assertion = "example";
       expected = writeText "machines" ''
         ssh-ng://builder x86_64-linux,aarch64-linux - 1 2 nixos-test,benchmark,big-parallel,kvm - -
       '';
