@@ -49,6 +49,7 @@ restic-age-init.overrideAttrs (
                 age
                 restic-age-init
               ];
+              RESTIC_CACHE_DIR = "restic-cache";
             }
             ''
               age-keygen --output key.txt
@@ -64,6 +65,7 @@ restic-age-init.overrideAttrs (
                 age
                 restic-age-init
               ];
+              RESTIC_CACHE_DIR = "restic-cache";
             }
             ''
               age-keygen --output key.txt
@@ -80,6 +82,7 @@ restic-age-init.overrideAttrs (
                 restic-age-init
                 jq
               ];
+              RESTIC_CACHE_DIR = "restic-cache";
             }
             ''
               age-keygen --output a.txt
@@ -103,6 +106,7 @@ restic-age-init.overrideAttrs (
                 restic
                 restic-age-init
               ];
+              RESTIC_CACHE_DIR = "restic-cache";
             }
             ''
               echo "secret" >password.txt
