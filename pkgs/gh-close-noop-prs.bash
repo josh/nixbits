@@ -14,12 +14,12 @@ close_comment="Closing: flake.lock bump with no derivation change (noop). Only $
 
 dry_run=false
 case "${1:-}" in
-  --dry-run | --list) dry_run=true ;;
-  "") ;;
-  *)
-    echo "usage: gh-close-noop-prs [--dry-run|--list]" >&2
-    exit 2
-    ;;
+--dry-run | --list) dry_run=true ;;
+"") ;;
+*)
+  echo "usage: gh-close-noop-prs [--dry-run|--list]" >&2
+  exit 2
+  ;;
 esac
 
 # Note: gh search prs treats the positional arg as free-text keywords, so the
@@ -60,28 +60,28 @@ for url in "${urls[@]}"; do
   ' <<<"$checks_json")
 
   case "$other_status" in
-    bad)
-      failed_checks=$(jq --raw-output --arg name "$lockfile_check" \
-        '[ .[] | select(.name != $name and (.bucket == "fail" or .bucket == "cancel")) | .name ] | join(", ")' \
-        <<<"$checks_json")
-      review+=("$url (failing: $failed_checks)")
-      echo "review $url (other checks failing: $failed_checks)" >&2
-      ;;
-    pending)
-      deferred+=("$url")
-      echo "defer  $url (other checks pending)" >&2
-      ;;
-    ok)
-      closed+=("$url")
-      if [ "$dry_run" = true ]; then
-        echo "+ [dry-run] gh pr close $url --delete-branch" >&2
-      else
-        echo "+ gh pr close $url --delete-branch" >&2
-        if ! gh pr close "$url" --delete-branch --comment "$close_comment"; then
-          errors=$((errors + 1))
-        fi
+  bad)
+    failed_checks=$(jq --raw-output --arg name "$lockfile_check" \
+      '[ .[] | select(.name != $name and (.bucket == "fail" or .bucket == "cancel")) | .name ] | join(", ")' \
+      <<<"$checks_json")
+    review+=("$url (failing: $failed_checks)")
+    echo "review $url (other checks failing: $failed_checks)" >&2
+    ;;
+  pending)
+    deferred+=("$url")
+    echo "defer  $url (other checks pending)" >&2
+    ;;
+  ok)
+    closed+=("$url")
+    if [ "$dry_run" = true ]; then
+      echo "+ [dry-run] gh pr close $url --delete-branch" >&2
+    else
+      echo "+ gh pr close $url --delete-branch" >&2
+      if ! gh pr close "$url" --delete-branch --comment "$close_comment"; then
+        errors=$((errors + 1))
       fi
-      ;;
+    fi
+    ;;
   esac
 done
 
