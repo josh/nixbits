@@ -4,6 +4,7 @@
   # keep-sorted start
   bash,
   coreutils,
+  findutils,
   gh,
   git,
   gnutar,
@@ -22,6 +23,7 @@ buildEnv {
     # keep-sorted start
     bash
     coreutils
+    findutils
     gh
     git
     gnutar
