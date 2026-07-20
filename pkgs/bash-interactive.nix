@@ -63,7 +63,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     if [ -n "$ITERM_SESSION_ID" ]; then
       PATH="${iterm2-shell-integration}/bin:$PATH"
       ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=1 source ${iterm2-shell-integration}/share/iterm2-shell-integration/iterm2_shell_integration.bash
-      it2tip
     fi
   '');
 
