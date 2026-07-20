@@ -52,7 +52,7 @@ ok() {
 wait_for_code() {
   ok |
     nc -l 3000 |
-    grep --extended-regexp --only-matching --regexp 'code=[a-z0-9]+' |
+    grep --extended-regexp --only-matching --regexp 'code=[A-Za-z0-9]+' |
     sed 's/code=//'
 }
 
@@ -60,7 +60,7 @@ open_authorize_url
 CODE=$(wait_for_code)
 [ -n "$CODE" ]
 
-curl --fail --show-error --silent \
+curl --fail-with-body --show-error --silent \
   --request POST \
   --url "https://api.trakt.tv/oauth/token" \
   --data "code=${CODE}" \
