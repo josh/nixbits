@@ -5,14 +5,10 @@
   # keep-sorted start
   claude-code,
   codex,
-  llm,
   # keep-sorted end
   opencode ? null,
-  nixbits,
 }:
 let
-  llm' = if llm == pkgs.llm then nixbits.llm else llm;
-
   opencode' =
     if opencode == null && (builtins.hasAttr "opencode" pkgs) then pkgs.opencode else opencode;
 in
@@ -22,7 +18,6 @@ symlinkJoin {
     # keep-sorted start
     claude-code
     codex
-    llm'
     # keep-sorted end
   ]
   ++ (lib.lists.optional (opencode' != null) opencode');
