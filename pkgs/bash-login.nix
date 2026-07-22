@@ -21,6 +21,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       # shellcheck disable=SC1091
       . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
     fi
+
+    export GOPATH="''${XDG_DATA_HOME:-$HOME/.local/share}/go"
   ''
   + (lib.strings.optionalString stdenvNoCC.isDarwin ''
     if [ -n "$ZED_TERM" ]; then

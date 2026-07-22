@@ -23,6 +23,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
     fi
 
+    export GOPATH="''${XDG_DATA_HOME:-$HOME/.local/share}/go"
+
     ${finalAttrs.shellInit}
   ''
   + (lib.strings.optionalString stdenvNoCC.isDarwin ''

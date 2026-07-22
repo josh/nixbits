@@ -73,6 +73,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       echo "$fishEnvVarsScript" >>$out/conf.d/env.fish
     fi
 
+    cat >$out/conf.d/go.fish <<'EOF'
+    if set --query XDG_DATA_HOME
+        set --export GOPATH $XDG_DATA_HOME/go
+    else
+        set --export GOPATH $HOME/.local/share/go
+    end
+    EOF
+
     cat ${./fish-config.fish} >>$out/config.fish
     substituteInPlace $out/config.fish \
       --replace-warn '@out@' "$out" \
