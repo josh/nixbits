@@ -29,11 +29,34 @@ subscribed_threads() {
     --jq '.[]
       | select(.repository.owner.login == env.OWNER)
       | select(.state == "closed")
-      | [.node_id, (if .pull_request then "pr" else "issue" end), .html_url]
+      | [
+          .node_id,
+          (if .pull_request then "pr" else "issue" end),
+          .html_url,
+          (if .pull_request then .pull_request.url else .url end)
+        ]
       | @tsv'
 }
 
-while IFS=$'\t' read -r node_id kind url; do
+# Notification actions use a separate REST API from subscriptions. Index the
+# current inbox (including read notifications) by subject URL so a successfully
+# unsubscribed issue/PR can also be marked "Done".
+declare -A notification_thread_ids=()
+if $apply; then
+  notification_rows="$(
+    gh api --paginate --method GET '/notifications' \
+      -f all=true \
+      -f per_page=100 \
+      --jq '.[] | select(.subject.url != null) | [.subject.url, .id] | @tsv'
+  )"
+  while IFS=$'\t' read -r subject_url thread_id; do
+    if [[ -n $subject_url ]]; then
+      notification_thread_ids["$subject_url"]="$thread_id"
+    fi
+  done <<<"$notification_rows"
+fi
+
+while IFS=$'\t' read -r node_id kind url subject_url; do
   if $apply; then
     echo "+ unsubscribe $kind $url" >&2
     # shellcheck disable=SC2016 # $id is a GraphQL variable, not a shell one
@@ -44,6 +67,12 @@ while IFS=$'\t' read -r node_id kind url; do
         }
       }' \
       --raw-field id="$node_id" >/dev/null
+
+    thread_id="${notification_thread_ids[$subject_url]-}"
+    if [[ -n $thread_id ]]; then
+      echo "+ mark notification done $url" >&2
+      gh api --method DELETE "/notifications/threads/$thread_id"
+    fi
   else
     printf '%s\t%s\n' "$kind" "$url"
   fi
