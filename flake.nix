@@ -92,6 +92,7 @@
         default = import ./modules/default.nix;
         # keep-sorted start
         healthchecks = import ./modules/healthchecks.nix;
+        nix-trim-generations = import ./modules/nix-trim-generations.nix;
         vlagent = import ./modules/vlagent.nix;
         vmagent = import ./modules/vmagent.nix;
         # keep-sorted end
