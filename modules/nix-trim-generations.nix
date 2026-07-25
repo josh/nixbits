@@ -20,7 +20,7 @@ in
   config = lib.modules.mkIf cfg.enable {
     systemd.paths.nix-trim-system-profile = {
       wantedBy = [ "multi-user.target" ];
-      pathConfig.PathChanged = "/nix/var/nix/profiles/system";
+      pathConfig.PathChanged = "/nix/var/nix/profiles";
     };
 
     systemd.services.nix-trim-system-profile = {
