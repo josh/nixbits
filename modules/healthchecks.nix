@@ -110,13 +110,17 @@ in
   };
 
   config = lib.modules.mkIf cfg.enable {
-    system.activationScripts.healthchecks.text = ''
-      if [ "$NIXOS_ACTION" = "dry-activate" ]; then
-        ${lib.getExe cfg.activationPackage} --dry-run
-      else
-        ${lib.getExe cfg.activationPackage}
-      fi
-    '';
-    system.activationScripts.healthchecks.supportsDryActivation = true;
+    systemd.services.healthchecks-apply = {
+      description = "Sync healthchecks.io checks";
+      wantedBy = [ "multi-user.target" ];
+      wants = [ "network-online.target" ];
+      after = [ "network-online.target" ];
+      restartTriggers = [ cfg.activationPackage ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = lib.getExe cfg.activationPackage;
+      };
+    };
   };
 }
