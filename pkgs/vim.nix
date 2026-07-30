@@ -9,7 +9,7 @@ stdenvNoCC.mkDerivation {
 
   __structuredAttrs = true;
 
-  buildInputs = [ makeWrapper ];
+  nativeBuildInputs = [ makeWrapper ];
 
   buildCommand = ''
     mkdir -p $out

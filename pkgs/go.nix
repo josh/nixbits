@@ -14,7 +14,7 @@ let
     paths = [
       go
     ];
-    buildInputs = [ makeWrapper ];
+    nativeBuildInputs = [ makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/go \
         --set GOENV '/dev/null' \

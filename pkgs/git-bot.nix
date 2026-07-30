@@ -12,7 +12,7 @@ let
     pname = "git-bot";
     inherit (git) version;
     paths = [ git ];
-    buildInputs = [ makeWrapper ];
+    nativeBuildInputs = [ makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/git \
         --set GIT_CONFIG_GLOBAL ${nixbits.git-bot-config}
