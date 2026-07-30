@@ -28,7 +28,6 @@ let
 
     meta = {
       inherit (go.meta)
-        name
         description
         homepage
         platforms
