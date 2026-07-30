@@ -2,16 +2,15 @@
   lib,
   writeShellApplication,
   coreutils,
-  findutils,
   nixbits,
 }:
 writeShellApplication {
   name = "x-lndir";
+  runtimeInputs = [
+    coreutils
+  ];
+  inheritPath = false;
   runtimeEnv = {
-    "PATH" = lib.strings.makeBinPath [
-      coreutils
-      findutils
-    ];
     XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./x-lndir.bash;

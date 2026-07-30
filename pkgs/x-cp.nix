@@ -7,11 +7,12 @@
 }:
 writeShellApplication {
   name = "x-cp";
+  runtimeInputs = [
+    coreutils
+    diffutils
+  ];
+  inheritPath = false;
   runtimeEnv = {
-    "PATH" = lib.strings.makeBinPath [
-      coreutils
-      diffutils
-    ];
     XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./x-cp.bash;

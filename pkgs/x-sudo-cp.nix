@@ -8,12 +8,13 @@
 }:
 writeShellApplication {
   name = "x-sudo-cp";
+  runtimeInputs = [
+    coreutils
+    diffutils
+    overrideSudo
+  ];
+  inheritPath = false;
   runtimeEnv = {
-    "PATH" = lib.strings.makeBinPath [
-      coreutils
-      diffutils
-      overrideSudo
-    ];
     COREUTILS_PATH = coreutils;
     XTRACE_PATH = nixbits.xtrace;
   };
