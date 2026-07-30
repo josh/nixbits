@@ -14,7 +14,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   text = ''
     if ! shopt -q login_shell; then
       echo "Error: This script must be run as a login shell" >&2
-      exit 1
+      # shellcheck disable=SC2317
+      return 1 2>/dev/null || exit 1
     fi
 
     if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then

@@ -40,7 +40,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   text = ''
     if [[ $- != *i* ]]; then
       echo "Error: This script must be run in an interactive shell"
-      exit 1
+      # shellcheck disable=SC2317
+      return 1 2>/dev/null || exit 1
     fi
 
     export PATH=${path}/bin:$PATH
