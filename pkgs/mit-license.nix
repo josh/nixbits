@@ -1,7 +1,6 @@
 {
   lib,
   stdenvNoCC,
-  makeWrapper,
   runCommand,
   bash,
   coreutils,
@@ -18,7 +17,6 @@ let
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   name = "mit-license";
-  nativeBuildInputs = [ makeWrapper ];
 
   inherit script;
   passAsFile = [ "script" ];

@@ -13,7 +13,7 @@ in
 symlinkJoin {
   name = "fish";
   paths = [ fish ];
-  buildInputs = [ makeWrapper ];
+  nativeBuildInputs = [ makeWrapper ];
   postBuild = ''
     wrapProgram $out/bin/fish \
       --add-flags "--init-command" \

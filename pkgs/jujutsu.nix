@@ -22,7 +22,7 @@ let
       nixbits.jujutsu-pull
     ]
     ++ (lib.lists.optional watchman.meta.available watchman);
-    buildInputs = [ makeWrapper ];
+    nativeBuildInputs = [ makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/jj \
         --set JJ_CONFIG ${nixbits.jujutsu-config} \

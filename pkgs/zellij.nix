@@ -15,7 +15,7 @@ symlinkJoin {
   paths = [
     zellij
   ];
-  buildInputs = [ makeWrapper ];
+  nativeBuildInputs = [ makeWrapper ];
   postBuild = ''
     wrapProgram $out/bin/zellij \
       --set ZELLIJ_CONFIG_DIR '${configDir}'
