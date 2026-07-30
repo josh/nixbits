@@ -46,7 +46,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       "HC_API_KEY"
       "command:${toExePath healthchecksConfig.apiKeyCommand}"
     ])
-    ++ (lib.lists.optionals (healthchecksConfig ? delete) [
+    ++ (lib.lists.optionals (healthchecksConfig.delete or false) [
       "--add-flags"
       "--delete"
     ]);
