@@ -15,6 +15,8 @@ in
 stdenvNoCC.mkDerivation {
   name = "direnv-xdg-config-home";
 
+  __structuredAttrs = true;
+
   buildCommand = ''
     mkdir -p $out/direnv
     cp ${config} $out/direnv/direnv.toml
