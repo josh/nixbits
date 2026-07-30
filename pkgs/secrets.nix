@@ -25,6 +25,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     mkdir -p $out/bin
     (
       echo "#!$SHELL -e"
+      echo "set -o pipefail"
       echo "export PATH='${age}/bin:${ensure-newline}/bin'"
       echo "SECRETS_PATH='$SECRETS_PATH'"
       echo "AGE_IDENTITY_COMMAND='$AGE_IDENTITY_COMMAND'"
