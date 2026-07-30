@@ -42,7 +42,7 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
     chmod +x $out/share/nix/hooks/pre-install.d/zed
 
     mkdir -p $out/share/tccpolicy.d
-    cat "$NIX_ATTRS_JSON_FILE" | jq --raw-output '.tccpolicyPolicy' >$out/share/tccpolicy.d/zed.json
+    jq --raw-output '.tccpolicyPolicy' <"$NIX_ATTRS_JSON_FILE" >$out/share/tccpolicy.d/zed.json
   '';
 
   meta = {
