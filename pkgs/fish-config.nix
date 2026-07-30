@@ -83,7 +83,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     cat ${./fish-config.fish} >>$out/config.fish
     substituteInPlace $out/config.fish \
-      --replace-warn '@out@' "$out" \
+      --replace-fail '@out@' "$out" \
       --replace-fail '@fish-path@' "$fishPath" \
       --replace-fail '@loginShellInit@' "$loginShellInit" \
       --replace-fail '@interactiveShellInit@' "$interactiveShellInit" \

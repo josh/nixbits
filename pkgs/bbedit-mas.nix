@@ -47,7 +47,7 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
     echo "BBEdit" >$out/share/mas/$masID
 
     mkdir -p $out/share/tccpolicy.d
-    cat "$NIX_ATTRS_JSON_FILE" | jq --raw-output '.tccpolicyPolicy' >$out/share/tccpolicy.d/bbedit.json
+    jq --raw-output '.tccpolicyPolicy' <"$NIX_ATTRS_JSON_FILE" >$out/share/tccpolicy.d/bbedit.json
   '';
 
   meta = {

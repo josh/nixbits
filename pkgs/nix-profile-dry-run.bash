@@ -19,6 +19,7 @@ fi
 current_profile=$(readlink -f "$nix_profile_dir/profile")
 
 profile_dir=$(mktemp -d)
+trap 'rm -rf "$profile_dir"' EXIT
 pushd "$profile_dir" >/dev/null || exit 1
 ln -s "$current_profile" profile-1-link
 ln -s profile-1-link profile

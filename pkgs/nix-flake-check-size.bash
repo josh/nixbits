@@ -17,7 +17,7 @@ checks | nix path-info --json --stdin | jq --compact-output 'to_entries[] | {key
   narSize=$(echo "$json" | jq --raw-output '.narSize')
   reference_count=$(echo "$json" | jq --raw-output '.references | length')
   if [ "$reference_count" -ne 0 ]; then
-    echo "WARN: $key has multiple references" >&2
+    echo "WARN: $key has $reference_count references" >&2
     echo "$json" | jq
   elif [ "$narSize" -gt 200 ]; then
     echo "WARN: $key has large narSize: $narSize" >&2
