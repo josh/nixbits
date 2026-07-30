@@ -1,6 +1,7 @@
-import subprocess
+import os
 import re
-from datetime import timedelta, datetime
+import subprocess
+from datetime import datetime, timedelta
 
 import click
 
@@ -34,6 +35,7 @@ class CalendarParamType(click.ParamType):
         process = subprocess.run(
             [SYSTEMD_ANALYZE, "calendar", "--iterations=12", value],
             capture_output=True,
+            env={**os.environ, "TZ": "UTC"},
         )
         if process.returncode != 0:
             self.fail(f"{value!r} is not a valid calendar spec", param, ctx)
