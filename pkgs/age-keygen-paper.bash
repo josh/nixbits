@@ -3,7 +3,7 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 
-output="$1"
+output=$(realpath --canonicalize-missing "$1")
 
 tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT
