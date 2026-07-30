@@ -1,4 +1,6 @@
 { zsh }:
-zsh.overrideAttrs {
-  passthru.tests = { };
-}
+zsh.overrideAttrs (previousAttrs: {
+  passthru = (previousAttrs.passthru or { }) // {
+    tests = { };
+  };
+})
