@@ -6,6 +6,8 @@
 swiftPackages.stdenv.mkDerivation {
   name = "clean-completed-reminders";
 
+  __structuredAttrs = true;
+
   dontUnpack = true;
 
   nativeBuildInputs = [

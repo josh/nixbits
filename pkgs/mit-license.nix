@@ -18,12 +18,14 @@ in
 stdenvNoCC.mkDerivation (finalAttrs: {
   name = "mit-license";
 
+  __structuredAttrs = true;
+
   inherit script;
-  passAsFile = [ "script" ];
 
   buildCommand = ''
     mkdir -p $out/bin
-    install -m 755 $scriptPath $out/bin/mit-license
+    printf '%s' "$script" >$out/bin/mit-license
+    chmod 755 $out/bin/mit-license
     ln -s $out/bin/mit-license $out/bin/license
   '';
 

@@ -7,6 +7,8 @@ stdenvNoCC.mkDerivation {
   pname = "gtar";
   inherit (gnutar) version;
 
+  __structuredAttrs = true;
+
   buildCommand = ''
     mkdir -p $out/bin
     ln -s ${lib.getExe gnutar} $out/bin/gtar

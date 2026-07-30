@@ -6,6 +6,8 @@ stdenv.mkDerivation {
   pname = "launchd-exec";
   version = "0.1.0";
 
+  __structuredAttrs = true;
+
   buildCommand = ''
     substitute ${./launchd-exec.c} launchd-exec.c \
       --replace-fail '@version@' "$version"

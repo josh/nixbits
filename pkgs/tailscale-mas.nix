@@ -28,6 +28,8 @@ in
 stdenvNoCC.mkDerivation {
   name = "tailscale-mas";
 
+  __structuredAttrs = true;
+
   buildCommand = ''
     mkdir -p $out/bin $out/share/mas $out/share/nix/hooks/pre-install.d $out/share/defaults.d
     install -m 755 ${wrapper} $out/bin/tailscale

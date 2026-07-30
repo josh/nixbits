@@ -6,6 +6,8 @@
 stdenv.mkDerivation (finalAttrs: {
   name = "ensure-newline";
 
+  __structuredAttrs = true;
+
   buildCommand = ''
     mkdir -p $out/bin
     $CC ${./ensure-newline.c} -o $out/bin/ensure-newline

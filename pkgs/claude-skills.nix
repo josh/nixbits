@@ -2,6 +2,8 @@
 stdenvNoCC.mkDerivation {
   name = "claude-skills";
 
+  __structuredAttrs = true;
+
   buildCommand = ''
     mkdir -p $out
     cp -R ${../.claude/skills/gh} $out/gh
