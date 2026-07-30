@@ -12,7 +12,7 @@ let
       drv = fetchurl {
         name = "ollama-blob-${sha256}";
         url = "https://registry.ollama.ai/v2/library/${modelName}/blobs/sha256:${sha256}";
-        inherit sha256;
+        hash = blob.digest;
       };
     in
     {
@@ -76,7 +76,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   buildCommand = ''
     mkdir -p $out
-    for p in ''${ollamaModelPackages[@]}; do
+    for p in "''${ollamaModelPackages[@]}"; do
       lndir -silent $p $out
     done
   '';
