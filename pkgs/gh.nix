@@ -12,7 +12,10 @@ stdenvNoCC.mkDerivation {
 
   __structuredAttrs = true;
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [
+    lndir
+    makeWrapper
+  ];
   makeWrapperArgs =
     (lib.lists.optionals stdenvNoCC.hostPlatform.isDarwin [
       "--set"
@@ -40,7 +43,7 @@ stdenvNoCC.mkDerivation {
 
   buildCommand = ''
     mkdir $out
-    ${lndir}/bin/lndir -silent ${gh} $out
+    lndir -silent ${gh} $out
 
     rm $out/bin/gh
     makeWrapper ${gh}/bin/gh $out/bin/gh "''${makeWrapperArgs[@]}"

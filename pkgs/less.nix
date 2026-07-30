@@ -9,7 +9,10 @@ stdenvNoCC.mkDerivation {
 
   __structuredAttrs = true;
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [
+    lndir
+    makeWrapper
+  ];
   makeWrapperArgs = [
     "--set"
     "LESSHISTFILE"
@@ -18,7 +21,7 @@ stdenvNoCC.mkDerivation {
 
   buildCommand = ''
     mkdir $out
-    ${lndir}/bin/lndir -silent ${less} $out
+    lndir -silent ${less} $out
 
     rm $out/bin/less
     makeWrapper ${less}/bin/less $out/bin/less "''${makeWrapperArgs[@]}"

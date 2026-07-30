@@ -9,7 +9,10 @@ stdenvNoCC.mkDerivation {
 
   __structuredAttrs = true;
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [
+    lndir
+    makeWrapper
+  ];
   makeWrapperArgs = [
     "--set"
     "GREP_COLORS"
@@ -22,7 +25,7 @@ stdenvNoCC.mkDerivation {
 
   buildCommand = ''
     mkdir $out
-    ${lndir}/bin/lndir -silent ${gnugrep} $out
+    lndir -silent ${gnugrep} $out
 
     rm $out/bin/grep
     makeWrapper ${gnugrep}/bin/grep $out/bin/grep "''${makeWrapperArgs[@]}"
