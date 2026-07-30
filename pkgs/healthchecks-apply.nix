@@ -64,12 +64,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     fi
   '';
 
-  meta = {
-    mainProgram = "healthchecks-apply";
-    description = "Apply local healthchecks configs to a healthchecks.io server";
-    platforms = lib.platforms.all;
-  };
-
   passthru.tests =
     let
       healthchecks-apply = finalAttrs.finalPackage;
@@ -80,4 +74,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         touch $out
       '';
     };
+
+  meta = {
+    description = "Apply local healthchecks configs to a healthchecks.io server";
+    mainProgram = "healthchecks-apply";
+    platforms = lib.platforms.all;
+  };
 })

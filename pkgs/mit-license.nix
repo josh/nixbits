@@ -29,12 +29,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     ln -s $out/bin/mit-license $out/bin/license
   '';
 
-  meta = {
-    mainProgram = "mit-license";
-    description = "Print MIT license";
-    platforms = lib.platforms.all;
-  };
-
   passthru.tests =
     let
       mit-license = finalAttrs.finalPackage;
@@ -45,4 +39,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         touch $out
       '';
     };
+
+  meta = {
+    description = "Print MIT license";
+    mainProgram = "mit-license";
+    platforms = lib.platforms.all;
+  };
 })

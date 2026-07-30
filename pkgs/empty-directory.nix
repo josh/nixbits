@@ -19,7 +19,7 @@ derivation {
 // {
   meta = {
     name = "empty-directory";
-    description = "An empty directory";
+    description = "Empty directory";
     platforms = lib.platforms.all;
     available = true;
   };

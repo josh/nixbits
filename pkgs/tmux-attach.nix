@@ -9,7 +9,7 @@ writeShellApplication {
   runtimeInputs = [ tmux ];
   text = builtins.readFile ./tmux-attach.bash;
   meta = {
-    description = "Attach to existing tmux session or create a new one.";
+    description = "Attach to existing tmux session or create a new one";
     platforms = lib.platforms.all;
   };
 }

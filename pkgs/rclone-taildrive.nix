@@ -36,16 +36,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     makeWrapper ${lib.getExe rclone} $out/bin/rclone "''${makeWrapperArgs[@]}"
   '';
 
-  meta = {
-    inherit (rclone.meta)
-      homepage
-      description
-      license
-      platforms
-      ;
-    mainProgram = "rclone";
-  };
-
   passthru.tests =
     let
       rclone = finalAttrs.finalPackage;
@@ -60,4 +50,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         fi
       '';
     };
+
+  meta = {
+    inherit (rclone.meta)
+      description
+      homepage
+      license
+      platforms
+      ;
+    mainProgram = "rclone";
+  };
 })

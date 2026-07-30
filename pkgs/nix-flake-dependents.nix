@@ -23,12 +23,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     chmod +x $out/bin/nix-flake-dependents
   '';
 
-  meta = {
-    mainProgram = "nix-flake-dependents";
-    description = "Scan nix flake package dependents";
-    platforms = lib.platforms.all;
-  };
-
   passthru.tests =
     let
       nix-flake-dependents = finalAttrs.finalPackage;
@@ -41,4 +35,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
             touch $out
           '';
     };
+
+  meta = {
+    description = "Scan nix flake package dependents";
+    mainProgram = "nix-flake-dependents";
+    platforms = lib.platforms.all;
+  };
 })

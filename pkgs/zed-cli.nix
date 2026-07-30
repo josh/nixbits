@@ -48,7 +48,7 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
   meta = {
     description = "Zed Command Line Tools";
     homepage = "https://zed.dev";
-    platforms = lib.platforms.darwin;
     mainProgram = "zed";
+    platforms = lib.platforms.darwin;
   };
 })
