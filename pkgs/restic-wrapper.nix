@@ -53,12 +53,16 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   resticPreRunScript = ''
     flag=""
     for arg in "$@"; do
-      if [ "$flag" == "--repo" ]; then
+      if [ "$flag" == "--repo" ] || [ "$flag" == "-r" ]; then
         export RESTIC_REPOSITORY="$arg"
       fi
       if [ "$flag" == "--from-repo" ]; then
         export RESTIC_FROM_REPOSITORY="$arg"
       fi
+      case "$arg" in
+      --repo=*) export RESTIC_REPOSITORY="''${arg#--repo=}" ;;
+      --from-repo=*) export RESTIC_FROM_REPOSITORY="''${arg#--from-repo=}" ;;
+      esac
       flag="$arg"
     done
 
@@ -70,7 +74,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   buildCommand = ''
     prependToVar makeWrapperArgs --add-flags "--option rclone.program=${lib.getExe rclone}"
-    prependToVar makeWrapperArgs --set RESTIC_REPOSITORY "$resticRepository"
+    if [ -n "$resticRepository" ]; then
+      prependToVar makeWrapperArgs --set RESTIC_REPOSITORY "$resticRepository"
+    fi
     prependToVar makeWrapperArgs --unset RESTIC_REPOSITORY_FILE
     prependToVar makeWrapperArgs --set RESTIC_PASSWORD_COMMAND "$resticPasswordCommand"
     prependToVar makeWrapperArgs --unset RESTIC_PASSWORD_FILE
