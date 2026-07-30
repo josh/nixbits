@@ -42,4 +42,4 @@ let
     };
   };
 in
-if stdenv.isDarwin then darwin-script else linux-script
+if stdenv.hostPlatform.isDarwin then darwin-script else linux-script

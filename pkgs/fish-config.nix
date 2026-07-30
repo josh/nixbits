@@ -93,7 +93,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       cp "$themePath" $out/conf.d/$themeName.fish
     fi
   ''
-  + (lib.strings.optionalString stdenvNoCC.isDarwin ''
+  + (lib.strings.optionalString stdenvNoCC.hostPlatform.isDarwin ''
     cat ${./fish-config-darwin.fish} >$out/conf.d/darwin.fish
     substituteInPlace $out/conf.d/darwin.fish \
       --replace-fail '@fish-history-sync@' ${nixbits.fish-history-sync}

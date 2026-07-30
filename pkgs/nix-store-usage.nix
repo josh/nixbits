@@ -18,7 +18,8 @@ writeShellApplication {
   ];
   inheritPath = false;
   runtimeEnv = {
-    DF_EXE = if stdenv.isDarwin then "${nixbits.darwin.df}/bin/df" else "${coreutils}/bin/df";
+    DF_EXE =
+      if stdenv.hostPlatform.isDarwin then "${nixbits.darwin.df}/bin/df" else "${coreutils}/bin/df";
   };
   text = builtins.readFile ./nix-store-usage.bash;
   meta = {

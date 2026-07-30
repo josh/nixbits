@@ -24,7 +24,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     export GOPATH="''${XDG_DATA_HOME:-$HOME/.local/share}/go"
   ''
-  + (lib.strings.optionalString stdenvNoCC.isDarwin ''
+  + (lib.strings.optionalString stdenvNoCC.hostPlatform.isDarwin ''
     if [ -n "$ZED_TERM" ]; then
     	export EDITOR="${nixbits.zed-cli}/bin/zed --wait"
     fi

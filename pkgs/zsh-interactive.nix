@@ -114,7 +114,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     ${finalAttrs.shellInit}
   ''
   + (
-    if stdenvNoCC.isDarwin then
+    if stdenvNoCC.hostPlatform.isDarwin then
       ''
 
         export EDITOR="${nixbits.bbedit-mas}/bin/bbedit --wait --resume"
@@ -126,7 +126,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         export EDITOR="${neovim}/bin/nvim"
       ''
   )
-  + (lib.strings.optionalString stdenvNoCC.isDarwin ''
+  + (lib.strings.optionalString stdenvNoCC.hostPlatform.isDarwin ''
 
     if [ -d "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Terminal/history" ]; then
       __sync_history() {
