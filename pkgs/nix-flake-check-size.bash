@@ -10,7 +10,7 @@ checks() {
       '.checks[$system] | keys | .[] | $prefix + .'
 }
 
-nix flake check
+nix flake check "${flake_uri}"
 
 checks | nix path-info --json --stdin | jq --compact-output 'to_entries[] | {key: .key} + .value' | while read -r json; do
   key=$(echo "$json" | jq --raw-output '.key')
