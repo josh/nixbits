@@ -10,7 +10,13 @@ else
 fi
 
 new_profile="$1"
-old_profile=$(readlink -f "$nix_profile_dir/profile")
+
+mkdir -p "$nix_profile_dir"
+
+old_profile=""
+if [ -e "$nix_profile_dir/profile" ]; then
+  old_profile=$(readlink -f "$nix_profile_dir/profile")
+fi
 
 if [ ! -f "$new_profile/manifest.json" ]; then
   echo "Invalid nix profile: $new_profile" >&2
