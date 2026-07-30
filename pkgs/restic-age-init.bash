@@ -7,6 +7,7 @@ unset RESTIC_PASSWORD_COMMAND
 RESTIC_AGE_IDENTITY_COMMAND="${RESTIC_AGE_IDENTITY_COMMAND:-}"
 RESTIC_AGE_IDENTITY_FILE="${RESTIC_AGE_IDENTITY_FILE:-}"
 RESTIC_AGE_RECIPIENTS_FILE="${RESTIC_AGE_RECIPIENTS_FILE:-}"
+RESTIC_AGE_RECIPIENT=""
 
 restic_init_args=()
 while [[ $# -gt 0 ]]; do
@@ -52,7 +53,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ -z "$RESTIC_REPOSITORY" ]; then
-  echo "error: please specify repository location (-r or --repository-file)" >&2
+  echo "error: please specify repository location (--repo)" >&2
   exit 1
 fi
 
@@ -60,6 +61,11 @@ if [ -n "$RESTIC_AGE_IDENTITY_FILE" ]; then
   RESTIC_AGE_RECIPIENT=$(age-keygen -y "$RESTIC_AGE_IDENTITY_FILE")
 elif [ -n "$RESTIC_AGE_IDENTITY_COMMAND" ]; then
   RESTIC_AGE_RECIPIENT=$(eval "$RESTIC_AGE_IDENTITY_COMMAND" | age-keygen -y)
+fi
+
+if [ -z "$RESTIC_AGE_RECIPIENTS_FILE" ] && [ -z "$RESTIC_AGE_RECIPIENT" ]; then
+  echo "error: please specify --recipients-file, --identity-file or --identity-command" >&2
+  exit 1
 fi
 
 RESTIC_PASSWORD_FILE=$(mktemp)
