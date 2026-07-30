@@ -18,10 +18,12 @@ stdenvNoCC.mkDerivation {
     mkdir -p $out/share/nix/hooks/pre-install.d $out/share/nix/hooks/post-install.d
 
     makeWrapper $masActivateBin $out/share/nix/hooks/pre-install.d/mas \
+      --run '[ -d "$NIX_NEW_PROFILE/share/mas" ] || exit 0' \
       --add-flags "--dry-run" \
       --add-flags '$NIX_NEW_PROFILE/share/mas'
 
     makeWrapper $masActivateBin $out/share/nix/hooks/post-install.d/mas \
+      --run '[ -d "$NIX_NEW_PROFILE/share/mas" ] || exit 0' \
       --add-flags '$NIX_NEW_PROFILE/share/mas'
   '';
 
