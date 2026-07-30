@@ -25,8 +25,8 @@ fi
 if [ -n "${RUNNER_NAME:-}" ]; then
   config_opts+=(--name "$RUNNER_NAME")
 fi
-if [ -n "${RUNNER_GROUP:-}" ]; then
-  config_opts+=(--runnergroup "$RUNNER_GROUP")
+if [ -n "${RUNNER_RUNNERGROUP:-}" ]; then
+  config_opts+=(--runnergroup "$RUNNER_RUNNERGROUP")
 fi
 if [ -n "${RUNNER_LABELS:-}" ]; then
   config_opts+=(--labels "$RUNNER_LABELS")
@@ -35,14 +35,29 @@ if [ -n "${RUNNER_WORK:-}" ]; then
   config_opts+=(--work "$RUNNER_WORK")
 fi
 if [ -n "${RUNNER_EPHEMERAL:-}" ]; then
-  config_opts+=(--ephemeral "$RUNNER_EPHEMERAL")
+  config_opts+=(--ephemeral)
 fi
 
 for arg in "$@"; do
   config_opts+=("$arg")
 done
 
-expected_config_hash="$(echo "${config_opts[@]}" | sha256sum | cut -d' ' -f1)"
+# Hash the configuration without the PAT: the token rotates on every
+# gh auth token refresh and must not force a reconfiguration.
+declare -a hash_opts=()
+skip_next=false
+for opt in "${config_opts[@]}"; do
+  if [ "$skip_next" = true ]; then
+    skip_next=false
+    continue
+  fi
+  if [ "$opt" = "--pat" ]; then
+    skip_next=true
+    continue
+  fi
+  hash_opts+=("$opt")
+done
+expected_config_hash="$(printf '%s\n' "${hash_opts[@]}" | sha256sum | cut -d' ' -f1)"
 actual_config_hash=""
 if [ -f "$RUNNER_ROOT/.config.hash" ]; then
   actual_config_hash="$(cat "$RUNNER_ROOT/.config.hash")"
