@@ -15,7 +15,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   text = ''
     if [[ ! -o login ]]; then
       echo "Error: This script must be run as a login shell" >&2
-      exit 1
+      return 1 2>/dev/null || exit 1
     fi
 
     if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then

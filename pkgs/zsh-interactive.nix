@@ -52,7 +52,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   text = ''
     if [[ ! -o interactive ]]; then
       echo "Error: This script must be run in an interactive shell"
-      exit 1
+      return 1 2>/dev/null || exit 1
     fi
 
     typeset -U path fpath
