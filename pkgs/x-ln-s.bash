@@ -14,7 +14,7 @@ if [ ! -e "$src" ]; then
   exit 1
 fi
 
-if [ -L "$dst" ] && [ "$(readlink -f "$dst")" = "$src" ]; then
+if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
   exit 0
 fi
 
@@ -25,7 +25,7 @@ fi
 
 x ln -fns "$src" "$dst"
 
-if [ ! -L "$dst" ] || [ "$(readlink -f "$dst")" != "$src" ]; then
+if [ ! -L "$dst" ] || [ "$(readlink "$dst")" != "$src" ]; then
   echo "error: failed to create symlink" >&2
   exit 1
 fi
