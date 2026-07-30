@@ -8,15 +8,15 @@
   age,
   bash,
   rclone,
+  restic,
+  nur,
+  nixbits,
   rclone-config ? nixbits.rclone-taildrive-config,
   # TODO: Deprecate this alias
   aws-config ? null,
   awsConfig ? null,
   awsCredentials ? null,
   restic-age-key ? nur.repos.josh.restic-age-key,
-  restic,
-  nur,
-  nixbits,
 }:
 let
   toExePath = path: if lib.attrsets.isDerivation path then lib.meta.getExe path else path;

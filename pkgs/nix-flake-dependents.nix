@@ -1,8 +1,8 @@
 {
   lib,
-  python3,
   stdenvNoCC,
   runCommand,
+  python3,
 }:
 let
   python = python3.withPackages (ps: [

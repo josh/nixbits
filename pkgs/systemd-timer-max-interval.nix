@@ -1,7 +1,7 @@
 {
-  python3,
   stdenvNoCC,
   runCommand,
+  python3,
   systemd,
 }:
 let
