@@ -17,7 +17,7 @@ let
       exec plutil -convert xml1 -o - -- -
     '';
     meta = {
-      description = "Convert a JSON file to a plist file.";
+      description = "Convert a JSON file to a plist file";
       platforms = lib.platforms.darwin;
     };
   };

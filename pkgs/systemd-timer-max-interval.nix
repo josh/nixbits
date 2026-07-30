@@ -25,12 +25,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     chmod +x $out/bin/systemd-timer-max-interval
   '';
 
-  meta = {
-    mainProgram = "systemd-timer-max-interval";
-    description = "Calculate the maximum interval between systemd timer triggers";
-    inherit (systemd.meta) platforms;
-  };
-
   passthru.tests =
     let
       systemd-timer-max-interval = finalAttrs.finalPackage;
@@ -83,4 +77,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
             touch $out
           '';
     };
+
+  meta = {
+    description = "Calculate the maximum interval between systemd timer triggers";
+    mainProgram = "systemd-timer-max-interval";
+    inherit (systemd.meta) platforms;
+  };
 })

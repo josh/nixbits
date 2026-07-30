@@ -57,16 +57,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       "''${makeWrapperArgs[@]}"
   '';
 
-  meta = {
-    mainProgram = "lazygit";
-    inherit (lazygit.meta)
-      description
-      homepage
-      license
-      platforms
-      ;
-  };
-
   passthru.tests =
     let
       lazygit = finalAttrs.finalPackage;
@@ -77,4 +67,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         touch $out
       '';
     };
+
+  meta = {
+    inherit (lazygit.meta)
+      description
+      homepage
+      license
+      platforms
+      ;
+    mainProgram = "lazygit";
+  };
 })

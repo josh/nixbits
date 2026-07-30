@@ -53,7 +53,7 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
   meta = {
     description = "BBEdit Command Line Tools";
     homepage = "https://www.barebones.com/products/bbedit/";
-    platforms = lib.platforms.darwin;
     mainProgram = "bbedit";
+    platforms = lib.platforms.darwin;
   };
 })

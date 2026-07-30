@@ -112,8 +112,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     };
 
   meta = {
-    description = "A configured restic wrapper";
-    inherit (restic.meta) platforms;
+    description = "Configured restic wrapper";
     mainProgram = finalAttrs.pname;
+    inherit (restic.meta) platforms;
   };
 })

@@ -77,16 +77,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     fi
   '';
 
-  meta = {
-    inherit (age.meta)
-      homepage
-      description
-      license
-      platforms
-      ;
-    mainProgram = finalAttrs.name;
-  };
-
   passthru.tests =
     let
       identity = builtins.toFile "key.txt" ''
@@ -138,4 +128,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         fi
       '';
     };
+
+  meta = {
+    inherit (age.meta)
+      description
+      homepage
+      license
+      platforms
+      ;
+    mainProgram = finalAttrs.name;
+  };
 })

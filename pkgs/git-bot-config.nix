@@ -20,7 +20,7 @@ config.overrideAttrs {
   outputHashMode = "nar";
 
   meta = {
-    description = "github actions bot git config";
+    description = "GitHub Actions bot git config";
     platforms = lib.platforms.all;
   };
 }

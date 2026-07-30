@@ -19,7 +19,7 @@ writeShellApplication {
   text = builtins.readFile ./gh-random-issue.bash;
 
   meta = {
-    description = "Open a random GitHub issue.";
+    description = "Open a random GitHub issue";
     platforms = lib.platforms.all;
   };
 }
