@@ -7,7 +7,7 @@
 writeShellApplication {
   name = "trakt-id-from-url";
   runtimeEnv = {
-    PATH = lib.makeBinPath [
+    PATH = lib.strings.makeBinPath [
       curl
       jq
     ];

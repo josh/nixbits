@@ -9,7 +9,7 @@ let
   mkHelixExe =
     theme:
     let
-      themeAttrs = lib.optionalAttrs (theme != null) { inherit theme; };
+      themeAttrs = lib.attrsets.optionalAttrs (theme != null) { inherit theme; };
       helixConfig' = helixConfig // themeAttrs;
     in
     lib.getExe (
