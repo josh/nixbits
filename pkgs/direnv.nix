@@ -12,13 +12,16 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   __structuredAttrs = true;
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [
+    lndir
+    makeWrapper
+  ];
 
   # TODO: Also export $DIRENV_CONFIG in shell before `direnv hook $shell`
 
   buildCommand = ''
     mkdir -p $out
-    ${lndir}/bin/lndir -silent ${direnv} $out
+    lndir -silent ${direnv} $out
 
     wrapProgram $out/bin/direnv \
       --set DIRENV_CONFIG '${nixbits.direnv-xdg-config-home}/direnv'

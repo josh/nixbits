@@ -9,11 +9,14 @@ stdenvNoCC.mkDerivation {
 
   __structuredAttrs = true;
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [
+    lndir
+    makeWrapper
+  ];
 
   buildCommand = ''
     mkdir -p $out
-    ${lndir}/bin/lndir -silent ${vim} $out
+    lndir -silent ${vim} $out
 
     rm $out/bin/vim
     makeWrapper ${vim}/bin/vim $out/bin/vim \
