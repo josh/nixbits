@@ -39,7 +39,7 @@ fi
 
 x-dry-run $dry_run -- cp "$src" "$dst"
 
-if [ -n "$dry_run" ]; then
+if [ "$dry_run" = true ]; then
   exit 0
 fi
 
