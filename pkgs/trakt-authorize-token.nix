@@ -11,7 +11,7 @@
 writeShellApplication {
   name = "trakt-authorize-token";
   runtimeEnv = {
-    PATH = lib.makeBinPath [
+    PATH = lib.strings.makeBinPath [
       curl
       gnugrep
       gnused

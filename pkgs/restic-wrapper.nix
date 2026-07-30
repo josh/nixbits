@@ -19,7 +19,7 @@
   nixbits,
 }:
 let
-  toExePath = path: if lib.attrsets.isDerivation path then lib.meta.getExe path else path;
+  toExePath = path: if lib.attrsets.isDerivation path then lib.getExe path else path;
 
   age' = if age == pkgs.age then nixbits.age else age;
   restic-age-key' = restic-age-key.override {

@@ -38,7 +38,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     runHook preCheck
     $SHELL -n "$target"
-    ${lib.meta.getExe shellcheck-minimal} "$target"
+    ${lib.getExe shellcheck-minimal} "$target"
     runHook postCheck
   '';
 

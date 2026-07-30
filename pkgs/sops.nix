@@ -29,9 +29,9 @@ let
   age-plugin-yubikey' = age-plugin-yubikey;
 
   features =
-    (lib.optional seSupport "se")
-    ++ (lib.optional tpmSupport "tpm")
-    ++ (lib.optional yubikeySupport "yubikey");
+    (lib.lists.optional seSupport "se")
+    ++ (lib.lists.optional tpmSupport "tpm")
+    ++ (lib.lists.optional yubikeySupport "yubikey");
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = if features == [ ] then "sops" else "sops-with-${builtins.concatStringsSep "-" features}";
@@ -49,9 +49,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     sops
     age
   ]
-  ++ (lib.optional seSupport age-plugin-se')
-  ++ (lib.optional tpmSupport age-plugin-tpm')
-  ++ (lib.optional yubikeySupport age-plugin-yubikey');
+  ++ (lib.lists.optional seSupport age-plugin-se')
+  ++ (lib.lists.optional tpmSupport age-plugin-tpm')
+  ++ (lib.lists.optional yubikeySupport age-plugin-yubikey');
 
   buildCommand = ''
     mkdir -p $out
