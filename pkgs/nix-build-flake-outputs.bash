@@ -1,12 +1,12 @@
 # shellcheck source=/dev/null
 source "$XTRACE_PATH/share/bash/xtrace.bash"
 
-flake_uri="$1"
-
-if [ -z "$flake_uri" ]; then
+if [ $# -lt 1 ]; then
   echo "usage: $0 <flake-uri> [system]" >&2
   exit 1
 fi
+
+flake_uri="$1"
 shift
 
 current_system=$(nix eval --impure --raw --expr 'builtins.currentSystem')
