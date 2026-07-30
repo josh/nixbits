@@ -26,14 +26,14 @@ IGNORE_CHECKS="${IGNORE_CHECKS-formatting}"
 # other systems will then report no-change.
 SYSTEM="${SYSTEM-}"
 
-# Evaluation can trigger a build through import from derivation. Allow that when
-# it can succeed locally or from a substituter, but never hand it to a remote
-# builder. That path retries forever when the builder is busy or unreachable,
-# instead of failing.
+# Evaluation can trigger a build through import from derivation, including for
+# other systems, so remote builders are left enabled. A system nothing can build
+# still fails fast; a builder that is merely busy or unreachable is bounded by
+# eval_timeout below rather than waiting forever.
+# stalled-download-timeout is deliberately omitted: it is a restricted setting,
+# so untrusted runners drop it and log a warning for every eval.
 nix_eval_options=(
-  --builders ''
   --option connect-timeout 5
-  --option stalled-download-timeout 90
 )
 
 # No nix setting bounds evaluation wall clock time. build-timeout and
@@ -107,14 +107,14 @@ compare_attr() {
   local base_out="$tmpdir/base.$attr"
   local head_out="$tmpdir/head.$attr"
 
-  eval_attr "$BASE_FLAKE" "$attr" "$base_out" "$@" &
-  local pid_a=$!
-  eval_attr "$HEAD_FLAKE" "$attr" "$head_out" "$@" &
-  local pid_b=$!
-
+  # Evaluate one flake at a time. Base and head share almost all of their
+  # inputs, and two concurrent nix processes deadlock fetching them: each ends
+  # up holding the git cache locks the other is waiting on, forever. The second
+  # evaluation reuses what the first fetched, so this costs far less than twice
+  # the time.
   local rc_a=0 rc_b=0
-  wait "$pid_a" || rc_a=$?
-  wait "$pid_b" || rc_b=$?
+  eval_attr "$BASE_FLAKE" "$attr" "$base_out" "$@" || rc_a=$?
+  eval_attr "$HEAD_FLAKE" "$attr" "$head_out" "$@" || rc_b=$?
 
   if [ "$rc_a" -ne 0 ]; then
     echo "::error::failed to evaluate ${BASE_FLAKE}#${attr}" >&2
