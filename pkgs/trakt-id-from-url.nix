@@ -6,12 +6,11 @@
 }:
 writeShellApplication {
   name = "trakt-id-from-url";
-  runtimeEnv = {
-    PATH = lib.strings.makeBinPath [
-      curl
-      jq
-    ];
-  };
+  runtimeInputs = [
+    curl
+    jq
+  ];
+  inheritPath = false;
   text = builtins.readFile ./trakt-id-from-url.bash;
   meta = {
     description = "Extract Trakt media ID from URL";

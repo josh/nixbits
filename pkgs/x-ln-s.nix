@@ -6,10 +6,11 @@
 }:
 writeShellApplication {
   name = "x-ln-s";
+  runtimeInputs = [
+    coreutils
+  ];
+  inheritPath = false;
   runtimeEnv = {
-    "PATH" = lib.strings.makeBinPath [
-      coreutils
-    ];
     XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./x-ln-s.bash;
