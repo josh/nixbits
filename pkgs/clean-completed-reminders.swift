@@ -4,8 +4,11 @@ import Foundation
 let eventStore = EKEventStore()
 
 extension EKEventStore {
-  func requestReminderAccess() async -> Bool {
-    await withCheckedContinuation { continuation in
+  func requestReminderAccess() async throws -> Bool {
+    if #available(macOS 14.0, *) {
+      return try await requestFullAccessToReminders()
+    }
+    return await withCheckedContinuation { continuation in
       requestAccess(to: .reminder) { granted, _ in
         continuation.resume(returning: granted)
       }
@@ -28,8 +31,11 @@ extension EKReminder {
 }
 
 func main() async throws {
-  let granted = await eventStore.requestReminderAccess()
-  precondition(granted, "Reminder access not granted")
+  let granted = try await eventStore.requestReminderAccess()
+  guard granted else {
+    fputs("error: reminders access not granted\n", stderr)
+    exit(1)
+  }
 
   let reminderLists = eventStore.calendars(for: .reminder)
   let reminders = try await eventStore.fetchReminders(
@@ -51,8 +57,13 @@ func main() async throws {
 }
 
 Task {
-  try! await main()
-  exit(0)
+  do {
+    try await main()
+    exit(0)
+  } catch {
+    fputs("error: \(error)\n", stderr)
+    exit(1)
+  }
 }
 
 RunLoop.main.run()
