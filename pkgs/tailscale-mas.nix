@@ -1,7 +1,7 @@
 {
   lib,
-  formats,
   stdenvNoCC,
+  formats,
   writeShellScript,
 }:
 let

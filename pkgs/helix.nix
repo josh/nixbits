@@ -1,8 +1,8 @@
 {
-  pkgs,
   lib,
-  writers,
+  pkgs,
   stdenvNoCC,
+  writers,
   makeWrapper,
   lndir,
   evil-helix,

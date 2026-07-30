@@ -1,8 +1,3 @@
-let
-  UTC = "UTC";
-  ONE_HOUR = 1 * 60 * 60;
-  isPresent = s: s != null && s != "";
-in
 {
   lib,
   stdenvNoCC,
@@ -20,10 +15,13 @@ in
   checkSlug ? null,
   checkTimeout ? null,
   checkSchedule ? null,
-  checkTZ ? UTC,
-  checkGrace ? ONE_HOUR,
+  checkTZ ? "UTC",
+  # One hour
+  checkGrace ? 3600,
 }:
 let
+  isPresent = s: s != null && s != "";
+
   toExePath = path: if lib.attrsets.isDerivation path then lib.getExe path else path;
 
   checkSlug' =
