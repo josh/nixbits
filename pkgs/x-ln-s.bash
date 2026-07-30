@@ -1,13 +1,13 @@
 # shellcheck source=/dev/null
 source "$XTRACE_PATH/share/bash/xtrace.bash"
 
-src="$1"
-dst="$2"
-
-if [ -z "$src" ] || [ -z "$dst" ]; then
+if [ $# -ne 2 ]; then
   echo "usage: x-ln <src> <dst>" >&2
   exit 1
 fi
+
+src="$1"
+dst="$2"
 
 if [ ! -e "$src" ]; then
   echo "error: $src not found" >&2

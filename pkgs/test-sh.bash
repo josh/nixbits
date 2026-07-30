@@ -1,3 +1,8 @@
+if [ $# -lt 1 ]; then
+  echo "usage: test-sh <script> [args...]" >&2
+  exit 1
+fi
+
 SCRIPT="$1"
 shift
 
