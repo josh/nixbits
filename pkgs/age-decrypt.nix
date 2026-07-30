@@ -94,13 +94,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       age-decrypt = finalAttrs.finalPackage.overrideAttrs {
         name = "age-decrypt-data";
         ageInput = "${data}";
-        ageIdentity = null;
-        ageIdentityCommand = null;
       };
       age-decrypt-command = finalAttrs.finalPackage.overrideAttrs {
-        name = "age-decrypt-data";
+        name = "age-decrypt-data-command";
         ageInput = "${data}";
-        ageIdentity = null;
         ageIdentityCommand = "${coreutils}/bin/cat ${identity}";
       };
     in
@@ -116,17 +113,19 @@ stdenvNoCC.mkDerivation (finalAttrs: {
           exit 1
         fi
       '';
-      decrypt-command = runCommand "test-age-decrypt" { nativeBuildInputs = [ age-decrypt-command ]; } ''
-        age-decrypt-data >data.txt
-        if [ "$(cat data.txt)" = "foo" ]; then
-          cp data.txt $out
-        else
-          echo "expected: foo"
-          echo -n "actual:"
-          cat data.txt
-          exit 1
-        fi
-      '';
+      decrypt-command =
+        runCommand "test-age-decrypt-command" { nativeBuildInputs = [ age-decrypt-command ]; }
+          ''
+            age-decrypt-data-command >data.txt
+            if [ "$(cat data.txt)" = "foo" ]; then
+              cp data.txt $out
+            else
+              echo "expected: foo"
+              echo -n "actual:"
+              cat data.txt
+              exit 1
+            fi
+          '';
     };
 
   meta = {
