@@ -5,7 +5,6 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   name = "ensure-newline";
-  src = ./ensure-newline.c;
 
   buildCommand = ''
     mkdir -p $out/bin
@@ -23,7 +22,7 @@ stdenv.mkDerivation (finalAttrs: {
         }:
         runCommand name
           {
-            __structureAttrs = true;
+            __structuredAttrs = true;
             nativeBuildInputs = [ ensure-newline ];
             inherit input;
             expected = output;
