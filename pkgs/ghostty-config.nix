@@ -58,12 +58,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     echo -n "$text" >$out/share/ghostty/config
 
-    if ${lib.getExe nixbits.ghostty-validate-config} $out/share/ghostty/config; then
+    rc=0
+    ${lib.getExe nixbits.ghostty-validate-config} $out/share/ghostty/config || rc=$?
+    if [ $rc -eq 0 ]; then
       echo "$out/share/ghostty/config: OK"
-    elif [ $? -eq 127 ]; then
+    elif [ $rc -eq 127 ]; then
       echo "warn: ghostty-validate-config not supported"
     else
-      exit $?
+      exit $rc
     fi
 
     echo -n "$postInstallText" >$out/share/nix/hooks/post-install.d/ghostty-config
@@ -73,7 +75,5 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Ghostty config";
-    # TODO: Busted on 25.04
-    broken = lib.strings.versionOlder lib.version "25.10";
   };
 })
