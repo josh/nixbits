@@ -3,6 +3,8 @@ LOCAL_HISTFILE="$HOME/.zsh_history"
 HOSTNAME=$(hostname -s | tr '[:upper:]' '[:lower:]')
 CLOUD_HISTFILE="$CLOUD_HISTFILES/$HOSTNAME.zsh-history"
 
+shopt -s nullglob
+
 histutils \
   --output-format zsh \
   --fix \
