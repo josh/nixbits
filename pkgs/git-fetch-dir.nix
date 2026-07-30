@@ -20,7 +20,7 @@ writeShellApplication {
   runtimeInputs = [ findutils ];
   inheritPath = false;
   text = ''
-    find "''${*:-$PWD}" -name .git -type d -prune -print0 |
+    find "''${@:-$PWD}" -name .git -type d -prune -print0 |
       xargs --null --max-procs=4 --replace='{}' ${lib.getExe git-fetch-git-dir} '{}'
   '';
   meta.description = "Recursively fetch all git repos";
