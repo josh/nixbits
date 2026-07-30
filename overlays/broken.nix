@@ -6,8 +6,8 @@ else
     inherit (prev) lib;
     inherit (prev.stdenv.hostPlatform) system;
 
-    isRelease2511 = lib.trivial.release == "25.11";
-    isUnstable = lib.trivial.release == "26.05";
+    isRelease2605 = lib.trivial.release == "26.05";
+    isUnstable = lib.trivial.release == "26.11";
 
     # markBroken =
     #   drv:
@@ -23,11 +23,11 @@ else
     #     }
     #   );
   in
-  if isRelease2511 && system == "x86_64-linux" then
+  if isRelease2605 && system == "x86_64-linux" then
     { }
-  else if isRelease2511 && system == "aarch64-linux" then
+  else if isRelease2605 && system == "aarch64-linux" then
     { }
-  else if isRelease2511 && system == "aarch64-darwin" then
+  else if isRelease2605 && system == "aarch64-darwin" then
     { }
   else if isUnstable && system == "x86_64-linux" then
     { }
