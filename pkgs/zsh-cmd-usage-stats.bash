@@ -11,7 +11,13 @@ if [ ! -f "$history_file" ]; then
   exit 1
 fi
 
-count=$(grep --count ";$command" "$history_file")
+count=$(grep --count ";$command" "$history_file" || true)
+
+if [ "$count" -eq 0 ]; then
+  echo "$command used 0 times"
+  exit 0
+fi
+
 last_timestamp=$(grep ";$command" "$history_file" | tail --lines=1 | cut --delimiter=':' --fields=2)
 last_used=$(date --date="@$last_timestamp" +"%b %-d %Y")
 
