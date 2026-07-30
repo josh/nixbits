@@ -11,10 +11,11 @@ else
 fi
 
 git branch --merged "$default_branch" |
-  grep --invert-match --regexp "^[ *]*$default_branch$" --regexp "^[ *]*$current_branch$" |
+  { grep --invert-match --regexp "^[ *+]*$default_branch$" --regexp "^[ *+]*$current_branch$" || true; } |
   while read -r branch; do
     branch=${branch#"${branch%%[! ]*}"}
     branch=${branch#"*"}
+    branch=${branch#"+"}
     branch=${branch#" "}
     echo "Removing branch: $branch" >&2
     git branch --delete "$branch"
