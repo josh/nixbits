@@ -65,7 +65,9 @@ if [[ $src != /nix/store/* ]]; then
 fi
 
 if [[ $src != *.app ]]; then
+  shopt -s nullglob
   apps=("$src/Applications/"*.app)
+  shopt -u nullglob
 
   if [ ${#apps[@]} -eq 0 ]; then
     echo "error: no .app found in $src/Applications/" >&2
@@ -91,14 +93,15 @@ _has_changes() {
 }
 
 _rsync() {
+  local stats prefix=""
+  local -a opts=()
   if [ "$dry_run" = true ]; then
-    if rsync --dry-run --stats "$@" | _has_changes; then
-      echo "dry-run: + rsync" "$@" >&2
-    fi
-  else
-    if rsync --stats "$@" | _has_changes; then
-      echo "+ rsync" "$@" >&2
-    fi
+    opts+=(--dry-run)
+    prefix="dry-run: "
+  fi
+  stats=$(rsync "${opts[@]}" --stats "$@") || return
+  if _has_changes <<<"$stats"; then
+    echo "$prefix+ rsync" "$@" >&2
   fi
 }
 
