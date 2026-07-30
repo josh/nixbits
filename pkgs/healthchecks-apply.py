@@ -97,11 +97,10 @@ def main(
     code = 0
 
     if hc_api_key.startswith("file:"):
-        hc_api_key = Path(hc_api_key[5:]).read_text()
+        hc_api_key = Path(hc_api_key[5:]).read_text().strip()
     elif hc_api_key.startswith("command:"):
         hc_api_key = subprocess.check_output(
             hc_api_key[8:].split(),
-            shell=True,
             encoding="utf-8",
         ).strip()
 
@@ -114,12 +113,14 @@ def main(
     for slug, local_check in local_checks.items():
         remote_check = remote_checks.get(slug)
         if not remote_check:
-            _hc_create_check(
+            ok = _hc_create_check(
                 api_url=hc_api_url,
                 api_key=hc_api_key,
                 check=local_check,
                 dry_run=dry_run,
             )
+            if not ok:
+                code = 1
             continue
 
         uuid = remote_check["uuid"]
@@ -127,18 +128,19 @@ def main(
 
         needs_update = False
         for field in UPDATABLE_FIELDS:
-            value = local_check.get(field)
-            if value and value != remote_check.get(field):
+            if field in local_check and local_check[field] != remote_check.get(field):
                 needs_update = True
 
         if needs_update:
-            _hc_update_check(
+            ok = _hc_update_check(
                 api_url=hc_api_url,
                 api_key=hc_api_key,
                 uuid=uuid,
                 check=local_check,
                 dry_run=dry_run,
             )
+            if not ok:
+                code = 1
 
     for slug, remote_check in remote_checks.items():
         uuid = remote_check["uuid"]
@@ -165,7 +167,7 @@ def _load_checks_config(path: Path) -> dict[str, Check]:
     if path.is_file():
         check_paths = [path]
     else:
-        check_paths = [f for f in path.rglob("*") if f.is_file()]
+        check_paths = [f for f in path.rglob("*.json") if f.is_file()]
 
     for file_path in check_paths:
         checks = json.load(file_path.open(mode="r"))
