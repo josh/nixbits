@@ -34,9 +34,7 @@ in
 {
   options = {
     healthchecks = {
-      enable = lib.options.mkEnableOption {
-        description = "Enable healthchecks sync";
-      };
+      enable = lib.options.mkEnableOption "healthchecks sync";
 
       url = lib.options.mkOption {
         type = lib.types.str;
@@ -82,7 +80,7 @@ in
           ]
           ++ [
             "--set"
-            "PING_KEY"
+            "HC_PING_KEY"
             cfg.pingKey
           ];
         };
