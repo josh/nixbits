@@ -30,7 +30,7 @@ x nix build "${build_args[@]}" --impure --expr "
 let
   flake = builtins.getFlake \"$flake_uri\";
   pkgs = flake.inputs.nixpkgs.legacyPackages.${system};
-  packages = builtins.attrValues flake.checks.${system};
-  checks = builtins.attrValues flake.checks.${system};
+  packages = builtins.attrValues (flake.packages.${system} or { });
+  checks = builtins.attrValues (flake.checks.${system} or { });
 in
 pkgs.linkFarmFromDrvs \"flake\" (packages ++ checks)"
