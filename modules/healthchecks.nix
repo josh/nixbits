@@ -60,6 +60,7 @@ in
 
       activationPackage = lib.options.mkOption {
         type = lib.types.package;
+        description = "healthchecks-apply package used to sync checks to the server";
         default = healthchecks-apply.override {
           healthchecksConfig = {
             checksPath = pkgs.writers.writeJSON "healthchecks.json" cfg.checks;
@@ -72,6 +73,7 @@ in
 
       runitor = lib.options.mkOption {
         type = lib.types.package;
+        description = "runitor wrapped with this module's ping URL and key";
         default = runitor-wrapper.overrideAttrs {
           makeWrapperArgs = [
             "--set"
@@ -88,6 +90,7 @@ in
 
       execStartPre = lib.options.mkOption {
         type = lib.types.package;
+        description = "Script for systemd ExecStartPre that pings the check start endpoint";
         default = healthchecks-exec-start-pre.overrideAttrs {
           inherit (cfg) pingURL pingKey;
         };
@@ -95,6 +98,7 @@ in
 
       execStopPost = lib.options.mkOption {
         type = lib.types.package;
+        description = "Script for systemd ExecStopPost that pings the check status endpoint";
         default = healthchecks-exec-stop-post.overrideAttrs {
           inherit (cfg) pingURL pingKey;
         };
@@ -103,6 +107,7 @@ in
       checks = lib.options.mkOption {
         type = lib.types.listOf checkType;
         default = [ ];
+        description = "Checks to sync to the healthchecks server";
       };
     };
   };
