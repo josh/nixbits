@@ -8,7 +8,7 @@
 }:
 let
   git' = symlinkJoin {
-    pname = git.name;
+    pname = "git";
     inherit (git) version;
 
     paths = [
@@ -24,7 +24,6 @@ let
 
     meta = {
       inherit (git.meta)
-        name
         description
         homepage
         platforms

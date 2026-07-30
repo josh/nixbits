@@ -23,7 +23,6 @@ symlinkJoin {
 
   meta = {
     inherit (zellij.meta)
-      name
       description
       homepage
       license

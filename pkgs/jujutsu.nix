@@ -31,7 +31,6 @@ let
 
     meta = {
       inherit (jujutsu.meta)
-        name
         description
         homepage
         platforms
