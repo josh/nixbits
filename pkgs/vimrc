@@ -2,7 +2,9 @@
 set nocompatible
 
 " Even with XDG compat, ~/.viminfo still gets written
-set viminfofile=$XDG_STATE_HOME/vim/viminfo
+let s:state_home = empty($XDG_STATE_HOME) ? $HOME . '/.local/state' : $XDG_STATE_HOME
+call mkdir(s:state_home . '/vim', 'p')
+let &viminfofile = s:state_home . '/vim/viminfo'
 
 " Write without backups
 set nobackup
