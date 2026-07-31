@@ -9,7 +9,7 @@ request_actions_id_token() {
     --header "Accept: application/json; api-version=2.0" \
     --header "Content-Type: application/json" \
     --header "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" |
-    jq --raw-output '.value'
+    jq --raw-output --exit-status '.value'
 }
 
 request_dex_token() {
@@ -22,13 +22,16 @@ request_dex_token() {
     --data-urlencode "requested_token_type=urn:ietf:params:oauth:token-type:access_token" \
     --data-urlencode "subject_token=$1" \
     --data-urlencode "subject_token_type=urn:ietf:params:oauth:token-type:id_token" |
-    jq --raw-output '.access_token'
+    jq --raw-output --exit-status '.access_token'
 }
 
 actions_id_token=$(request_actions_id_token)
 dex_token=$(request_dex_token "${actions_id_token}")
 
 if [ -n "${GITHUB_OUTPUT:-}" ]; then
+  # Mask both tokens so a later step echoing these outputs can't leak them.
+  echo "::add-mask::${actions_id_token}"
+  echo "::add-mask::${dex_token}"
   {
     echo "actions-id-token=${actions_id_token}"
     echo "dex-token=${dex_token}"
