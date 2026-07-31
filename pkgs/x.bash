@@ -21,7 +21,14 @@ case $1 in
   ;;
 esac
 
-[ "$1" == "--" ] && shift
+if [ $# -gt 0 ] && [ "$1" == "--" ]; then
+  shift
+fi
+
+if [ $# -eq 0 ]; then
+  echo "usage: x [-q|-s] [--] command [args...]" >&2
+  exit 1
+fi
 
 if [ "$quiet" = true ]; then
   x-quiet "$@"
