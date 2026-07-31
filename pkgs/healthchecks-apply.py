@@ -104,10 +104,16 @@ def main(
         ).strip()
 
     local_checks = _load_checks_config(checks_path)
-    remote_checks = {
-        check["slug"]: check
-        for check in _hc_list_check(api_url=hc_api_url, api_key=hc_api_key)
-    }
+    remote_checks: dict[str, Check] = {}
+    for check in _hc_list_check(api_url=hc_api_url, api_key=hc_api_key):
+        if "uuid" not in check:
+            # Read-only API keys return unique_key instead of uuid.
+            logger.error("API key is read-only; a read-write key is required")
+            exit(1)
+        if check["slug"] in remote_checks:
+            logger.warning(f"duplicate remote slug {check['slug']}; using first match")
+            continue
+        remote_checks[check["slug"]] = check
 
     for slug, local_check in local_checks.items():
         remote_check = remote_checks.get(slug)
