@@ -21,9 +21,9 @@ let
   };
 in
 stdenvNoCC.mkDerivation {
-  __structuredAttrs = true;
-
   name = "external-ip";
+
+  __structuredAttrs = true;
 
   buildCommand = ''
     mkdir -p $out/bin

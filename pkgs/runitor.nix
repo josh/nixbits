@@ -53,9 +53,9 @@ let
     };
 in
 stdenvNoCC.mkDerivation (_finalAttrs: {
-  __structuredAttrs = true;
-
   inherit name;
+
+  __structuredAttrs = true;
 
   nativeBuildInputs = [ makeWrapper ];
 
