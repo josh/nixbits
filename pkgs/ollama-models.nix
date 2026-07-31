@@ -61,6 +61,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   __structuredAttrs = true;
 
+  nativeBuildInputs = [ lndir ];
+
   availableModels = "";
   models = [ ];
 
@@ -71,8 +73,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       inherit model;
     }
   ) finalAttrs.models;
-
-  nativeBuildInputs = [ lndir ];
 
   buildCommand = ''
     mkdir -p $out

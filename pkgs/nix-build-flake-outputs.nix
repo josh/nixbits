@@ -9,10 +9,10 @@ writeShellApplication {
   runtimeInputs = [
     nix
   ];
+  inheritPath = false;
   runtimeEnv = {
     XTRACE_PATH = nixbits.xtrace;
   };
-  inheritPath = false;
   text = builtins.readFile ./nix-build-flake-outputs.bash;
   meta = {
     description = "Build all flake outputs as a nix package";

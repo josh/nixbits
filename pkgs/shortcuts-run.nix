@@ -16,15 +16,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   __structuredAttrs = true;
 
+  nativeBuildInputs = [ makeWrapper ];
+  makeWrapperArgs = [ ];
+  preInstallHookMakeWrapperArgs = [ ];
+
   shortcutId = "00000000-0000-0000-0000-000000000000";
   shortcutName = "";
   shortcutSlug = lib.strings.toLower (
     lib.strings.replaceStrings [ " " "\"" "'" ] [ "-" "" "" ] finalAttrs.shortcutName
   );
-
-  nativeBuildInputs = [ makeWrapper ];
-  makeWrapperArgs = [ ];
-  preInstallHookMakeWrapperArgs = [ ];
 
   buildCommand = ''
     appendToVar makeWrapperArgs "--add-flags" "run $shortcutId"

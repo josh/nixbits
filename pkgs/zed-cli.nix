@@ -12,6 +12,8 @@ stdenvNoCC.mkDerivation {
 
   __structuredAttrs = true;
 
+  nativeBuildInputs = [ jq ];
+
   wrapper = ''
     #!${runtimeShell} -e
     exec "${app}/Contents/MacOS/cli" "$@"
@@ -30,8 +32,6 @@ stdenvNoCC.mkDerivation {
       "SystemPolicyAllFiles" = true;
     };
   };
-
-  nativeBuildInputs = [ jq ];
 
   buildCommand = ''
     mkdir -p $out/bin $out/share/nix/hooks/pre-install.d

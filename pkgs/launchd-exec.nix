@@ -8,14 +8,14 @@ stdenv.mkDerivation {
 
   __structuredAttrs = true;
 
+  allowedReferences = [ ];
+
   buildCommand = ''
     substitute ${./launchd-exec.c} launchd-exec.c \
       --replace-fail '@version@' "$version"
     mkdir -p $out/bin
     $CC launchd-exec.c -o $out/bin/launchd-exec
   '';
-
-  allowedReferences = [ ];
 
   meta = {
     description = "Launchd exec permissions wrapper";
