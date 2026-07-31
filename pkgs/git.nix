@@ -27,6 +27,7 @@ let
       inherit (git.meta)
         description
         homepage
+        license
         platforms
         ;
     };

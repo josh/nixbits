@@ -31,6 +31,7 @@ let
       inherit (go.meta)
         description
         homepage
+        license
         platforms
         ;
     };
