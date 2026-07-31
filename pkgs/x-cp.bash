@@ -1,11 +1,6 @@
 # shellcheck source=/dev/null
 source "$XTRACE_PATH/share/bash/xtrace.bash"
 
-if [ $# -lt 2 ]; then
-  echo "usage: x-cp [--dry-run] <src> <dst>" >&2
-  exit 1
-fi
-
 dry_run=false
 
 while [ $# -gt 0 ]; do
@@ -19,6 +14,11 @@ while [ $# -gt 0 ]; do
     ;;
   esac
 done
+
+if [ $# -ne 2 ]; then
+  echo "usage: x-cp [--dry-run] <src> <dst>" >&2
+  exit 1
+fi
 
 src="$1"
 dst="$2"

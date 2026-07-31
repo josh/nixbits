@@ -8,10 +8,20 @@ TRAKT_CLIENT_SECRET="${TRAKT_CLIENT_SECRET:-}"
 while [[ $# -gt 0 ]]; do
   case "$1" in
   --client-id)
+    if [ $# -lt 2 ]; then
+      echo "error: --client-id requires a value" >&2
+      usage
+      exit 1
+    fi
     TRAKT_CLIENT_ID="$2"
     shift 2
     ;;
   --client-secret)
+    if [ $# -lt 2 ]; then
+      echo "error: --client-secret requires a value" >&2
+      usage
+      exit 1
+    fi
     TRAKT_CLIENT_SECRET="$2"
     shift 2
     ;;

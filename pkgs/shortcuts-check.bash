@@ -12,10 +12,20 @@ while [[ $# -gt 0 ]]; do
     exit 0
     ;;
   --name)
+    if [ $# -lt 2 ]; then
+      echo "error: --name requires a value" >&2
+      usage
+      exit 1
+    fi
     expected_name="$2"
     shift 2
     ;;
   --id)
+    if [ $# -lt 2 ]; then
+      echo "error: --id requires a value" >&2
+      usage
+      exit 1
+    fi
     id="$2"
     shift 2
     ;;

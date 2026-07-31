@@ -8,6 +8,11 @@ TRAKT_CLIENT_ID="${TRAKT_CLIENT_ID:-}"
 while [[ $# -gt 0 ]]; do
   case "$1" in
   --client-id)
+    if [ $# -lt 2 ]; then
+      echo "error: --client-id requires a value" >&2
+      usage
+      exit 1
+    fi
     TRAKT_CLIENT_ID="$2"
     shift 2
     ;;
