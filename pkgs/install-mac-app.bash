@@ -89,7 +89,9 @@ if [ "$skip_update" = true ] && [ -d "$dst/$app_name" ]; then
 fi
 
 _has_changes() {
-  grep --quiet 'Number of regular files transferred: [1-9]'
+  # A sync that only removes stale files reports zero transfers but a
+  # non-zero deletion count; both modify the installed app.
+  grep --quiet --extended-regexp 'Number of (regular files transferred|deleted files): [1-9]'
 }
 
 _rsync() {
