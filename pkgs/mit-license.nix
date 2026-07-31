@@ -35,7 +35,17 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     in
     {
       run = runCommand "test-license-run" { nativeBuildInputs = [ mit-license ]; } ''
-        mit-license
+        mit-license >license.txt
+        grep --quiet --extended-regexp 'Copyright \(c\) 20[0-9]{2} Joshua Peek' license.txt
+        if grep --quiet '20XX' license.txt; then
+          echo "year placeholder was not substituted"
+          return 1
+        fi
+        touch $out
+      '';
+
+      alias = runCommand "test-license-alias" { nativeBuildInputs = [ mit-license ]; } ''
+        license | cmp --quiet - <(mit-license)
         touch $out
       '';
     };
