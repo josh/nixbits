@@ -20,10 +20,10 @@ def main(root_flake_uris: list[str]) -> None:
         for flake_uri in items:
             drv_path_to_pkg_uri.update(flake_package_drv_map(flake_uri))
 
-    input_drv_paths = input_derivation_paths(drv_path_to_pkg_uri.keys())
+    all_input_drv_paths = input_derivation_paths(drv_path_to_pkg_uri.keys())
 
     input_pkgs: dict[str, set[str]] = {}
-    for drv_path, input_drv_paths in input_drv_paths.items():
+    for drv_path, input_drv_paths in all_input_drv_paths.items():
         if drv_path not in drv_path_to_pkg_uri:
             continue
         pkg_uri = drv_path_to_pkg_uri[drv_path]
@@ -56,7 +56,11 @@ def flake_inputs(flake_uri: str) -> set[str]:
     uris = set()
 
     root = metadata["locked"]
-    assert root["type"] == "github"
+    if root.get("type") != "github":
+        raise click.ClickException(
+            f"{flake_uri} is a {root.get('type', 'unknown')} flake; "
+            "only github flakes are supported"
+        )
     uris.add(f"github:{root['owner']}/{root['repo']}/{root['rev']}")
 
     for node_name, node in metadata["locks"]["nodes"].items():
