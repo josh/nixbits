@@ -11,4 +11,6 @@ writeShellApplication {
   ];
   inheritPath = false;
   text = builtins.readFile ./zsh-cmd-usage-stats.bash;
+
+  meta.description = "Show zsh command usage statistics";
 }

@@ -27,5 +27,8 @@ stdenvNoCC.mkDerivation {
     makeWrapper ${less}/bin/less $out/bin/less "''${makeWrapperArgs[@]}"
   '';
 
-  meta.mainProgram = "less";
+  meta = {
+    description = "less with the history file disabled";
+    mainProgram = "less";
+  };
 }

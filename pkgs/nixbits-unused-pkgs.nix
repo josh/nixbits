@@ -16,4 +16,6 @@ writeShellApplication {
   };
   inheritPath = false;
   text = builtins.readFile ./nixbits-unused-pkgs.bash;
+
+  meta.description = "List nixbits packages unused by dependent repositories";
 }

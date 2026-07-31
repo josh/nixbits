@@ -35,4 +35,5 @@ buildEnv {
     # keep-sorted end
   ];
   pathsToLink = [ "/bin" ];
+  meta.description = "Tools for self-hosted GitHub Actions runners";
 }

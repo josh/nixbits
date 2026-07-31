@@ -80,4 +80,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       lndir -silent $p $out
     done
   '';
+
+  meta.description = "Ollama models fetched from the registry";
 })
