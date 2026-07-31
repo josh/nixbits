@@ -110,6 +110,11 @@ in
     hash = "sha256-Fsoik9dbcymYGpsjVYdtwuitzMgptIKRJVQQYl+Mb+4=";
     manpage = "osascript.1";
   };
+  plutil = mkDarwinImpureDrv {
+    command = "/usr/bin/plutil";
+    hash = "sha256-947YNRmK0dkLPFwiHeWUIvXLydxuzeJwXJ8bZC6hIMU=";
+    manpage = "plutil.1";
+  };
   route = mkDarwinImpureDrv {
     command = "/sbin/route";
     hash = "sha256-6o+n0SQWJ0TsOG477BEn9vAPa22JLF+Gmp3CT64EJlQ=";

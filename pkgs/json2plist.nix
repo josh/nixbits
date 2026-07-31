@@ -2,16 +2,12 @@
   lib,
   writeShellApplication,
   runCommand,
-  coreutils,
-  xcbuild,
+  nixbits,
 }:
 let
   json2plist = writeShellApplication {
     name = "json2plist";
-    runtimeInputs = [
-      coreutils
-      xcbuild
-    ];
+    runtimeInputs = [ nixbits.darwin.plutil ];
     inheritPath = false;
     text = ''
       exec plutil -convert xml1 -o - -- -
@@ -26,7 +22,7 @@ json2plist.overrideAttrs (
   finalAttrs: _previousAttrs: {
     passthru.tests =
       let
-        json2plist = finalAttrs.finalPackage;
+        json2plist' = finalAttrs.finalPackage;
         jsonFile = builtins.toFile "foo.json" ''
           {"foo":"bar"}
         '';
@@ -42,31 +38,51 @@ json2plist.overrideAttrs (
         '';
       in
       {
-        convert-file =
-          runCommand "test-json2plist-convert-file"
-            {
-              nativeBuildInputs = [ json2plist ];
-            }
+        convert-file = runCommand "test-json2plist-convert-file" { nativeBuildInputs = [ json2plist' ]; } ''
+          expected="$(<${plistFile})"
+          actual="$(json2plist <${jsonFile})"
+          if [[ "$actual" != "$expected" ]]; then
+            echo "expected, '$expected' but was '$actual'"
+            return 1
+          fi
+          touch $out
+        '';
+
+        convert-pipe = runCommand "test-json2plist-convert-pipe" { nativeBuildInputs = [ json2plist' ]; } ''
+          expected="$(<${plistFile})"
+          actual="$(cat ${jsonFile} | json2plist)"
+          if [[ "$actual" != "$expected" ]]; then
+            echo "expected, '$expected' but was '$actual'"
+            return 1
+          fi
+          touch $out
+        '';
+
+        convert-types =
+          runCommand "test-json2plist-convert-types" { nativeBuildInputs = [ json2plist' ]; }
             ''
-              expected="$(<${plistFile})"
-              actual="$(json2plist <${jsonFile})"
-              if [[ "$actual" != "$expected" ]]; then
-                echo "expected, '$expected' but was '$actual'"
-                return 1
-              fi
+              printf '{"int":42,"real":1.5,"yes":true,"list":[1,"two"]}' >types.json
+              json2plist <types.json >types.plist
+              grep --quiet '<integer>42</integer>' types.plist
+              grep --quiet '<real>1.5</real>' types.plist
+              grep --quiet '<true/>' types.plist
+              grep --quiet '<string>two</string>' types.plist
               touch $out
             '';
 
-        convert-pipe =
-          runCommand "test-json2plist-convert-pipe"
-            {
-              nativeBuildInputs = [ json2plist ];
-            }
+        error-empty = runCommand "test-json2plist-error-empty" { nativeBuildInputs = [ json2plist' ]; } ''
+          if json2plist </dev/null >/dev/null 2>&1; then
+            echo "expected empty input to fail"
+            return 1
+          fi
+          touch $out
+        '';
+
+        error-invalid =
+          runCommand "test-json2plist-error-invalid" { nativeBuildInputs = [ json2plist' ]; }
             ''
-              expected="$(<${plistFile})"
-              actual="$(cat ${jsonFile} | json2plist)"
-              if [[ "$actual" != "$expected" ]]; then
-                echo "expected, '$expected' but was '$actual'"
+              if printf '{"unterminated"' | json2plist >/dev/null 2>&1; then
+                echo "expected invalid JSON to fail"
                 return 1
               fi
               touch $out
