@@ -43,6 +43,8 @@ class CalendarParamType(click.ParamType):
         for line in process.stdout.decode("utf-8").splitlines():
             if m := re.search(r": \w+ (.+) UTC", line):
                 events.append(datetime.strptime(m.group(1), "%Y-%m-%d %H:%M:%S"))
+        if len(events) < 2:
+            self.fail(f"{value!r} does not repeat", param, ctx)
         return max(b - a for a, b in zip(events[:-1], events[1:]))
 
 
@@ -70,12 +72,12 @@ def main(
     calendar: timedelta | None,
     randomized_delay: timedelta | None,
 ):
-    if timespan:
-        if randomized_delay:
+    if timespan is not None:
+        if randomized_delay is not None:
             timespan = timespan + randomized_delay
         click.echo(int(timespan.total_seconds()))
-    elif calendar:
-        if randomized_delay:
+    elif calendar is not None:
+        if randomized_delay is not None:
             calendar += randomized_delay
         click.echo(int(calendar.total_seconds()))
     else:
