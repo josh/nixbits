@@ -37,7 +37,7 @@ filetype plugin on
 filetype indent on
 
 " git commit style
-autocmd Filetype gitcommit set textwidth=68 spell
+autocmd Filetype gitcommit setlocal textwidth=68 spell
 
 " Strip trailing whitespace
 autocmd BufWritePre * :%s/\s\+$//e
