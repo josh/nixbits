@@ -33,6 +33,8 @@ fix_permissions() {
   fi
 }
 
+fix_permissions "$SSH_DIR" "700"
+
 for key in "$SSH_DIR"/id_*; do
   [[ -f $key && $key != *.pub ]] || continue
   fix_permissions "$key" "600"
