@@ -5,7 +5,8 @@
   less,
 }:
 stdenvNoCC.mkDerivation {
-  name = "less";
+  pname = "less";
+  inherit (less) version;
 
   __structuredAttrs = true;
 

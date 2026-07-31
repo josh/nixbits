@@ -11,7 +11,8 @@ let
     if theme != null then fish-config.overrideAttrs { themeName = theme; } else fish-config;
 in
 symlinkJoin {
-  name = "fish";
+  pname = "fish";
+  inherit (fish) version;
   paths = [ fish ];
   nativeBuildInputs = [ makeWrapper ];
   postBuild = ''

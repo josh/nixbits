@@ -8,7 +8,8 @@
   nixbits,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
-  name = "direnv";
+  pname = "direnv";
+  inherit (direnv) version;
 
   __structuredAttrs = true;
 

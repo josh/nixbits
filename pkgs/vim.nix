@@ -5,7 +5,8 @@
   vim,
 }:
 stdenvNoCC.mkDerivation {
-  name = "vim";
+  pname = "vim";
+  inherit (vim) version;
 
   __structuredAttrs = true;
 

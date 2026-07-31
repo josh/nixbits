@@ -8,7 +8,8 @@
   nixbits,
 }:
 stdenvNoCC.mkDerivation {
-  name = "gh";
+  pname = "gh";
+  inherit (gh) version;
 
   __structuredAttrs = true;
 
