@@ -8,8 +8,8 @@ writeShellApplication {
   name = "nix-flake-rebuild";
   runtimeInputs = [
     coreutils
-    nix
     jq
+    nix
   ];
   inheritPath = false;
   text = builtins.readFile ./nix-flake-rebuild.bash;

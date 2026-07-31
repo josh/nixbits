@@ -1,8 +1,8 @@
 {
   lib,
   stdenvNoCC,
-  makeWrapper,
   lndir,
+  makeWrapper,
   jujutsu,
   lazyjj,
   nixbits,
@@ -43,8 +43,8 @@ stdenvNoCC.mkDerivation {
   ];
 
   nativeBuildInputs = [
-    makeWrapper
     lndir
+    makeWrapper
   ];
 
   # <https://github.com/Cretezy/lazyjj/commit/523c422e6bc4c86fffcdd68eb3900085dcf23e19>

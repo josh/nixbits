@@ -1,9 +1,9 @@
 {
   stdenvNoCC,
-  makeWrapper,
   runCommand,
-  direnv,
   lndir,
+  makeWrapper,
+  direnv,
   jq,
   nixbits,
 }:

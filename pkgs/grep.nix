@@ -1,7 +1,7 @@
 {
   stdenvNoCC,
-  makeWrapper,
   lndir,
+  makeWrapper,
   gnugrep,
 }:
 stdenvNoCC.mkDerivation {

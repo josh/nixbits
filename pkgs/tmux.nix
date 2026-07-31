@@ -1,7 +1,7 @@
 {
   stdenvNoCC,
-  makeWrapper,
   lndir,
+  makeWrapper,
   bash,
   tmux,
   nixbits,
@@ -18,8 +18,8 @@ stdenvNoCC.mkDerivation {
   __structuredAttrs = true;
 
   nativeBuildInputs = [
-    makeWrapper
     lndir
+    makeWrapper
   ];
 
   makeWrapperArgs = [
