@@ -1,10 +1,10 @@
 quote-arg() {
   local arg="$1"
-  if [[ $arg =~ [[:space:]] || $arg =~ '"' || $arg == *"'"* ]]; then
+  if [[ -n $arg && $arg =~ ^[A-Za-z0-9_@%+=:,./-]+$ ]]; then
+    printf "%s" "$arg"
+  else
     escaped=${arg//\'/\'"\'"\'}
     printf "'%s'" "$escaped"
-  else
-    printf "%s" "$arg"
   fi
 }
 
