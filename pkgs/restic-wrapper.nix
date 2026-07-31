@@ -3,7 +3,6 @@
   pkgs,
   stdenvNoCC,
   runCommand,
-  lndir,
   makeWrapper,
   age,
   bash,
@@ -44,7 +43,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   inherit awsCredentials;
 
   nativeBuildInputs = [
-    lndir
     makeWrapper
   ];
 

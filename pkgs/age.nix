@@ -4,7 +4,6 @@
   stdenvNoCC,
   runCommand,
   lndir,
-  makeWrapper,
   age,
   age-plugin-se,
   age-plugin-tpm,
@@ -41,7 +40,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [
     lndir
-    makeWrapper
   ];
 
   paths = [
