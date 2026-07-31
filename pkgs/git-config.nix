@@ -112,7 +112,7 @@ let
 
     # diff-so-fancy
     core.pager = "${lib.getExe diff-so-fancy} | ${lib.getExe less} --tabs=4 -RF";
-    core.interactive.diffFilter = "${lib.getExe diff-so-fancy} --patch";
+    interactive.diffFilter = "${lib.getExe diff-so-fancy} --patch";
     diff-so-fancy.markEmptyLines = false;
   };
 in
