@@ -13,6 +13,10 @@ while [[ $# -gt 0 ]]; do
     shift
     ;;
   --systems)
+    if [ $# -lt 2 ]; then
+      echo "error: --systems requires a value" >&2
+      exit 1
+    fi
     systems="$2"
     shift 2
     ;;
