@@ -8,7 +8,7 @@ usage() {
   exit 1
 }
 
-if [ -n "$USER" ]; then
+if [ -n "${USER:-}" ]; then
   user="$USER"
 fi
 if [ -n "$SCREEN_SHARING_USER" ]; then
