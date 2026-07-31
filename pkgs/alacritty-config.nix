@@ -45,7 +45,9 @@ let
   configs = [
     (writers.writeTOML "alacritty.toml" config)
   ]
-  ++ [ (writers.writeTOML "alacritty-macos.toml" macosConfig) ]
+  ++ (lib.lists.optional stdenvNoCC.hostPlatform.isDarwin (
+    writers.writeTOML "alacritty-macos.toml" macosConfig
+  ))
   ++ (lib.lists.optional (theme != null) themeImport)
   ++ (lib.lists.optional enableTmux tmuxConfig);
 
