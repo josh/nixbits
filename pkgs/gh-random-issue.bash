@@ -18,12 +18,21 @@ _issue_url() {
     count=1000
   fi
 
-  gh api 'search/issues' \
+  local url
+  url=$(gh api 'search/issues' \
     --method GET \
     --field 'q=is:open user:josh' \
     --field 'per_page=1' \
     --field "page=$((RANDOM % count + 1))" \
-    --jq '.items[0].html_url'
+    --jq '.items[0].html_url // empty')
+
+  # The search index is eventually consistent; a page can come back empty
+  # even when total_count said it exists.
+  if [ -z "$url" ]; then
+    echo "error: search page came back empty, try again" >&2
+    return 1
+  fi
+  echo "$url"
 }
 
 if [[ ${1:-} == "--open" ]]; then
