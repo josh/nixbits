@@ -42,7 +42,10 @@ if [ -z "$id" ]; then
   exit 1
 fi
 
-shortcut_match=$(shortcuts list --show-identifiers | grep "(${id})" || true)
+# Capture the listing on its own so a shortcuts failure (e.g. denied
+# automation access) aborts instead of reading as "shortcut not found".
+shortcut_list=$(shortcuts list --show-identifiers)
+shortcut_match=$(grep "(${id})" <<<"$shortcut_list" || true)
 if [ -z "$shortcut_match" ]; then
   if [ -n "$expected_name" ]; then
     echo "error: Shortcut '$expected_name ($id)' not found" >&2
