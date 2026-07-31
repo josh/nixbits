@@ -52,10 +52,10 @@ pid_a=$!
 nix eval --json "${flake_b}#packages" >"$b_out" &
 pid_b=$!
 
-wait $pid_a
-status_a=$?
-wait $pid_b
-status_b=$?
+status_a=0
+status_b=0
+wait $pid_a || status_a=$?
+wait $pid_b || status_b=$?
 
 if [ $status_a -ne 0 ]; then
   echo "error: failed to evaluate ${flake_a}#packages" >&2
