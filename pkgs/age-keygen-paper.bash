@@ -6,7 +6,12 @@ fi
 output=$(realpath --canonicalize-missing "$1")
 
 tmpdir=$(mktemp -d)
+# The EXIT trap alone does not run on an uncaught signal, which would leave
+# the plaintext key on disk after a Ctrl-C during pdflatex.
 trap 'rm -rf "$tmpdir"' EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
 cd "$tmpdir" || exit 1
 
 set -o xtrace
