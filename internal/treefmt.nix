@@ -11,6 +11,7 @@ let
     programs.actionlint.enable = true;
     programs.clang-format.enable = true;
     programs.deadnix.enable = true;
+    programs.isort.enable = true;
     programs.keep-sorted.enable = true;
     programs.nixfmt.enable = true;
     programs.prettier.enable = true;
@@ -20,6 +21,7 @@ let
     programs.shfmt.enable = true;
     programs.statix.enable = true;
     programs.stylua.enable = true;
+    programs.swift-format.enable = pkgs.stdenv.hostPlatform.isDarwin;
     programs.taplo.enable = true;
     # keep-sorted end
   };
