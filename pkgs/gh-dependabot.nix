@@ -2,9 +2,9 @@
   lib,
   stdenv,
   writeShellApplication,
-  coreutils,
   findutils,
   jq,
+  xdg-utils,
   nixbits,
 }:
 let
@@ -13,10 +13,10 @@ in
 writeShellApplication {
   name = "gh-dependabot";
   runtimeInputs = [
-    coreutils
     findutils
     gh
     jq
+    xdg-utils
   ]
   ++ (lib.lists.optional stdenv.hostPlatform.isDarwin nixbits.darwin.open);
   inheritPath = false;

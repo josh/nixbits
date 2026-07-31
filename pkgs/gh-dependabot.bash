@@ -33,7 +33,7 @@ urls() {
 }
 
 if [[ ${1:-} == "--open" ]]; then
-  urls | xargs -n 1 open
+  urls | xargs -n 1 xdg-open
 else
   urls
 fi
