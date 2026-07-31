@@ -8,9 +8,9 @@
   neovim,
   starship,
   zoxide,
+  zsh,
   zsh-autosuggestions,
   zsh-syntax-highlighting,
-  zsh,
   nur,
   nixbits,
 }:

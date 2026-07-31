@@ -4,8 +4,8 @@
   runCommand,
   coreutils,
   gnugrep,
-  rsync,
   neovide,
+  rsync,
 }:
 let
   script = writeShellApplication {

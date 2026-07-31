@@ -2,11 +2,11 @@
   lib,
   writeShellApplication,
   coreutils,
-  gnugrep,
   github-runner,
+  gnugrep,
+  nixbits,
   github-runner-root ? null,
   github-runner-use-gh-token ? true,
-  nixbits,
 }:
 let
   inherit (nixbits) gh;

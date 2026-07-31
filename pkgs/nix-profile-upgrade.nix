@@ -1,8 +1,8 @@
 {
   writeShellApplication,
   coreutils,
-  nix-output-monitor,
   nix,
+  nix-output-monitor,
   nvd,
   nixbits,
 }:
