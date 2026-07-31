@@ -15,7 +15,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [ -f /etc/pam.d/sudo_local ] && diff /etc/pam.d/sudo_local "$SUDO_LOCAL_TEMPLATE"; then
+if [ -f /etc/pam.d/sudo_local ] && cmp -s /etc/pam.d/sudo_local "$SUDO_LOCAL_TEMPLATE"; then
   echo "pam_tid already enabled" >&2
   exit 0
 fi
