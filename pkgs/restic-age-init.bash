@@ -69,7 +69,12 @@ if [ -z "$RESTIC_AGE_RECIPIENTS_FILE" ] && [ -z "$RESTIC_AGE_RECIPIENT" ]; then
 fi
 
 RESTIC_PASSWORD_FILE=$(mktemp)
+# The EXIT trap alone does not run on an uncaught signal, which would leave
+# the repository password on disk after a Ctrl-C mid-init.
 trap 'rm -f "$RESTIC_PASSWORD_FILE"' EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
 openssl rand -base64 32 >"$RESTIC_PASSWORD_FILE"
 export RESTIC_PASSWORD_FILE
 
