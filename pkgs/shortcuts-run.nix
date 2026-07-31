@@ -10,7 +10,6 @@ in
 stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
-  pname = "shortcuts-run";
   name =
     if finalAttrs.shortcutSlug == "" then
       "shortcuts-run"
