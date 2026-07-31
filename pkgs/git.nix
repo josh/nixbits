@@ -23,12 +23,12 @@ let
     '';
 
     meta = {
+      mainProgram = "git";
       inherit (git.meta)
         description
         homepage
         platforms
         ;
-      mainProgram = "git";
     };
   };
 in

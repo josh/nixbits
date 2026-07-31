@@ -30,12 +30,12 @@ let
     '';
 
     meta = {
+      mainProgram = "jj";
       inherit (jujutsu.meta)
         description
         homepage
         platforms
         ;
-      mainProgram = "jj";
     };
   };
 in

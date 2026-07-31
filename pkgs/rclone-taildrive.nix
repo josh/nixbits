@@ -52,12 +52,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     };
 
   meta = {
+    mainProgram = "rclone";
     inherit (rclone.meta)
       description
       homepage
       license
       platforms
       ;
-    mainProgram = "rclone";
   };
 })

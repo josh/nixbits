@@ -120,7 +120,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Wrapper for healthchecks.io runitor";
-    inherit (runitor.meta) platforms;
     inherit (finalAttrs) mainProgram;
+    inherit (runitor.meta) platforms;
   };
 })

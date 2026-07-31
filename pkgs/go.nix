@@ -27,12 +27,12 @@ let
     '';
 
     meta = {
+      mainProgram = "go";
       inherit (go.meta)
         description
         homepage
         platforms
         ;
-      mainProgram = "go";
     };
   };
 in

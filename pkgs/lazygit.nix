@@ -69,12 +69,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     };
 
   meta = {
+    mainProgram = "lazygit";
     inherit (lazygit.meta)
       description
       homepage
       license
       platforms
       ;
-    mainProgram = "lazygit";
   };
 })
