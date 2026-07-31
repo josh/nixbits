@@ -1,5 +1,5 @@
 if [ -n "${1:-}" ]; then
-  if [ -e "$1" ]; then
+  if [ -e "$1" ] || [ -L "$1" ]; then
     echo "error: $1 already exists" >&2
     exit 1
   fi
