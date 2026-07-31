@@ -11,7 +11,6 @@ import logging
 import subprocess
 from pathlib import Path
 from typing import TypedDict
-from urllib.parse import urljoin
 
 import click
 import requests
@@ -23,7 +22,7 @@ class Check(TypedDict, total=False):
     uuid: str
     name: str
     slug: str
-    tags: list[str]
+    tags: str
     desc: str
     timeout: int
     grace: int
@@ -176,13 +175,19 @@ def _load_checks_config(path: Path) -> dict[str, Check]:
 
         for check in checks:
             assert check["slug"] and check["slug"] not in all_checks
+            if isinstance(check.get("tags"), list):
+                check["tags"] = " ".join(check["tags"])
             all_checks[check["slug"]] = check
 
     return all_checks
 
 
+def _api_url(api_url: str, path: str) -> str:
+    return api_url.rstrip("/") + "/" + path
+
+
 def _hc_online(hc_api_url: str) -> bool:
-    url = urljoin(hc_api_url, "api/v3/checks/")
+    url = _api_url(hc_api_url, "api/v3/checks/")
     logger.debug(f"GET {url}")
     try:
         requests.get(url, timeout=(5, 10))
@@ -196,7 +201,7 @@ def _hc_list_check(
     api_url: str,
     api_key: str,
 ) -> list[Check]:
-    url = urljoin(api_url, "api/v3/checks/")
+    url = _api_url(api_url, "api/v3/checks/")
     headers = {"X-Api-Key": api_key}
     logger.debug(f"GET {url}")
     response = requests.get(url, headers=headers, timeout=(5, 30))
@@ -213,7 +218,7 @@ def _hc_create_check(
     slug = check["slug"]
     if not check.get("name"):
         check["name"] = check["slug"]
-    url = urljoin(api_url, "api/v3/checks/")
+    url = _api_url(api_url, "api/v3/checks/")
     headers = {"X-Api-Key": api_key}
     if dry_run:
         logger.info(f"Would POST {url}")
@@ -237,7 +242,7 @@ def _hc_update_check(
     dry_run: bool,
 ) -> bool:
     slug = check["slug"]
-    url = urljoin(api_url, f"api/v3/checks/{uuid}")
+    url = _api_url(api_url, f"api/v3/checks/{uuid}")
     headers = {"X-Api-Key": api_key}
     if dry_run:
         logger.info(f"Would POST {url}")
@@ -260,7 +265,7 @@ def _hc_delete_check(
     uuid: str,
     dry_run: bool,
 ) -> bool:
-    url = urljoin(api_url, f"api/v3/checks/{uuid}")
+    url = _api_url(api_url, f"api/v3/checks/{uuid}")
     headers = {"X-Api-Key": api_key}
     if dry_run:
         logger.info(f"Would DELETE {url}")
