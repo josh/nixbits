@@ -34,7 +34,7 @@ for file in "$src"/*; do
 done
 
 for file in "$dst"/*; do
-  [ -e "$file" ] || continue
+  [ -e "$file" ] || [ -L "$file" ] || continue
   name=$(basename "$file")
 
   if [ ! -L "$file" ]; then
