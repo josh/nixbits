@@ -23,7 +23,8 @@ let
   };
 
   direnv-init = runCommand "direnv-init.bash" { nativeBuildInputs = [ direnv ]; } ''
-    direnv hook bash >$out
+    direnv hook bash | sed 's|/bin/\.direnv-wrapped|/bin/direnv|' >$out
+    grep --quiet --fixed-strings '/bin/direnv"' $out
   '';
   fzf-init = runCommand "fzf-init.bash" { nativeBuildInputs = [ fzf ]; } ''
     fzf --bash >$out
