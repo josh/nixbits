@@ -23,6 +23,8 @@ if [ ! -e "$dst" ]; then
   x mkdir -p "$dst"
 fi
 
+shopt -s dotglob nullglob
+
 for file in "$src"/*; do
   [ -e "$file" ] || continue
   name=$(basename "$file")
