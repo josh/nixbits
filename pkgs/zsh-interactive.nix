@@ -98,12 +98,13 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     source ${zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
     bindkey '\t\t' autosuggest-accept
 
-    source ${zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
     source ${direnv-init}
     source ${fzf-init}
     source ${starship-init}
     source ${zoxide-init}
+
+    # Must come after all zle -N widget registrations
+    source ${zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
     alias ls='${lib.getExe eza}'
     alias ll='${lib.getExe eza} --long'
