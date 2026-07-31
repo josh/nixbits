@@ -2,7 +2,7 @@
 source "$XTRACE_PATH/share/bash/xtrace.bash"
 
 usage() {
-  echo "usage: scutil-sync-hostname [--dry-run] [COMPUTER_NAME]" >&2
+  echo "usage: scutil-set-hostname [--dry-run] [COMPUTER_NAME]" >&2
 }
 
 dry_run=false
@@ -14,7 +14,15 @@ for arg in "$@"; do
   "--dry-run")
     dry_run=true
     ;;
+  -*)
+    usage
+    exit 1
+    ;;
   *)
+    if [ -n "$expected_computer_name" ]; then
+      usage
+      exit 1
+    fi
     expected_computer_name="$arg"
     ;;
   esac
