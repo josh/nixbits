@@ -108,8 +108,9 @@ def main(
     for check in _hc_list_check(api_url=hc_api_url, api_key=hc_api_key):
         if "uuid" not in check:
             # Read-only API keys return unique_key instead of uuid.
-            logger.error("API key is read-only; a read-write key is required")
-            exit(1)
+            raise click.ClickException(
+                "API key is read-only; a read-write key is required"
+            )
         if check["slug"] in remote_checks:
             logger.warning(f"duplicate remote slug {check['slug']}; using first match")
             continue
