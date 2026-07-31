@@ -68,12 +68,15 @@ if [ $status_b -ne 0 ]; then
 fi
 
 if [ "$changes" == true ]; then
-  # Invert jd exit code
-  if jd -color "$a_out" "$b_out"; then
-    exit 1
-  else
-    exit 0
-  fi
+  # jd exits 0 when equal, 1 when different, 2 on error. Invert the first
+  # two so "changes present" is success, but keep errors as errors.
+  status=0
+  jd -color "$a_out" "$b_out" || status=$?
+  case "$status" in
+  0) exit 1 ;;
+  1) exit 0 ;;
+  *) exit "$status" ;;
+  esac
 else
   jd -color "$a_out" "$b_out"
 fi
