@@ -28,12 +28,6 @@ bootout() {
   launchctl bootout "gui/$UID/$label" >/dev/null 2>&1 || true
 }
 
-last_exit_code() {
-  launchctl print "gui/$UID/$label" 2>/dev/null |
-    grep --max-count=1 "last exit code = " |
-    grep --only-matching --extended-regexp "[0-9]+$" || true
-}
-
 trap cleanup EXIT
 bootout
 submit "$@"
@@ -42,14 +36,35 @@ submit "$@"
 # registered, before it runs. "last exit code" stays "(never exited)" until
 # the first run completes, so poll for a numeric code instead of the active
 # count, which is still 0 in the pre-spawn window.
+deadline=$((SECONDS + ${LAUNCHCTL_SPAWN_TIMEOUT:-300}))
 exit_code=""
 while [ -z "$exit_code" ]; do
-  if ! launchctl print "gui/$UID/$label" >/dev/null 2>&1; then
+  if ! print_output=$(launchctl print "gui/$UID/$label" 2>/dev/null); then
     echo "error: launchd job $label disappeared" >&2
-    exit 1
+    exit_code=1
+    break
   fi
-  exit_code=$(last_exit_code)
-  [ -n "$exit_code" ] || sleep 0.1
+
+  line=$(grep --max-count=1 "last exit code = " <<<"$print_output" || true)
+  case "$line" in
+  "" | *"(never exited)")
+    if [ "$SECONDS" -ge "$deadline" ]; then
+      echo "error: timed out waiting for $label to run" >&2
+      exit_code=1
+      break
+    fi
+    sleep 0.1
+    ;;
+  *)
+    # Renders as "= 0", or "= 78: EX_CONFIG" when launchd knows the name
+    exit_code=$(grep --only-matching --extended-regexp "= [0-9]+" <<<"$line" | grep --only-matching --extended-regexp "[0-9]+" || true)
+    if [ -z "$exit_code" ]; then
+      echo "error: unparsed launchd state: $line" >&2
+      exit_code=1
+      break
+    fi
+    ;;
+  esac
 done
 
 cat "$job_stdout" >&1
