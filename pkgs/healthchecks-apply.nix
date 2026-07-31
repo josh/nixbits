@@ -14,9 +14,9 @@ let
   ]);
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
-  __structuredAttrs = true;
-
   name = "healthchecks-apply";
+
+  __structuredAttrs = true;
 
   nativeBuildInputs = [ makeWrapper ];
 

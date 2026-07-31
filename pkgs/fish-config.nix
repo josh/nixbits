@@ -28,9 +28,9 @@ let
   };
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
-  __structuredAttrs = true;
-
   name = "fish-config";
+
+  __structuredAttrs = true;
 
   fishPath = symlinkJoin {
     name = "fish-path";

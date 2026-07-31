@@ -10,9 +10,9 @@ let
   ]);
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
-  __structuredAttrs = true;
-
   name = "nix-flake-dependents";
+
+  __structuredAttrs = true;
 
   buildCommand = ''
     mkdir -p $out/bin
