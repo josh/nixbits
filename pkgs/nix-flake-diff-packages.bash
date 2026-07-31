@@ -46,25 +46,21 @@ b_out=$(mktemp)
 
 trap 'rm -f "$a_out" "$b_out"' EXIT
 
-nix eval --json "${flake_a}#packages" >"$a_out" &
-pid_a=$!
-
-nix eval --json "${flake_b}#packages" >"$b_out" &
-pid_b=$!
-
+# Sequential on purpose: both flakes share most inputs, and two concurrent
+# nix processes deadlock waiting on each other's git cache locks.
 status_a=0
 status_b=0
-wait $pid_a || status_a=$?
-wait $pid_b || status_b=$?
+nix eval --json "${flake_a}#packages" >"$a_out" || status_a=$?
+nix eval --json "${flake_b}#packages" >"$b_out" || status_b=$?
 
 if [ $status_a -ne 0 ]; then
   echo "error: failed to evaluate ${flake_a}#packages" >&2
-  exit $status_a
+  exit 2
 fi
 
 if [ $status_b -ne 0 ]; then
   echo "error: failed to evaluate ${flake_b}#packages" >&2
-  exit $status_b
+  exit 2
 fi
 
 if [ "$changes" == true ]; then
