@@ -103,13 +103,21 @@ def flake_package_drv_map(flake_uri: str) -> dict[str, str]:
 
 
 def input_derivation_paths(drv_paths: Iterable[str]) -> dict[str, set[str]]:
-    args = ["nix", "derivation", "show", *drv_paths]
-    result = subprocess.run(args, check=True, capture_output=True, text=True)
-    data = json.loads(result.stdout)
-    return {
-        drv_path: {d for d in drv_data["inputDrvs"].keys()}
-        for drv_path, drv_data in data.items()
-    }
+    paths = list(drv_paths)
+    input_drvs: dict[str, set[str]] = {}
+    chunk_size = 100
+    for i in range(0, len(paths), chunk_size):
+        chunk = paths[i : i + chunk_size]
+        args = ["nix", "derivation", "show", *chunk]
+        result = subprocess.run(args, check=True, capture_output=True, text=True)
+        data = json.loads(result.stdout)
+        input_drvs.update(
+            {
+                drv_path: {d for d in drv_data["inputDrvs"].keys()}
+                for drv_path, drv_data in data.items()
+            }
+        )
+    return input_drvs
 
 
 if __name__ == "__main__":
