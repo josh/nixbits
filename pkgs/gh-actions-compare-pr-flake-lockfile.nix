@@ -3,6 +3,7 @@
   writeShellApplication,
   coreutils,
   gh,
+  gnugrep,
   jd-diff-patch,
 }:
 writeShellApplication {
@@ -10,6 +11,7 @@ writeShellApplication {
   runtimeInputs = [
     coreutils
     gh
+    gnugrep
     jd-diff-patch
     # Use nix from environment
   ];
