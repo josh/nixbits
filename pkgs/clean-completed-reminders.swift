@@ -37,7 +37,10 @@ func main() async throws {
     exit(1)
   }
 
+  // Subscribed or shared read-only lists reject remove(); one throw before
+  // commit() would abort the batch and delete nothing at all.
   let reminderLists = eventStore.calendars(for: .reminder)
+    .filter(\.allowsContentModifications)
   let reminders = try await eventStore.fetchReminders(
     matching: eventStore.predicateForReminders(in: reminderLists))
 
@@ -46,8 +49,12 @@ func main() async throws {
     if !reminder.isCompleted {
       continue
     }
-    try eventStore.remove(reminder, commit: false)
-    removedCount += 1
+    do {
+      try eventStore.remove(reminder, commit: false)
+      removedCount += 1
+    } catch {
+      fputs("warn: could not remove '\(reminder.safeTitle)': \(error)\n", stderr)
+    }
   }
 
   if removedCount > 0 {
