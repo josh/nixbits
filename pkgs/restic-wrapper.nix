@@ -113,6 +113,21 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         ${lib.getExe restic} age-key --help
         touch $out
       '';
+
+      repository =
+        let
+          restic' = restic.overrideAttrs {
+            resticPasswordCommand = "echo hunter2";
+          };
+        in
+        runCommand "test-repository" { nativeBuildInputs = [ restic' ]; } ''
+          export HOME=$(mktemp -d)
+          restic-wrapper --repo "$HOME/repo" init >/dev/null
+          restic-wrapper --repo "$HOME/repo" snapshots >/dev/null
+          restic-wrapper --repo="$HOME/repo" snapshots >/dev/null
+          RESTIC_REPOSITORY_FILE=/nonexistent restic-wrapper --repo "$HOME/repo" snapshots >/dev/null
+          touch $out
+        '';
     };
 
   meta = {
