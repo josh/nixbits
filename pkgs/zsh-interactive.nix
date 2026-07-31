@@ -118,13 +118,13 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     if stdenvNoCC.hostPlatform.isDarwin then
       ''
 
-        export EDITOR="${nixbits.bbedit-mas}/bin/bbedit --wait --resume"
+        export EDITOR="''${EDITOR:-${nixbits.bbedit-mas}/bin/bbedit --wait --resume}"
       ''
     else
       # TODO: Use customized neovim
       ''
 
-        export EDITOR="${neovim}/bin/nvim"
+        export EDITOR="''${EDITOR:-${neovim}/bin/nvim}"
       ''
   )
   + (lib.strings.optionalString stdenvNoCC.hostPlatform.isDarwin ''
