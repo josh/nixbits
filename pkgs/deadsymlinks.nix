@@ -7,7 +7,7 @@ writeShellApplication {
   runtimeInputs = [ findutils ];
   inheritPath = false;
   text = ''
-    find . -xtype l
+    find "''${@:-.}" -xtype l
   '';
 
   meta.description = "Find dead symlinks";
