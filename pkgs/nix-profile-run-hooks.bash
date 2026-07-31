@@ -1,4 +1,4 @@
-if [ $# -eq 0 ]; then
+if [ $# -lt 2 ]; then
   echo "Usage: nix-profile-run-hooks <pre-install|post-install> /nix/store/...-new-profile [/nix/store/...-old-profile]" >&2
   exit 1
 fi
@@ -37,12 +37,15 @@ if [ -x "$NIX_NEW_PROFILE/share/nix/hooks/$hook" ]; then
 fi
 
 if [ -d "$NIX_NEW_PROFILE/share/nix/hooks/$hook.d" ]; then
+  shopt -s nullglob
   for script in "$NIX_NEW_PROFILE/share/nix/hooks/$hook.d"/*; do
+    [ -x "$script" ] || continue
     echo "+ $(basename "$script")" >&2
     if ! "$script"; then
       code=1
     fi
   done
+  shopt -u nullglob
 fi
 
 if [ $code -ne 0 ]; then
