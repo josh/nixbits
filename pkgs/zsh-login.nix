@@ -37,9 +37,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   buildCommand = ''
     echo -n "$text" >"$out"
 
-    runHook preCheck
     ${zsh}/bin/zsh --no-exec "$out"
-    runHook postCheck
   '';
 
   passthru.tests = {

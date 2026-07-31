@@ -74,10 +74,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   buildCommand = ''
     echo -n "$text" >"$out"
 
-    runHook preCheck
     ${bash}/bin/bash -n "$out"
     shellcheck --shell=bash "$out" --external-sources
-    runHook postCheck
   '';
 
   passthru.tests = {
