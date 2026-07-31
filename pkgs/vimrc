@@ -3,8 +3,10 @@ set nocompatible
 
 " Even with XDG compat, ~/.viminfo still gets written
 let s:state_home = empty($XDG_STATE_HOME) ? $HOME . '/.local/state' : $XDG_STATE_HOME
-call mkdir(s:state_home . '/vim', 'p')
-let &viminfofile = s:state_home . '/vim/viminfo'
+silent! call mkdir(s:state_home . '/vim', 'p')
+if isdirectory(s:state_home . '/vim')
+  let &viminfofile = s:state_home . '/vim/viminfo'
+endif
 
 " Write without backups
 set nobackup
