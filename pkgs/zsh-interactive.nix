@@ -57,7 +57,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     typeset -U path fpath
 
-    path+=("${path}/bin")
+    path=("${path}/bin" $path)
 
     # TODO: statically link this path
     if [ -d "$HOME/.local/state/nix/profiles/profile/share/zsh/site-functions" ]; then
@@ -140,7 +140,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     fi
 
     if [ -n "$ITERM_SESSION_ID" ]; then
-      path+=(${iterm2-shell-integration}/bin)
+      path=(${iterm2-shell-integration}/bin $path)
       ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=1 source ${iterm2-shell-integration}/share/iterm2-shell-integration/iterm2_shell_integration.zsh
     fi
   '');
