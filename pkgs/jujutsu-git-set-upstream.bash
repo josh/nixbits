@@ -1,7 +1,12 @@
 # shellcheck source=/dev/null
 source "$XTRACE_PATH/share/bash/xtrace.bash"
 
-origin_url=$(jj --ignore-working-copy git remote list | grep '^origin ' | cut -d' ' -f2)
+origin_url=$(jj --ignore-working-copy git remote list | { grep '^origin ' || true; } | cut -d' ' -f2)
+
+if [ -z "$origin_url" ]; then
+  echo "error: no origin remote found" >&2
+  exit 1
+fi
 
 is_fork=$(gh repo view "$origin_url" --json 'isFork' --jq '.isFork')
 if [ "$is_fork" = "false" ]; then
