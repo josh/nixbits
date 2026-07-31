@@ -18,7 +18,7 @@ stdenv.mkDerivation {
   allowedReferences = [ ];
 
   meta = {
-    description = "launchd exec permissions wrapper";
+    description = "Launchd exec permissions wrapper";
     mainProgram = "launchd-exec";
     platforms = lib.platforms.darwin;
   };

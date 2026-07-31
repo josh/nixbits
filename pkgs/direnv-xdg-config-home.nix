@@ -24,5 +24,5 @@ stdenvNoCC.mkDerivation {
       --replace-fail "@uv@" "${lib.getExe uv}"
   '';
 
-  meta.description = "$XDG_CONFIG_HOME for direnv";
+  meta.description = "Config directory for direnv";
 }

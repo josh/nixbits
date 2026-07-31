@@ -26,7 +26,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "tmux wrapper for iTerm";
+    description = "Tmux wrapper for iTerm";
     mainProgram = "tmux-iterm";
     platforms = lib.platforms.darwin;
   };

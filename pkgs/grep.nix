@@ -32,7 +32,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "grep with colors";
+    description = "GNU grep with colors";
     mainProgram = "grep";
   };
 }

@@ -25,7 +25,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "systemd ExecPreStart script for Healthchecks.io";
+    description = "systemd ExecStartPre script for Healthchecks.io";
     inherit (systemd.meta) platforms;
   };
 }

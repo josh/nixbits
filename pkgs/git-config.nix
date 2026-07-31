@@ -118,7 +118,7 @@ let
 in
 config.overrideAttrs {
   meta = {
-    description = "git config";
+    description = "Git config";
     platforms = lib.platforms.all;
   };
 }
