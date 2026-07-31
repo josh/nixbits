@@ -56,6 +56,13 @@ if $apply; then
   done <<<"$notification_rows"
 fi
 
+# Capture before iterating: a pagination failure inside process substitution
+# would silently truncate the list and exit 0 after a partial prune.
+thread_rows="$(subscribed_threads)"
+if [[ -z $thread_rows ]]; then
+  exit 0
+fi
+
 while IFS=$'\t' read -r node_id kind url subject_url; do
   if $apply; then
     echo "+ unsubscribe $kind $url" >&2
@@ -76,4 +83,4 @@ while IFS=$'\t' read -r node_id kind url subject_url; do
   else
     printf '%s\t%s\n' "$kind" "$url"
   fi
-done < <(subscribed_threads)
+done <<<"$thread_rows"
