@@ -20,7 +20,7 @@ stdenvNoCC.mkDerivation {
 
     rm $out/bin/vim
     makeWrapper ${vim}/bin/vim $out/bin/vim \
-      --append-flags "-u ${./vimrc}"
+      --add-flags "-u ${./vimrc}"
   '';
   meta = {
     inherit (vim.meta)
