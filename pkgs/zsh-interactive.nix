@@ -131,8 +131,21 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     if [ -d "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Terminal/history" ]; then
       __sync_history() {
         echo "...syncing history"
-        ${lib.getExe nixbits.zsh-session-prune}
-        ${lib.getExe nixbits.zsh-history-sync}
+        local lock="$HOME/.zsh_sync_history.lock"
+        local waited=0
+        while ! mkdir "$lock" 2>/dev/null; do
+          if (( waited >= 100 )); then
+            break
+          fi
+          sleep 0.1
+          (( waited += 1 ))
+        done
+        {
+          ${lib.getExe nixbits.zsh-session-prune}
+          ${lib.getExe nixbits.zsh-history-sync}
+        } always {
+          rmdir "$lock" 2>/dev/null
+        }
       }
       autoload -Uz add-zsh-hook
       add-zsh-hook zshexit __sync_history
