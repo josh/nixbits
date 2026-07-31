@@ -14,7 +14,7 @@ if [ ! -f "$src" ]; then
   exit 1
 fi
 
-if [ -f "$dst" ] && cmp -s "$src" "$dst"; then
+if [ -f "$dst" ] && [ -r "$dst" ] && cmp -s "$src" "$dst"; then
   exit 0
 fi
 
@@ -25,7 +25,7 @@ fi
 
 x sudo "$COREUTILS_PATH"/bin/cp "$src" "$dst"
 
-if [ ! -f "$dst" ] || ! cmp -s "$src" "$dst"; then
+if [ -r "$dst" ] && ! cmp -s "$src" "$dst"; then
   echo "error: failed to copy file" >&2
   exit 1
 fi
