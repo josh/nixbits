@@ -42,10 +42,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     echo -n "$text" >"$target"
     chmod +x "$target"
 
-    runHook preCheck
     $SHELL -n "$target"
     ${lib.getExe shellcheck-minimal} "$target"
-    runHook postCheck
   '';
 
   meta = {

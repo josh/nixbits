@@ -15,7 +15,9 @@ swiftPackages.stdenv.mkDerivation {
   ];
 
   buildPhase = ''
+    runHook preBuild
     swiftc ${./clean-completed-reminders.swift} -o main
+    runHook postBuild
   '';
 
   installPhase = ''
