@@ -26,7 +26,8 @@ let
   };
 
   direnv-init = runCommand "direnv-init.zsh" { nativeBuildInputs = [ direnv ]; } ''
-    direnv hook zsh | sed 's|/bin/\.direnv-wrapped|/bin/direnv|' >$out
+    direnv hook zsh | sed 's|/bin/\.direnv-wrapped|/bin/direnv|g' >$out
+    ! grep --quiet --fixed-strings '.direnv-wrapped' $out
     grep --quiet --fixed-strings '/bin/direnv"' $out
   '';
   starship-init = runCommand "starship-init.zsh" { nativeBuildInputs = [ starship ]; } ''
