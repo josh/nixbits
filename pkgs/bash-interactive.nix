@@ -6,6 +6,7 @@
   bash,
   eza,
   fzf,
+  neovim,
   shellcheck-minimal,
   starship,
   nixbits,
@@ -61,6 +62,18 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     alias lt='${lib.getExe eza} --tree'
     alias lla='${lib.getExe eza} --long --all'
   ''
+  + (
+    if stdenvNoCC.hostPlatform.isDarwin then
+      ''
+
+        export EDITOR="''${EDITOR:-${nixbits.bbedit-mas}/bin/bbedit --wait --resume}"
+      ''
+    else
+      ''
+
+        export EDITOR="''${EDITOR:-${neovim}/bin/nvim}"
+      ''
+  )
   + (lib.strings.optionalString stdenvNoCC.hostPlatform.isDarwin ''
     if [ -n "$ITERM_SESSION_ID" ]; then
       PATH="${iterm2-shell-integration}/bin:$PATH"

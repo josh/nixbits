@@ -3,6 +3,7 @@
   stdenvNoCC,
   runCommand,
   symlinkJoin,
+  neovim,
   nur,
   nixbits,
 }:
@@ -67,12 +68,26 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   interactiveShellInit = "";
   loginShellInit = "";
 
+  defaultEditor =
+    if stdenvNoCC.hostPlatform.isDarwin then
+      "${nixbits.bbedit-mas}/bin/bbedit --wait --resume"
+    else
+      "${neovim}/bin/nvim";
+
   buildCommand = ''
     mkdir -p $out $out/conf.d
 
     if [ -n "$fishEnvVarsScript" ]; then
       echo "$fishEnvVarsScript" >>$out/conf.d/env.fish
     fi
+
+    cat >$out/conf.d/editor.fish <<'EOF'
+    if not set --query EDITOR
+        set --export EDITOR "@defaultEditor@"
+    end
+    EOF
+    substituteInPlace $out/conf.d/editor.fish \
+      --replace-fail '@defaultEditor@' "$defaultEditor"
 
     cat >$out/conf.d/go.fish <<'EOF'
     if set --query XDG_DATA_HOME
