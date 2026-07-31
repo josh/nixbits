@@ -19,6 +19,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     "font-thicken" = "true";
     "font-size" = 20;
     "theme" = "TokyoNight Storm";
+    "env" = "THEME=tokyonight_storm";
     "background-opacity" = "0.95";
     "background-blur-radius" = 20;
     "window-height" = 40;
