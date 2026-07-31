@@ -1,4 +1,5 @@
 {
+  lib,
   writeShellApplication,
   nix,
   nixbits,
@@ -6,6 +7,7 @@
 writeShellApplication {
   name = "nix-check";
   runtimeInputs = [ nix ];
+  inheritPath = false;
   text = ''
     # shellcheck source=/dev/null
     source "${nixbits.xtrace}/share/bash/xtrace.bash"
@@ -13,5 +15,8 @@ writeShellApplication {
     exec nix flake check --all-systems --show-trace --option warn-dirty false --print-build-logs --keep-going "$@"
   '';
 
-  meta.description = "Run nix flake check across all systems";
+  meta = {
+    description = "Run nix flake check across all systems";
+    platforms = lib.platforms.all;
+  };
 }
