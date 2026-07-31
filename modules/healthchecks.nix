@@ -118,10 +118,11 @@ in
       wantedBy = [ "multi-user.target" ];
       wants = [ "network-online.target" ];
       after = [ "network-online.target" ];
-      restartTriggers = [ cfg.activationPackage ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
+        Restart = "on-failure";
+        RestartSec = 30;
         ExecStart = lib.getExe cfg.activationPackage;
       };
     };
