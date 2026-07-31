@@ -13,7 +13,7 @@ let
 in
 config.overrideAttrs {
   meta = {
-    description = "rclone config for Tailscale Taildrive";
+    description = "Rclone config for Tailscale Taildrive";
     platforms = lib.platforms.all;
   };
 }

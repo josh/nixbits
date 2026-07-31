@@ -11,7 +11,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "Claude Skills";
+    description = "Skills for Claude Code";
     platforms = lib.platforms.all;
   };
 }
