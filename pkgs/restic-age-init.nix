@@ -14,15 +14,16 @@ let
     seSupport = true;
     tpmSupport = true;
   };
+  restic-age-key = nur.repos.josh.restic-age-key.override { inherit age; };
   restic-age-init = writeShellApplication {
     name = "restic-age-init";
     runtimeInputs = [
       age
       coreutils
       jq
-      nur.repos.josh.restic-age-key
       openssl
       restic
+      restic-age-key
     ];
     inheritPath = false;
     runtimeEnv = {

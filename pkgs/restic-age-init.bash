@@ -69,6 +69,7 @@ if [ -z "$RESTIC_AGE_RECIPIENTS_FILE" ] && [ -z "$RESTIC_AGE_RECIPIENT" ]; then
 fi
 
 RESTIC_PASSWORD_FILE=$(mktemp)
+trap 'rm -f "$RESTIC_PASSWORD_FILE"' EXIT
 openssl rand -base64 32 >"$RESTIC_PASSWORD_FILE"
 export RESTIC_PASSWORD_FILE
 
@@ -87,4 +88,3 @@ fi
 restic-age-key password >"$RESTIC_PASSWORD_FILE"
 
 x restic key remove "$orig_key_id"
-rm -f "$RESTIC_PASSWORD_FILE"
