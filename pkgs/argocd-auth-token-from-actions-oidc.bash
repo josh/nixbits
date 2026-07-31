@@ -30,8 +30,9 @@ dex_token=$(request_dex_token "${actions_id_token}")
 
 if [ -n "${GITHUB_OUTPUT:-}" ]; then
   # Mask both tokens so a later step echoing these outputs can't leak them.
-  echo "::add-mask::${actions_id_token}"
-  echo "::add-mask::${dex_token}"
+  # On stderr so command substitution around this script can't capture them.
+  echo "::add-mask::${actions_id_token}" >&2
+  echo "::add-mask::${dex_token}" >&2
   {
     echo "actions-id-token=${actions_id_token}"
     echo "dex-token=${dex_token}"
