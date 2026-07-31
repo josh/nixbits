@@ -1,16 +1,12 @@
 {
   lib,
   writeShellApplication,
-  coreutils,
-  git,
   jujutsu,
   nixbits,
 }:
 writeShellApplication {
   name = "jj-pull";
   runtimeInputs = [
-    coreutils
-    git
     jujutsu
   ];
   inheritPath = false;

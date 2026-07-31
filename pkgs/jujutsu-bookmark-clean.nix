@@ -1,14 +1,12 @@
 {
   lib,
   writeShellApplication,
-  coreutils,
   jujutsu,
   nixbits,
 }:
 writeShellApplication {
   name = "jj-bookmark-clean";
   runtimeInputs = [
-    coreutils
     jujutsu
   ];
   inheritPath = false;
