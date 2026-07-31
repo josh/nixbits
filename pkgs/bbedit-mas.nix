@@ -3,7 +3,7 @@
   stdenvNoCC,
   jq,
 }:
-stdenvNoCC.mkDerivation (_finalAttrs: {
+stdenvNoCC.mkDerivation {
   name = "bbedit-mas";
 
   __structuredAttrs = true;
@@ -56,4 +56,4 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
     mainProgram = "bbedit";
     platforms = lib.platforms.darwin;
   };
-})
+}

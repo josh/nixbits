@@ -15,7 +15,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   name = "age-decrypt";
 
   nativeBuildInputs = [ makeWrapper ];
-  buildInputs = [ age ];
 
   makeWrapperArgs = [ ];
 

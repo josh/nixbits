@@ -7,7 +7,7 @@
 let
   app = "/Applications/Zed.app";
 in
-stdenvNoCC.mkDerivation (_finalAttrs: {
+stdenvNoCC.mkDerivation {
   name = "zed-cli";
 
   __structuredAttrs = true;
@@ -51,4 +51,4 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
     mainProgram = "zed";
     platforms = lib.platforms.darwin;
   };
-})
+}

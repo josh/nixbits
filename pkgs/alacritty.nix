@@ -14,7 +14,7 @@ let
     inherit interactiveShell theme enableTmux;
   };
 in
-stdenvNoCC.mkDerivation (_finalAttrs: {
+stdenvNoCC.mkDerivation {
   pname = if theme != null then "${alacritty.pname}-${theme}" else alacritty.pname;
   inherit (alacritty) version;
 
@@ -43,4 +43,4 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
     mainProgram = "alacritty";
     platforms = lib.platforms.all;
   };
-})
+}
