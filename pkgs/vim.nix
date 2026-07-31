@@ -1,7 +1,7 @@
 {
   stdenvNoCC,
-  makeWrapper,
   lndir,
+  makeWrapper,
   vim,
 }:
 stdenvNoCC.mkDerivation {

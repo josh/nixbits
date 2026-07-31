@@ -7,8 +7,8 @@
 writeShellApplication {
   name = "nix-profile-nixpkgs-store-path";
   runtimeInputs = [
-    nix
     jq
+    nix
     nixbits.nix-profile-nixpkgs-uri
   ];
   inheritPath = false;

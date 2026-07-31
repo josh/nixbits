@@ -2,8 +2,8 @@
   lib,
   stdenvNoCC,
   runtimeShell,
-  makeWrapper,
   lndir,
+  makeWrapper,
   gh,
   nixbits,
 }:

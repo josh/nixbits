@@ -9,8 +9,8 @@ writeShellApplication {
   name = "nix-flake-check-size";
   runtimeInputs = [
     coreutils
-    nix
     jq
+    nix
   ];
   inheritPath = false;
   text = builtins.readFile ./nix-flake-check-size.bash;

@@ -3,8 +3,8 @@
   pkgs,
   stdenvNoCC,
   runCommand,
-  makeWrapper,
   lndir,
+  makeWrapper,
   age,
   age-plugin-se,
   age-plugin-tpm,
@@ -40,8 +40,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
   nativeBuildInputs = [
-    makeWrapper
     lndir
+    makeWrapper
   ];
 
   paths = [

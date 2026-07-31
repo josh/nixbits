@@ -21,8 +21,8 @@ stdenvNoCC.mkDerivation {
   __structuredAttrs = true;
 
   nativeBuildInputs = [
-    makeWrapper
     lndir
+    makeWrapper
   ];
 
   makeWrapperArgs = [

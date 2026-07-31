@@ -10,8 +10,8 @@ let
   script = writeShellApplication {
     name = "external-ip";
     runtimeInputs = [
-      curl
       coreutils
+      curl
       gnugrep
     ];
     inheritPath = false;

@@ -3,8 +3,8 @@
   pkgs,
   stdenvNoCC,
   writers,
-  makeWrapper,
   lndir,
+  makeWrapper,
   evil-helix,
   helix ? evil-helix,
   helixConfig ? { },
@@ -19,8 +19,8 @@ stdenvNoCC.mkDerivation {
   __structuredAttrs = true;
 
   nativeBuildInputs = [
-    makeWrapper
     lndir
+    makeWrapper
   ];
 
   makeWrapperArgs = [
