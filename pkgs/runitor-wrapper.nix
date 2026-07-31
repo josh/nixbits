@@ -5,10 +5,10 @@
   runitor,
 }:
 stdenvNoCC.mkDerivation {
-  __structuredAttrs = true;
-
   pname = "runitor";
   inherit (runitor) version;
+
+  __structuredAttrs = true;
 
   nativeBuildInputs = [
     lndir

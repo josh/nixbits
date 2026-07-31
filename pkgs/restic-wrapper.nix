@@ -28,10 +28,10 @@ let
   };
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
-  __structuredAttrs = true;
-
   pname = "restic-wrapper";
   inherit (restic) version;
+
+  __structuredAttrs = true;
 
   resticRepository = "";
   resticPasswordCommand = "${restic-age-key'}/bin/restic-age-key password";

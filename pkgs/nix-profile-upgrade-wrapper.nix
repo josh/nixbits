@@ -5,14 +5,14 @@
   nixbits,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
-  __structuredAttrs = true;
-
   mainPrograms = [
     "nix-profile-upgrade"
     "nix-profile-up"
   ];
 
   name = builtins.head finalAttrs.mainPrograms;
+
+  __structuredAttrs = true;
 
   nativeBuildInputs = [ makeWrapper ];
 

@@ -12,9 +12,9 @@ let
   '';
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
-  __structuredAttrs = true;
-
   name = "security-find-generic-password";
+
+  __structuredAttrs = true;
 
   nativeBuildInputs = [ makeWrapper ];
 

@@ -11,9 +11,9 @@ let
   '';
 in
 stdenvNoCC.mkDerivation {
-  __structuredAttrs = true;
-
   name = "clean-dsstore";
+
+  __structuredAttrs = true;
 
   buildCommand = ''
     mkdir -p $out/bin

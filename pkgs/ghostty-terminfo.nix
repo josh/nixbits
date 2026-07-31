@@ -5,10 +5,10 @@
   nixbits,
 }:
 stdenvNoCC.mkDerivation {
-  __structuredAttrs = true;
-
   pname = "ghostty-terminfo";
   inherit (ghostty) version;
+
+  __structuredAttrs = true;
 
   postInstallScript = ''
     #!${runtimeShell}

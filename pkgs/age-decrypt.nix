@@ -10,9 +10,9 @@ let
   inherit (nixbits) age;
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
-  __structuredAttrs = true;
-
   name = "age-decrypt";
+
+  __structuredAttrs = true;
 
   nativeBuildInputs = [ makeWrapper ];
 

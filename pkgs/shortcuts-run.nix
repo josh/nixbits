@@ -8,13 +8,13 @@ let
   inherit (nixbits.darwin) shortcuts;
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
-  __structuredAttrs = true;
-
   name =
     if finalAttrs.shortcutSlug == "" then
       "shortcuts-run"
     else
       "shortcuts-run-${finalAttrs.shortcutSlug}";
+
+  __structuredAttrs = true;
 
   shortcutId = "00000000-0000-0000-0000-000000000000";
   shortcutName = "";

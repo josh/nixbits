@@ -5,9 +5,9 @@
   nixbits,
 }:
 stdenvNoCC.mkDerivation {
-  __structuredAttrs = true;
-
   name = "scutil-sync-hostname-hooks";
+
+  __structuredAttrs = true;
 
   nativeBuildInputs = [ makeWrapper ];
 

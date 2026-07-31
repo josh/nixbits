@@ -79,9 +79,9 @@ let
   };
 in
 stdenvNoCC.mkDerivation {
-  __structuredAttrs = true;
-
   name = "alacritty-config";
+
+  __structuredAttrs = true;
 
   nativeBuildInputs = [
     yq

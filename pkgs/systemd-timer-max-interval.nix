@@ -10,9 +10,9 @@ let
   ]);
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
-  __structuredAttrs = true;
-
   name = "systemd-timer-max-interval";
+
+  __structuredAttrs = true;
 
   buildCommand = ''
     mkdir -p $out/bin

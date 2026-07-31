@@ -6,9 +6,9 @@
   nixbits,
 }:
 stdenvNoCC.mkDerivation {
-  __structuredAttrs = true;
-
   name = "mas-profile-hooks";
+
+  __structuredAttrs = true;
 
   nativeBuildInputs = [ makeWrapper ];
 

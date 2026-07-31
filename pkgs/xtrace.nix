@@ -4,9 +4,9 @@
   runCommand,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
-  __structuredAttrs = true;
-
   name = "xtrace";
+
+  __structuredAttrs = true;
 
   buildCommand = ''
     mkdir -p $out/bin $out/share/bash

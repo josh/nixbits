@@ -24,6 +24,11 @@ stdenvNoCC.mkDerivation {
 
   __structuredAttrs = true;
 
+  nativeBuildInputs = [
+    lndir
+    makeWrapper
+  ];
+
   makeWrapperArgs = [
     "--prefix"
     "PATH"
@@ -39,11 +44,6 @@ stdenvNoCC.mkDerivation {
     "--set"
     "GIT_CONFIG_GLOBAL"
     "${nixbits.git-config}"
-  ];
-
-  nativeBuildInputs = [
-    lndir
-    makeWrapper
   ];
 
   # <https://github.com/Cretezy/lazyjj/commit/523c422e6bc4c86fffcdd68eb3900085dcf23e19>

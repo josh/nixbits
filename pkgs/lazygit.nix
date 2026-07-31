@@ -29,10 +29,10 @@ let
   ];
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
-  __structuredAttrs = true;
-
   pname = "lazygit";
   inherit (lazygit) version;
+
+  __structuredAttrs = true;
 
   nativeBuildInputs = [ makeWrapper ];
   makeWrapperArgs = [
