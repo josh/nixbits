@@ -15,5 +15,10 @@ elif [ -n "${CREDENTIALS_DIRECTORY:-}" ] && [ -z "${RUNNER_PAT:-}" ]; then
   fi
 fi
 
+if [ -z "${RUNNER_PAT:-}" ]; then
+  echo "error: no token available, set RUNNER_PAT, RUNNER_USE_GH_TOKEN or CREDENTIALS_DIRECTORY" >&2
+  exit 1
+fi
+
 "$GITHUB_RUNNER_PATH/bin/config.sh" remove --pat "$RUNNER_PAT"
 rm -f "$RUNNER_ROOT/.config.hash"
