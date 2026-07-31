@@ -8,7 +8,7 @@
 stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
-  name = "rclone-taildrive";
+  pname = "rclone-taildrive";
   inherit (rclone) version;
 
   nativeBuildInputs = [ makeWrapper ];

@@ -17,7 +17,6 @@ let
 in
 stdenvNoCC.mkDerivation {
   inherit (lazyjj')
-    name
     pname
     version
     meta
