@@ -57,6 +57,11 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
 
   __structuredAttrs = true;
 
+  outputs = [
+    "out"
+    "healthcheck"
+  ];
+
   nativeBuildInputs = [ makeWrapper ];
 
   makeWrapperArgs =
@@ -98,11 +103,6 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
 
   healthcheckSlug = healthcheckConfig.slug;
   healthcheckConfig = builtins.toJSON healthcheckConfig;
-
-  outputs = [
-    "out"
-    "healthcheck"
-  ];
 
   buildCommand = ''
     mkdir -p $out/bin

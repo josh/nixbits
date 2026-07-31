@@ -11,6 +11,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   __structuredAttrs = true;
 
+  nativeBuildInputs = [
+    shellcheck-minimal
+  ];
+
   text = ''
     if ! shopt -q login_shell; then
       echo "Error: This script must be run as a login shell" >&2
@@ -30,10 +34,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     	export EDITOR="${nixbits.zed-cli}/bin/zed --wait"
     fi
   '');
-
-  nativeBuildInputs = [
-    shellcheck-minimal
-  ];
 
   buildCommand = ''
     echo -n "$text" >"$out"

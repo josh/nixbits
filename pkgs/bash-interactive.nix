@@ -39,6 +39,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   __structuredAttrs = true;
 
+  nativeBuildInputs = [
+    shellcheck-minimal
+  ];
+
   text = ''
     if [[ $- != *i* ]]; then
       echo "Error: This script must be run in an interactive shell"
@@ -80,10 +84,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=1 source ${iterm2-shell-integration}/share/iterm2-shell-integration/iterm2_shell_integration.bash
     fi
   '');
-
-  nativeBuildInputs = [
-    shellcheck-minimal
-  ];
 
   buildCommand = ''
     echo -n "$text" >"$out"

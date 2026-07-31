@@ -11,10 +11,10 @@ writeShellApplication {
     jq
     nixbits.gh
   ];
+  inheritPath = false;
   runtimeEnv = {
     NIXBITS_PKG_NAMES = builtins.concatStringsSep " " (builtins.attrNames nixbits);
   };
-  inheritPath = false;
   text = builtins.readFile ./nixbits-unused-pkgs.bash;
 
   meta.description = "List nixbits packages unused by dependent repositories";

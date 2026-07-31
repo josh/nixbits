@@ -18,12 +18,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [ makeWrapper ];
 
+  makeWrapperArgs = [ ];
+
   securityAccount = "";
   securityLabel = "";
   securityService = "";
   securityPrintPassword = true;
-
-  makeWrapperArgs = [ ];
 
   buildCommand = ''
     if [ -n "$securityAccount" ]; then

@@ -32,6 +32,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   __structuredAttrs = true;
 
+  nativeBuildInputs = [
+    makeWrapper
+  ];
+
+  makeWrapperArgs = [ ];
+
   resticRepository = "";
   resticPasswordCommand = "${restic-age-key'}/bin/restic-age-key password";
   resticFromPasswordCommand = "${restic-age-key'}/bin/restic-age-key from-password";
@@ -41,12 +47,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   rcloneConfig = rclone-config;
   awsConfig = if awsConfig != null then awsConfig else aws-config;
   inherit awsCredentials;
-
-  nativeBuildInputs = [
-    makeWrapper
-  ];
-
-  makeWrapperArgs = [ ];
 
   resticPreRunScript = ''
     flag=""
