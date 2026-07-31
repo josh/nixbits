@@ -8,6 +8,7 @@ permissions:
 
 jobs:
   lockfile-drv-changed:
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: self-hosted
 
     steps:
