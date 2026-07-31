@@ -41,6 +41,12 @@ stdenv.mkDerivation (finalAttrs: {
           '';
     in
     {
+      empty = runTest {
+        name = "test-empty";
+        input = "";
+        output = "";
+      };
+
       noop = runTest {
         name = "test-noop";
         input = "foo\n";

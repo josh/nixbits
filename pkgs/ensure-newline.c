@@ -21,7 +21,7 @@ static int write_all(const char *buf, size_t count) {
 int main(void) {
   char buffer[BUFFER_SIZE];
   ssize_t bytes_read;
-  char last_byte = '\0';
+  char last_byte = '\n';
 
   for (;;) {
     bytes_read = read(STDIN_FILENO, buffer, BUFFER_SIZE);
