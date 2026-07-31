@@ -5,7 +5,7 @@
   coreutils,
   gawk,
   gnugrep,
-  nettools,
+  unixtools,
 }:
 let
   script = writeShellApplication {
@@ -14,7 +14,7 @@ let
       coreutils
       gawk
       gnugrep
-      nettools
+      unixtools.ifconfig
     ];
     inheritPath = false;
     text = builtins.readFile ./internal-ip.bash;
