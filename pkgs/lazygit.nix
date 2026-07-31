@@ -66,6 +66,19 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         lazygit --help
         touch $out
       '';
+
+      config = runCommand "test-lazygit-config" { } ''
+        grep --quiet 'disableStartupPopups: true' ${config}
+        grep --quiet 'method: never' ${config}
+        touch $out
+      '';
+
+      wrapper-env = runCommand "test-lazygit-wrapper-env" { } ''
+        grep --quiet 'GIT_CONFIG_GLOBAL.*${git-config}' ${lazygit}/bin/lazygit
+        grep --quiet 'LG_CONFIG_FILE.*${config}' ${lazygit}/bin/lazygit
+        grep --quiet 'PATH.*${runtimePath}' ${lazygit}/bin/lazygit
+        touch $out
+      '';
     };
 
   meta = {
