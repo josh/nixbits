@@ -56,6 +56,9 @@ urls() {
       break
     fi
     cursor=$(jq --raw-output '.data.viewer.repositories.pageInfo.endCursor' <<<"$response")
+    if [ -z "$cursor" ] || [ "$cursor" = "null" ]; then
+      break
+    fi
   done
 }
 
