@@ -4,6 +4,7 @@
   runCommand,
   makeWrapper,
   python3,
+  writeShellScript,
   healthchecksConfig ? { },
 }:
 let
@@ -67,12 +68,48 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   passthru.tests =
     let
       healthchecks-apply = finalAttrs.finalPackage;
+
+      checksFixture = builtins.toFile "checks.json" ''
+        [{"slug":"test-check","timeout":60,"grace":60}]
+      '';
+      wrapped = import ./healthchecks-apply.nix {
+        inherit
+          lib
+          stdenvNoCC
+          runCommand
+          makeWrapper
+          python3
+          writeShellScript
+          ;
+        healthchecksConfig = {
+          apiURL = "http://127.0.0.1:1";
+          apiKeyCommand = "${writeShellScript "fake-api-key" "echo test-token"}";
+          checksPath = checksFixture;
+          delete = true;
+        };
+      };
     in
     {
       help = runCommand "test-healthchecks-apply-help" { nativeBuildInputs = [ healthchecks-apply ]; } ''
         healthchecks-apply --help
         touch $out
       '';
+
+      wrapper-env = runCommand "test-healthchecks-apply-wrapper-env" { } ''
+        grep --quiet 'HC_API_URL' ${wrapped}/bin/healthchecks-apply
+        grep --quiet 'command:' ${wrapped}/bin/healthchecks-apply
+        grep --quiet -- '--delete' ${wrapped}/bin/healthchecks-apply
+        grep --quiet '${checksFixture}' ${wrapped}/bin/healthchecks-apply
+        touch $out
+      '';
+
+      wrapper-offline-skip =
+        runCommand "test-healthchecks-apply-wrapper-offline-skip" { nativeBuildInputs = [ wrapped ]; }
+          ''
+            healthchecks-apply --dry-run --allow-hc-offline 2>err.log
+            grep --quiet 'offline' err.log
+            touch $out
+          '';
     };
 
   meta = {
