@@ -11,7 +11,7 @@ let
     runtimeInputs = [ yq-go ];
     inheritPath = false;
     text = ''
-      exec yq --input-format=xml --output-format=json
+      exec yq --input-format=xml --output-format=json --xml-strict-mode --xml-raw-token=false
     '';
     meta = {
       description = "Convert XML to JSON";
@@ -45,6 +45,32 @@ xml2json.overrideAttrs (
               actual="$(xml2json <${xmlFile} | jq --compact-output)"
               if [[ "$actual" != "$expected" ]]; then
                 echo "expected, '$expected' but was '$actual'"
+                return 1
+              fi
+              touch $out
+            '';
+
+        error-truncated =
+          runCommand "test-xml2json-error-truncated"
+            {
+              nativeBuildInputs = [ xml2json ];
+            }
+            ''
+              if printf '<a>hello' | xml2json >/dev/null 2>&1; then
+                echo "expected truncated XML to fail"
+                return 1
+              fi
+              touch $out
+            '';
+
+        error-mismatched =
+          runCommand "test-xml2json-error-mismatched"
+            {
+              nativeBuildInputs = [ xml2json ];
+            }
+            ''
+              if printf '<a><b></a>' | xml2json >/dev/null 2>&1; then
+                echo "expected mismatched tags to fail"
                 return 1
               fi
               touch $out
