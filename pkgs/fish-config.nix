@@ -51,7 +51,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   );
 
   direnvInit = runCommand "direnv-init.fish" { nativeBuildInputs = [ direnv ]; } ''
-    direnv hook fish >$out
+    direnv hook fish | sed 's|/bin/\.direnv-wrapped|/bin/direnv|' >$out
+    grep --quiet --fixed-strings '/bin/direnv"' $out
   '';
 
   themeName = null;
