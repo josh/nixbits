@@ -7,17 +7,15 @@
   config = lib.modules.mkMerge [
     {
       services.vlagent.enable = lib.modules.mkDefault (config.services.vlagent.remoteWrite.url != null);
-      services.vlagent.extraArgs = [ "-httpListenAddr=127.0.0.1:9429" ];
       services.journald.upload.enable = lib.modules.mkDefault config.services.vlagent.enable;
     }
     (lib.modules.mkIf config.services.vlagent.enable {
-      services.journald.upload.settings.Upload.URL = "http://localhost:9429/insert/journald";
-      services.journald.storage = "volatile";
+      services.vlagent.extraArgs = lib.modules.mkDefault [ "-httpListenAddr=127.0.0.1:9429" ];
+      services.journald.upload.settings.Upload.URL = "http://127.0.0.1:9429/insert/journald";
+      services.journald.storage = lib.modules.mkDefault "volatile";
       services.journald.extraConfig = ''
         MaxRetentionSec=1d
       '';
-    })
-    (lib.modules.mkIf config.services.vlagent.enable {
       systemd.coredump.settings.Coredump.Storage = "journal";
     })
   ];
