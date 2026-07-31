@@ -24,9 +24,10 @@ for pkg in $NIXBITS_PKG_NAMES; do
   throttle
 
   # Consumers may use "inherit (nixbits) foo;" instead of "nixbits.foo".
-  # Parentheses break the search query parser, but terms match regardless.
+  # The quoted phrase matches adjacently; bare terms would match any file
+  # that merely mentions inherit, nixbits, and the name separately.
   if [ "$count" -eq 0 ]; then
-    count=$(code_search_count "inherit nixbits $pkg")
+    count=$(code_search_count "\"inherit (nixbits)\" $pkg")
     throttle
   fi
 
@@ -38,3 +39,7 @@ for pkg in $NIXBITS_PKG_NAMES; do
     flush_newline=false
   fi
 done
+
+if [ "$flush_newline" = true ]; then
+  echo "" >&2
+fi
