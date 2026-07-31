@@ -5,7 +5,8 @@
   gnugrep,
 }:
 stdenvNoCC.mkDerivation {
-  name = "grep";
+  pname = "grep";
+  inherit (gnugrep) version;
 
   __structuredAttrs = true;
 
