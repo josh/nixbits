@@ -4,6 +4,10 @@
   runtimeShell,
   nixbits,
 }:
+let
+  theme = "TokyoNight Storm";
+  themeId = lib.strings.toLower (lib.strings.replaceStrings [ " " ] [ "_" ] theme);
+in
 stdenvNoCC.mkDerivation (finalAttrs: {
   name = "ghostty-config";
 
@@ -18,8 +22,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     "font-family-bold-italic" = "Berkeley Mono Bold Oblique";
     "font-thicken" = "true";
     "font-size" = 20;
-    "theme" = "TokyoNight Storm";
-    "env" = "THEME=tokyonight_storm";
+    "theme" = theme;
+    "env" = "THEME=${themeId}";
     "background-opacity" = "0.95";
     "background-blur" = 20;
     "window-height" = 40;
