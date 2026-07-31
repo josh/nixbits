@@ -1,5 +1,5 @@
 graphql() {
-  gh api graphql --raw-field query="$1" 2>/dev/null || true
+  gh api graphql --raw-field query="$1"
 }
 
 urls() {

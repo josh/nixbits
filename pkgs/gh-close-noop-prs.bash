@@ -10,7 +10,9 @@ case "${1:-}" in
   ;;
 esac
 
-mapfile -t urls < <(gh search prs --owner josh --state open --label noop --limit 1000 --json url --jq '.[].url')
+urls_output=$(gh search prs --owner josh --state open --label noop --limit 1000 --json url --jq '.[].url')
+urls=()
+[ -z "$urls_output" ] || mapfile -t urls <<<"$urls_output"
 
 if [ "${#urls[@]}" -eq 0 ]; then
   echo "No open noop PRs found." >&2
@@ -57,12 +59,14 @@ for url in "${urls[@]}"; do
     echo "defer  $url (other checks pending)" >&2
     ;;
   ok)
-    closed+=("$url")
     if [ "$dry_run" = true ]; then
+      closed+=("$url")
       echo "+ [dry-run] gh pr close $url --delete-branch" >&2
     else
       echo "+ gh pr close $url --delete-branch" >&2
-      if ! gh pr close "$url" --delete-branch; then
+      if gh pr close "$url" --delete-branch; then
+        closed+=("$url")
+      else
         errors=$((errors + 1))
       fi
     fi
