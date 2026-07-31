@@ -13,4 +13,6 @@ writeShellApplication {
   ];
   inheritPath = false;
   text = builtins.readFile ./nix-profile-nixpkgs-store-path.bash;
+
+  meta.description = "Print the store path of the profile's nixpkgs";
 }

@@ -79,4 +79,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
             touch $out
           '';
     };
+
+  meta.description = "Generated global gitignore file";
 })

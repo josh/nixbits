@@ -19,4 +19,5 @@ symlinkJoin {
     rustfmt
     # keep-sorted end
   ];
+  meta.description = "Favorite Rust development tools";
 }

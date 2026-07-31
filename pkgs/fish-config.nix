@@ -98,4 +98,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     substituteInPlace $out/conf.d/darwin.fish \
       --replace-fail '@fish-history-sync@' ${nixbits.fish-history-sync}
   '');
+
+  meta.description = "Fish shell configuration";
 })
