@@ -74,7 +74,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Wrapper around atticadm make-token";
-    inherit (attic-server.meta) platforms;
     mainProgram = "atticadm-make-token";
+    inherit (attic-server.meta) platforms;
   };
 })

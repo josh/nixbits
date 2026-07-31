@@ -107,7 +107,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       homepage
       license
       ;
-    platforms = lib.platforms.all;
     mainProgram = "sops";
+    platforms = lib.platforms.all;
   };
 })

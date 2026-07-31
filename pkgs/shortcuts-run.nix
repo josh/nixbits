@@ -42,7 +42,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Run '${finalAttrs.shortcutName}' Shortcut";
-    platforms = lib.platforms.darwin;
     mainProgram = finalAttrs.name;
+    platforms = lib.platforms.darwin;
   };
 })

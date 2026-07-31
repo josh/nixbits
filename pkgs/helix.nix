@@ -37,7 +37,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    inherit (helix'.meta) description license platforms;
     mainProgram = "hx";
+    inherit (helix'.meta) description license platforms;
   };
 }

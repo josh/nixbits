@@ -130,7 +130,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       homepage
       license
       ;
-    platforms = lib.platforms.all;
     mainProgram = "age";
+    platforms = lib.platforms.all;
   };
 })
