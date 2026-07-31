@@ -17,7 +17,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   name = "security-find-generic-password";
 
   nativeBuildInputs = [ makeWrapper ];
-  buildInputs = [ nixbits.darwin.security ];
 
   securityAccount = "";
   securityLabel = "";
