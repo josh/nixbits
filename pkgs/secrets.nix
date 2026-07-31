@@ -4,12 +4,19 @@
   runCommand,
   coreutils,
   nixbits,
-  ageIdentity ? "${nixbits.age}/bin/age-keygen",
+  ageIdentity ? null,
   secretsPath ? [ ],
 }:
 let
   inherit (nixbits) age ensure-newline;
-  toExePath = path: if lib.attrsets.isDerivation path then lib.getExe path else path;
+  toExePath =
+    path:
+    if path == null then
+      ""
+    else if lib.attrsets.isDerivation path then
+      lib.getExe path
+    else
+      path;
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   name = "secrets";
