@@ -34,6 +34,7 @@ let
       inherit (jujutsu.meta)
         description
         homepage
+        license
         platforms
         ;
     };

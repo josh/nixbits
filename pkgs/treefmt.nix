@@ -89,6 +89,7 @@ symlinkJoin {
     inherit (treefmt.meta)
       description
       homepage
+      license
       mainProgram
       platforms
       ;
