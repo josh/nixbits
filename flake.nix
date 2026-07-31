@@ -45,7 +45,7 @@
             attrs:
             lib.attrsets.foldlAttrs (
               pkgs: _name: pkg:
-              if (lib.attrsets.isDerivation pkg) && pkg.meta.available then
+              if (lib.attrsets.isDerivation pkg) && (pkg.meta.available or true) then
                 pkgs // { ${lib.strings.getName pkg.name} = pkg; }
               else
                 pkgs
@@ -55,7 +55,7 @@
           pkgs: name: pkg:
           if (builtins.isAttrs pkg) && (pkg.recurseForDerivations or false) then
             pkgs // (collectPkgsByName pkg)
-          else if (lib.attrsets.isDerivation pkg) && pkg.meta.available then
+          else if (lib.attrsets.isDerivation pkg) && (pkg.meta.available or true) then
             pkgs // { ${name} = pkg; }
           else
             pkgs

@@ -73,8 +73,11 @@ stdenvNoCC.mkDerivation {
     cp "$themeSrc" $out
   '';
 
-  meta = {
+  passthru = {
     inherit themeName;
+  };
+
+  meta = {
     description = "${themeName} TextMate theme";
     inherit (themeMeta) homepage license;
   };

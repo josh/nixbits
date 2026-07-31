@@ -52,11 +52,10 @@ let
       timeout = checkTimeout;
     };
 in
-stdenvNoCC.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation (_finalAttrs: {
   __structuredAttrs = true;
 
   inherit name;
-  mainProgram = name;
 
   nativeBuildInputs = [ makeWrapper ];
 
@@ -107,7 +106,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   buildCommand = ''
     mkdir -p $out/bin
-    makeWrapper ${lib.getExe runitor} $out/bin/$mainProgram "''${makeWrapperArgs[@]}"
+    makeWrapper ${lib.getExe runitor} $out/bin/$name "''${makeWrapperArgs[@]}"
 
     if [ -n "$healthcheckSlug" ]; then
       mkdir -p $out/etc/healthchecks $healthcheck/etc/healthchecks
@@ -120,7 +119,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Wrapper for healthchecks.io runitor";
-    inherit (finalAttrs) mainProgram;
+    mainProgram = name;
     inherit (runitor.meta) platforms;
   };
 })
