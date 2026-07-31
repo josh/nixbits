@@ -3,11 +3,16 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
+if [ -z "$AGE_IDENTITY_COMMAND" ]; then
+  echo "error: no age identity configured; set ageIdentity" >&2
+  exit 1
+fi
+
 name="$1"
 input=""
 
-IFS=':'
-for path in $SECRETS_PATH; do
+IFS=':' read -ra secret_paths <<<"$SECRETS_PATH"
+for path in "${secret_paths[@]}"; do
   [ -f "$path/$name.age" ] || continue
   input="$path/$name.age"
   break
