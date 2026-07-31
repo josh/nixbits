@@ -1,8 +1,8 @@
 {
   lib,
   writeShellApplication,
-  git,
   findutils,
+  git,
 }:
 let
   git-fetch-git-dir = writeShellApplication {
