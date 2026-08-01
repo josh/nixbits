@@ -22,7 +22,7 @@ for ((i = 0; i < ${#command}; i++)); do
 done
 
 # Require a word boundary so "git" does not also count "github".
-count=$(grep --count --extended-regexp ";${escaped}( |$)" "$history_file" || true)
+count=$(grep --count --extended-regexp "^: [0-9]+:[0-9]+;${escaped}( |$)" "$history_file" || true)
 
 if [ "$count" -eq 0 ]; then
   echo "$command used 0 times"
