@@ -53,10 +53,8 @@ stdenvNoCC.mkDerivation {
 
     rm $out/bin/lazyjj
     makeWrapper ${lazyjj'}/bin/lazyjj $out/bin/lazyjj "''${makeWrapperArgs[@]}"
-    if [ -n "$disableCSI" ]; then
-      sed -i 's/^exec //' $out/bin/lazyjj
-      echo "$disableCSI" >>$out/bin/lazyjj
-    fi
+    sed -i 's/^exec //' $out/bin/lazyjj
+    echo "$disableCSI" >>$out/bin/lazyjj
   '';
 
   inherit (lazyjj') meta;
