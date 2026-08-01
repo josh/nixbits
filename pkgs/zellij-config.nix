@@ -8,6 +8,7 @@ let
     "catppuccin-frappe"
     "catppuccin-latte"
     "catppuccin-macchiato"
+    "catppuccin-mocha"
     "tokyo-night-dark"
     "tokyo-night-light"
     "tokyo-night-storm"
