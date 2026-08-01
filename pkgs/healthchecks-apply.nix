@@ -72,6 +72,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       checksFixture = builtins.toFile "checks.json" ''
         [{"slug":"test-check","timeout":60,"grace":60}]
       '';
+      duplicateChecksFixture = builtins.toFile "duplicate-checks.json" ''
+        [{"slug":"test-check","timeout":60,"grace":60},{"slug":"test-check","timeout":90,"grace":90}]
+      '';
       wrapped = import ./healthchecks-apply.nix {
         inherit
           lib
@@ -108,6 +111,18 @@ stdenvNoCC.mkDerivation (finalAttrs: {
           ''
             healthchecks-apply --dry-run --allow-hc-offline 2>err.log
             grep --quiet 'offline' err.log
+            touch $out
+          '';
+
+      duplicate-slug =
+        runCommand "test-healthchecks-apply-duplicate-slug" { nativeBuildInputs = [ healthchecks-apply ]; }
+          ''
+            if HC_API_URL="http://127.0.0.1:1" HC_API_KEY="test-token" \
+              healthchecks-apply --dry-run ${duplicateChecksFixture} 2>err.log; then
+              echo "expected duplicate slug to fail" >&2
+              exit 1
+            fi
+            grep --quiet "duplicate slug 'test-check'" err.log
             touch $out
           '';
     };

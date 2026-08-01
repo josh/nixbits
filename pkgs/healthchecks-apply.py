@@ -8,6 +8,8 @@
 
 import json
 import logging
+import re
+import shlex
 import subprocess
 from pathlib import Path
 from typing import TypedDict
@@ -30,15 +32,48 @@ class Check(TypedDict, total=False):
     tz: str
 
 
-UPDATABLE_FIELDS = [
+# Fields the check list API returns verbatim as posted; subject, subject_fail,
+# unique and channels do not round-trip (see Check.to_dict upstream).
+COMPARABLE_FIELDS = [
     "name",
+    "slug",
     "tags",
     "desc",
     "timeout",
     "grace",
     "schedule",
     "tz",
+    "manual_resume",
+    "methods",
+    "start_kw",
+    "success_kw",
+    "failure_kw",
+    "filter_subject",
+    "filter_body",
+    "filter_http_body",
+    "filter_default_fail",
 ]
+
+UUID_RE = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\Z")
+
+
+def _channels_need_update(local: str, remote: str) -> bool:
+    # The API returns channel UUIDs; "*" and channel names cannot be compared.
+    local_items = {item for item in local.split(",") if item}
+    if local == "*" or not all(UUID_RE.match(item) for item in local_items):
+        return False
+    return local_items != {item for item in remote.split(",") if item}
+
+
+def _needs_update(local_check: Check, remote_check: Check) -> bool:
+    for field in COMPARABLE_FIELDS:
+        if field in local_check and local_check[field] != remote_check.get(field):
+            return True
+    if "channels" in local_check:
+        return _channels_need_update(
+            local_check["channels"], remote_check.get("channels", "")
+        )
+    return False
 
 
 @click.command()
@@ -99,7 +134,7 @@ def main(
         hc_api_key = Path(hc_api_key[5:]).read_text().strip()
     elif hc_api_key.startswith("command:"):
         hc_api_key = subprocess.check_output(
-            hc_api_key[8:].split(),
+            shlex.split(hc_api_key[8:]),
             encoding="utf-8",
         ).strip()
 
@@ -130,14 +165,8 @@ def main(
             continue
 
         uuid = remote_check["uuid"]
-        assert local_check["slug"] == remote_check["slug"]
 
-        needs_update = False
-        for field in UPDATABLE_FIELDS:
-            if field in local_check and local_check[field] != remote_check.get(field):
-                needs_update = True
-
-        if needs_update:
+        if _needs_update(local_check, remote_check):
             ok = _hc_update_check(
                 api_url=hc_api_url,
                 api_key=hc_api_key,
@@ -173,18 +202,23 @@ def _load_checks_config(path: Path) -> dict[str, Check]:
     if path.is_file():
         check_paths = [path]
     else:
-        check_paths = [f for f in path.rglob("*.json") if f.is_file()]
+        check_paths = sorted(f for f in path.rglob("*.json") if f.is_file())
 
     for file_path in check_paths:
-        checks = json.load(file_path.open(mode="r"))
+        with file_path.open() as file:
+            checks = json.load(file)
         if not isinstance(checks, list):
             checks = [checks]
 
         for check in checks:
-            assert check["slug"] and check["slug"] not in all_checks
+            slug = check.get("slug")
+            if not slug:
+                raise click.ClickException(f"{file_path}: check is missing a slug")
+            if slug in all_checks:
+                raise click.ClickException(f"{file_path}: duplicate slug '{slug}'")
             if isinstance(check.get("tags"), list):
                 check["tags"] = " ".join(check["tags"])
-            all_checks[check["slug"]] = check
+            all_checks[slug] = check
 
     return all_checks
 
@@ -197,11 +231,15 @@ def _hc_online(hc_api_url: str) -> bool:
     url = _api_url(hc_api_url, "api/v3/checks/")
     logger.debug(f"GET {url}")
     try:
-        requests.get(url, timeout=(5, 10))
-        return True
+        response = requests.get(url, timeout=(5, 10))
     except Exception as e:
         logger.error(f"Healthchecks instance is offline: {str(e)}")
         return False
+    # Unauthenticated requests are expected to get a 4xx from a healthy server.
+    if response.status_code >= 500:
+        logger.error(f"Healthchecks instance is offline: HTTP {response.status_code}")
+        return False
+    return True
 
 
 def _hc_list_check(
@@ -224,7 +262,7 @@ def _hc_create_check(
 ) -> bool:
     slug = check["slug"]
     if not check.get("name"):
-        check["name"] = check["slug"]
+        check = {**check, "name": slug}
     url = _api_url(api_url, "api/v3/checks/")
     headers = {"X-Api-Key": api_key}
     if dry_run:
