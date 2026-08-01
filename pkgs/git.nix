@@ -2,9 +2,9 @@
   symlinkJoin,
   makeWrapper,
   runCommand,
+  testers,
   git,
   nixbits,
-  testers,
 }:
 let
   git' = symlinkJoin {

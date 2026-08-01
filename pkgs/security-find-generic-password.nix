@@ -1,8 +1,8 @@
 {
   lib,
   stdenvNoCC,
-  writeShellScript,
   makeWrapper,
+  writeShellScript,
   nixbits,
 }:
 let

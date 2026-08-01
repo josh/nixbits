@@ -1,8 +1,8 @@
 {
   lib,
   writeShellApplication,
-  nixbits,
   helix,
+  nixbits,
   helixConfig ? { },
 }:
 let

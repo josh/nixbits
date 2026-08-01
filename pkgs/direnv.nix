@@ -1,8 +1,8 @@
 {
   stdenvNoCC,
-  runCommand,
   lndir,
   makeWrapper,
+  runCommand,
   direnv,
   jq,
   nixbits,

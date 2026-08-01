@@ -1,9 +1,9 @@
 {
   lib,
   stdenvNoCC,
+  lndir,
   makeWrapper,
   alacritty,
-  lndir,
   nixbits,
   theme ? "tokyonight_moon",
   interactiveShell ? "${nixbits.zsh}/bin/zsh",

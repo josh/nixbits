@@ -1,8 +1,8 @@
 {
   lib,
   writeShellApplication,
-  nix,
   jq,
+  nix,
   nixbits,
 }:
 writeShellApplication {

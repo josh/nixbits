@@ -2,8 +2,8 @@
   lib,
   writeShellApplication,
   runCommand,
-  yq-go,
   jq,
+  yq-go,
 }:
 let
   toml2json = writeShellApplication {
