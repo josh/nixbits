@@ -79,7 +79,7 @@ openssl rand -base64 32 >"$RESTIC_PASSWORD_FILE"
 export RESTIC_PASSWORD_FILE
 
 x restic init "${restic_init_args[@]}"
-orig_key_id=$(restic key list --json | jq --raw-output 'map(.id)[0]')
+orig_key_id=$(restic key list --json | jq --raw-output '.[0].id // error("no repository keys found")')
 
 if [ -n "$RESTIC_AGE_RECIPIENTS_FILE" ]; then
   x restic-age-key set --recipients-file "$RESTIC_AGE_RECIPIENTS_FILE"
@@ -90,6 +90,7 @@ else
   exit 1
 fi
 
-restic-age-key password >"$RESTIC_PASSWORD_FILE"
+age_password=$(restic-age-key password)
+printf '%s\n' "$age_password" >"$RESTIC_PASSWORD_FILE"
 
 x restic key remove "$orig_key_id"
