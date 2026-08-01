@@ -22,12 +22,12 @@ symlinkJoin {
   '';
 
   meta = {
-    mainProgram = "zellij";
     inherit (zellij.meta)
       description
       homepage
       license
       platforms
       ;
+    mainProgram = "zellij";
   };
 }

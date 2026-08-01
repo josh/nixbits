@@ -23,13 +23,13 @@ let
     '';
 
     meta = {
-      mainProgram = "git";
       inherit (git.meta)
         description
         homepage
         license
         platforms
         ;
+      mainProgram = "git";
     };
   };
 in

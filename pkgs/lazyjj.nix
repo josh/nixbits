@@ -16,11 +16,7 @@ let
   };
 in
 stdenvNoCC.mkDerivation {
-  inherit (lazyjj')
-    pname
-    version
-    meta
-    ;
+  inherit (lazyjj') pname version;
 
   __structuredAttrs = true;
 
@@ -66,4 +62,6 @@ stdenvNoCC.mkDerivation {
       echo "$disableCSI" >>$out/bin/lazyjj
     fi
   '';
+
+  inherit (lazyjj') meta;
 }

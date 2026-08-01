@@ -128,12 +128,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     };
 
   meta = {
-    mainProgram = finalAttrs.name;
     inherit (age.meta)
       description
       homepage
       license
       platforms
       ;
+    mainProgram = "age-decrypt";
   };
 })

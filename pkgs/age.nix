@@ -123,9 +123,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     inherit (age.meta)
-      changelog
       description
       homepage
+      changelog
       license
       ;
     mainProgram = "age";

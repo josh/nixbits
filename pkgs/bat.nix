@@ -94,7 +94,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     };
 
   meta = {
-    mainProgram = "bat";
     inherit (bat.meta) description license platforms;
+    mainProgram = "bat";
   };
 })

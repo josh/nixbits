@@ -73,6 +73,7 @@ writeShellApplication {
       description
       license
       ;
+    mainProgram = "hx";
     platforms = lib.platforms.all;
   };
 }
