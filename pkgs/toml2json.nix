@@ -15,6 +15,7 @@ let
     '';
     meta = {
       description = "Convert TOML to JSON";
+      license = lib.licenses.mit;
       platforms = lib.platforms.all;
     };
   };

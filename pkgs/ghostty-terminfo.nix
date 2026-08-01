@@ -34,6 +34,6 @@ stdenvNoCC.mkDerivation {
   meta = {
     description = "Terminfo for ghostty";
     homepage = "https://ghostty.org/docs/help/terminfo";
-    inherit (ghostty.meta) platforms broken;
+    inherit (ghostty.meta) license platforms broken;
   };
 }

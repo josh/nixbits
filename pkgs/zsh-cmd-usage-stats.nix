@@ -1,4 +1,5 @@
 {
+  lib,
   writeShellApplication,
   coreutils,
   gnugrep,
@@ -12,5 +13,9 @@ writeShellApplication {
   inheritPath = false;
   text = builtins.readFile ./zsh-cmd-usage-stats.bash;
 
-  meta.description = "Show zsh command usage statistics";
+  meta = {
+    description = "Show zsh command usage statistics";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

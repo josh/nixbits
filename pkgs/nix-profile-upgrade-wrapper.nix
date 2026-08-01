@@ -34,6 +34,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Upgrade nix profile";
+    license = lib.licenses.mit;
     mainProgram = builtins.head finalAttrs.mainPrograms;
+    platforms = lib.platforms.all;
   };
 })

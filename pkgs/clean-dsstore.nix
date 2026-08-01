@@ -23,6 +23,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Clean .DS_Store files recursively";
+    license = lib.licenses.mit;
     mainProgram = "clean-dsstore";
     platforms = lib.platforms.darwin;
   };

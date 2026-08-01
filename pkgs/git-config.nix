@@ -126,6 +126,7 @@ in
 config.overrideAttrs {
   meta = {
     description = "Git config";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

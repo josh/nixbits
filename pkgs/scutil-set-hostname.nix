@@ -18,6 +18,7 @@ writeShellApplication {
   text = builtins.readFile ./scutil-set-hostname.bash;
   meta = {
     description = "Set macOS computer name, bonjour name and unix hostname";
+    license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
   };
 }

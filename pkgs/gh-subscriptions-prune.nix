@@ -15,6 +15,7 @@ writeShellApplication {
   text = builtins.readFile ./gh-subscriptions-prune.bash;
   meta = {
     description = "Unsubscribe from issue/PR notifications in my own repos";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

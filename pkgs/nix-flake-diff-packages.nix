@@ -16,6 +16,7 @@ writeShellApplication {
   text = builtins.readFile ./nix-flake-diff-packages.bash;
   meta = {
     description = "Compare the package outputs of 2 nix flakes";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

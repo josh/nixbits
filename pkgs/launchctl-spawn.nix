@@ -16,6 +16,7 @@ writeShellApplication {
   text = builtins.readFile ./launchctl-spawn.bash;
   meta = {
     description = "Spawn a process using launchctl";
+    license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
   };
 }

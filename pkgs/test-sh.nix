@@ -15,6 +15,7 @@ writeShellApplication {
   text = builtins.readFile ./test-sh.bash;
   meta = {
     description = "Format, lint and test shell script";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

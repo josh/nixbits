@@ -11,6 +11,7 @@ let
     inheritPath = false;
     meta = {
       description = "Validate Ghostty configuration";
+      license = lib.licenses.mit;
       platforms = lib.platforms.darwin;
     };
   };
@@ -22,6 +23,7 @@ let
     inheritPath = false;
     meta = {
       description = "Validate Ghostty configuration";
+      license = lib.licenses.mit;
       platforms = lib.platforms.linux;
     };
   };

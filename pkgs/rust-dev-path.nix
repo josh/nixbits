@@ -1,4 +1,5 @@
 {
+  lib,
   symlinkJoin,
   # keep-sorted start
   cargo,
@@ -19,5 +20,9 @@ symlinkJoin {
     rustfmt
     # keep-sorted end
   ];
-  meta.description = "Favorite Rust development tools";
+  meta = {
+    description = "Favorite Rust development tools";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

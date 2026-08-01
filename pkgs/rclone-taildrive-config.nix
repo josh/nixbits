@@ -14,6 +14,7 @@ in
 config.overrideAttrs {
   meta = {
     description = "Rclone config for Tailscale Taildrive";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

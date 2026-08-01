@@ -1,4 +1,5 @@
 {
+  lib,
   writeShellApplication,
   coreutils,
   nix,
@@ -24,5 +25,9 @@ writeShellApplication {
   inheritPath = false;
   text = builtins.readFile ./nix-profile-upgrade.bash;
 
-  meta.description = "Upgrade nix profile and run pre/post install hooks";
+  meta = {
+    description = "Upgrade nix profile and run pre/post install hooks";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

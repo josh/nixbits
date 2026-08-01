@@ -1,4 +1,5 @@
 {
+  lib,
   writeShellApplication,
   coreutils,
   jq,
@@ -17,5 +18,9 @@ writeShellApplication {
   };
   text = builtins.readFile ./nixbits-unused-pkgs.bash;
 
-  meta.description = "List nixbits packages unused by dependent repositories";
+  meta = {
+    description = "List nixbits packages unused by dependent repositories";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

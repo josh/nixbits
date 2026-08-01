@@ -28,6 +28,7 @@ swiftPackages.stdenv.mkDerivation {
 
   meta = {
     description = "Delete completed reminders from Reminders.app";
+    license = lib.licenses.mit;
     mainProgram = "clean-completed-reminders";
     platforms = lib.platforms.darwin;
   };

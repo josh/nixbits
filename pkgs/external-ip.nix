@@ -34,6 +34,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Get the external IP address";
+    license = lib.licenses.mit;
     mainProgram = "external-ip";
     platforms = lib.platforms.all;
   };

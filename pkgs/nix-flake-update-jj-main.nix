@@ -18,6 +18,7 @@ writeShellApplication {
   text = builtins.readFile ./nix-flake-update-jj-main.bash;
   meta = {
     description = "Create a new jujutsu change, update nix flake input and move main forward on success";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

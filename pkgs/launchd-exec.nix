@@ -19,6 +19,7 @@ stdenv.mkDerivation {
 
   meta = {
     description = "Launchd exec permissions wrapper";
+    license = lib.licenses.mit;
     mainProgram = "launchd-exec";
     platforms = lib.platforms.darwin;
   };

@@ -1,4 +1,5 @@
 {
+  lib,
   stdenvNoCC,
   runCommand,
   python3,
@@ -80,6 +81,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Calculate the maximum interval between systemd timer triggers";
+    license = lib.licenses.mit;
     mainProgram = "systemd-timer-max-interval";
     inherit (systemd.meta) platforms;
   };

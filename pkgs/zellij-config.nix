@@ -34,6 +34,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Zellij config";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

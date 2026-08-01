@@ -116,5 +116,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       --replace-fail '@fish-history-sync@' ${nixbits.fish-history-sync}
   '');
 
-  meta.description = "Fish shell configuration";
+  meta = {
+    description = "Fish shell configuration";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 })

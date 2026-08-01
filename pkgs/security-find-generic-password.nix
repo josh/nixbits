@@ -52,6 +52,7 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
 
   meta = {
     description = "Find a generic password item in macOS Keychain";
+    license = lib.licenses.mit;
     mainProgram = "security-find-generic-password";
     platforms = lib.platforms.darwin;
   };

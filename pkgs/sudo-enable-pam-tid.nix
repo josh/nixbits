@@ -22,6 +22,7 @@ writeShellApplication {
   text = builtins.readFile ./sudo-enable-pam-tid.bash;
   meta = {
     description = "Enable sudo authentication with Touch ID";
+    license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
   };
 }

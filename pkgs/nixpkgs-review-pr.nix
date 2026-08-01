@@ -1,4 +1,5 @@
 {
+  lib,
   writeShellApplication,
   gum,
   nixpkgs-review,
@@ -16,5 +17,9 @@ writeShellApplication {
   ];
   inheritPath = false;
   text = builtins.readFile ./nixpkgs-review-pr.bash;
-  meta.description = "Review nixpkgs PRs";
+  meta = {
+    description = "Review nixpkgs PRs";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

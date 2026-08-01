@@ -16,6 +16,7 @@ writeShellApplication {
   '';
   meta = {
     description = "Reset Launchpad layout";
+    license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
   };
 }

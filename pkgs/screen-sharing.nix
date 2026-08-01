@@ -27,6 +27,7 @@ writeShellApplication {
   text = builtins.readFile ./screen-sharing.bash;
   meta = {
     description = "Launch macOS Screen Sharing";
+    license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
   };
 }

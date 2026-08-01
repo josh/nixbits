@@ -114,6 +114,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Apply local healthchecks configs to a healthchecks.io server";
+    license = lib.licenses.mit;
     mainProgram = "healthchecks-apply";
     platforms = lib.platforms.all;
   };

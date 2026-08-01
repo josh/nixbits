@@ -21,6 +21,7 @@ writeShellApplication {
 
   meta = {
     description = "Fetch SSH keys from GitHub profile";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

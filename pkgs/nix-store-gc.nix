@@ -48,6 +48,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Collect Nix store garbage";
+    license = lib.licenses.mit;
     mainProgram = "nix-store-gc";
     platforms = lib.platforms.all;
   };

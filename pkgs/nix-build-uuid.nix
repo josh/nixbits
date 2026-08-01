@@ -14,6 +14,7 @@ writeShellApplication {
   text = builtins.readFile ./nix-build-uuid.bash;
   meta = {
     description = "Build a random uuid as a nix package";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

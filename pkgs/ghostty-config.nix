@@ -80,5 +80,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Ghostty config";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
   };
 })

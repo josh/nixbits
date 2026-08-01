@@ -108,6 +108,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Tmux config";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

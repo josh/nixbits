@@ -1,4 +1,5 @@
 {
+  lib,
   writeShellApplication,
   coreutils,
 }:
@@ -10,5 +11,9 @@ writeShellApplication {
   inheritPath = false;
   text = builtins.readFile ./nix-profile-run-hooks.bash;
 
-  meta.description = "Run hooks for nix profile";
+  meta = {
+    description = "Run hooks for nix profile";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

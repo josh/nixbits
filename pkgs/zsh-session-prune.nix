@@ -14,6 +14,7 @@ writeShellApplication {
   text = builtins.readFile ./zsh-session-prune.bash;
   meta = {
     description = "Prune macOS zsh sessions directory";
+    license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
   };
 }

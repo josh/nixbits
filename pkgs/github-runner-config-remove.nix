@@ -33,6 +33,7 @@ writeShellApplication {
 
   meta = {
     description = "Unconfigure GitHub Actions runner";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

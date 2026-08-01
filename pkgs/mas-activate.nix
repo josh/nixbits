@@ -17,6 +17,7 @@ writeShellApplication {
 
   meta = {
     description = "Install Mac App Store Apps given a directory of App IDs";
+    license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
   };
 }

@@ -17,6 +17,7 @@ writeShellApplication {
   text = builtins.readFile ./jujutsu-pull.bash;
   meta = {
     description = "Pull jj git remote";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

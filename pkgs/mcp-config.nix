@@ -27,6 +27,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Model Context Protocol base config";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

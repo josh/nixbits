@@ -101,6 +101,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Alacritty config";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

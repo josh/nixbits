@@ -80,5 +80,6 @@ stdenvNoCC.mkDerivation {
   meta = {
     description = "${themeName} TextMate theme";
     inherit (themeMeta) homepage license;
+    platforms = lib.platforms.all;
   };
 }

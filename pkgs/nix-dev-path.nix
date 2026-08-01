@@ -1,4 +1,5 @@
 {
+  lib,
   symlinkJoin,
   nixbits,
   # keep-sorted start
@@ -43,5 +44,9 @@ symlinkJoin {
     tree
     # keep-sorted end
   ];
-  meta.description = "Favorite nix development tools";
+  meta = {
+    description = "Favorite nix development tools";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

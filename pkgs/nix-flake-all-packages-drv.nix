@@ -15,6 +15,7 @@ writeShellApplication {
   text = builtins.readFile ./nix-flake-all-packages-drv.bash;
   meta = {
     description = "Build nix derivation for all packages in current nix flake";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

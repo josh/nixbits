@@ -61,6 +61,7 @@ writeShellApplication {
   '';
   meta = {
     description = "Install launchd-exec wrapper";
+    license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
   };
 }

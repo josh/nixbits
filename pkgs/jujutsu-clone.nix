@@ -26,6 +26,7 @@ writeShellApplication {
   text = builtins.readFile ./jujutsu-clone.bash;
   meta = {
     description = "Clone a jj repository";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

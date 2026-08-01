@@ -75,5 +75,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     longDescription = ''
       Source via ~/.zprofile
     '';
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
   };
 })

@@ -33,6 +33,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Get the internal IP address";
+    license = lib.licenses.mit;
     mainProgram = "internal-ip";
     platforms = lib.platforms.all;
   };

@@ -27,6 +27,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Tmux wrapper for iTerm";
+    inherit (tmux.meta) license;
     mainProgram = "tmux-iterm";
     platforms = lib.platforms.darwin;
   };

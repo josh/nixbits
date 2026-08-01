@@ -24,5 +24,9 @@ stdenvNoCC.mkDerivation {
       --replace-fail "@uv@" "${lib.getExe uv}"
   '';
 
-  meta.description = "Config directory for direnv";
+  meta = {
+    description = "Config directory for direnv";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

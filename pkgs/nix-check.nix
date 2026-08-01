@@ -17,6 +17,7 @@ writeShellApplication {
 
   meta = {
     description = "Run nix flake check across all systems";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

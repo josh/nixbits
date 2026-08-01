@@ -17,6 +17,7 @@ writeShellApplication {
   text = builtins.readFile ./jujutsu-bookmark-clean.bash;
   meta = {
     description = "Clean up merged jj push-* bookmarks";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

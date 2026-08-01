@@ -15,6 +15,7 @@ let
     '';
     meta = {
       description = "Convert a plist file to a JSON file";
+      license = lib.licenses.mit;
       platforms = lib.platforms.darwin;
     };
   };

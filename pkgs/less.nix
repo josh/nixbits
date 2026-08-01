@@ -30,6 +30,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "less with the history file disabled";
+    inherit (less.meta) license platforms;
     mainProgram = "less";
   };
 }
