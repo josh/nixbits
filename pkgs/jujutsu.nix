@@ -30,13 +30,13 @@ let
     '';
 
     meta = {
-      mainProgram = "jj";
       inherit (jujutsu.meta)
         description
         homepage
         license
         platforms
         ;
+      mainProgram = "jj";
     };
   };
 in

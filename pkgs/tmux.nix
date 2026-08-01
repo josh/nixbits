@@ -36,7 +36,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    mainProgram = "tmux";
     inherit (tmux.meta) description license platforms;
+    mainProgram = "tmux";
   };
 }

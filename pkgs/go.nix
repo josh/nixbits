@@ -27,13 +27,13 @@ let
     '';
 
     meta = {
-      mainProgram = "go";
       inherit (go.meta)
         description
         homepage
         license
         platforms
         ;
+      mainProgram = "go";
     };
   };
 in

@@ -102,9 +102,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     inherit (sops.meta)
-      changelog
       description
       homepage
+      changelog
       license
       ;
     mainProgram = "sops";
