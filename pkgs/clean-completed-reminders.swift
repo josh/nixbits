@@ -37,10 +37,18 @@ func main() async throws {
     exit(1)
   }
 
+  eventStore.reset()
+
   // Subscribed or shared read-only lists reject remove(); one throw before
   // commit() would abort the batch and delete nothing at all.
   let reminderLists = eventStore.calendars(for: .reminder)
     .filter(\.allowsContentModifications)
+
+  // An empty array is not the "all calendars" nil sentinel; nothing to clean.
+  guard !reminderLists.isEmpty else {
+    return
+  }
+
   let reminders = try await eventStore.fetchReminders(
     matching: eventStore.predicateForReminders(in: reminderLists))
 
