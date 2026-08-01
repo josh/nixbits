@@ -2,8 +2,8 @@
   lib,
   stdenvNoCC,
   runtimeShell,
-  shellcheck-minimal,
   nix,
+  shellcheck-minimal,
   nixbits,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {

@@ -2,8 +2,8 @@
   lib,
   writeShellApplication,
   runCommand,
-  yq-go,
   jq,
+  yq-go,
 }:
 let
   xml2json = writeShellApplication {

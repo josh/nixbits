@@ -2,8 +2,8 @@
   lib,
   writeShellApplication,
   coreutils,
-  nix,
   jq,
+  nix,
 }:
 writeShellApplication {
   name = "nix-flake-check-size";

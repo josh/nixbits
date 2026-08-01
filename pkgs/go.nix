@@ -2,9 +2,9 @@
   stdenv,
   symlinkJoin,
   makeWrapper,
-  go,
-  testers,
   runCommand,
+  testers,
+  go,
 }:
 let
   go' = symlinkJoin {

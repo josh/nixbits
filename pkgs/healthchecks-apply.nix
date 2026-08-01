@@ -1,10 +1,10 @@
 {
   lib,
   stdenvNoCC,
-  runCommand,
   makeWrapper,
-  python3,
+  runCommand,
   writeShellScript,
+  python3,
   healthchecksConfig ? { },
 }:
 let

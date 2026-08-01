@@ -1,7 +1,6 @@
 {
   lib,
   buildEnv,
-  nixbits,
   # keep-sorted start
   bash,
   coreutils,
@@ -14,6 +13,7 @@
   nix,
   which,
   # keep-sorted end
+  nixbits,
 }:
 let
   inherit (nixbits) gtar;

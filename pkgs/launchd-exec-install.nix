@@ -1,7 +1,7 @@
 {
   lib,
-  writers,
   writeShellApplication,
+  writers,
   coreutils,
   nur,
   nixbits,

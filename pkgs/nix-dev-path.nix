@@ -1,7 +1,6 @@
 {
   lib,
   symlinkJoin,
-  nixbits,
   # keep-sorted start
   deadnix,
   nh,
@@ -16,6 +15,7 @@
   statix,
   tree,
   # keep-sorted end
+  nixbits,
 }:
 symlinkJoin {
   name = "nix-dev-path";

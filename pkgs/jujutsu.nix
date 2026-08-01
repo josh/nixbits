@@ -3,10 +3,10 @@
   symlinkJoin,
   makeWrapper,
   runCommand,
+  testers,
   jujutsu,
   watchman,
   nixbits,
-  testers,
 }:
 let
   jujutsu' = symlinkJoin {

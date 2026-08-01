@@ -9,8 +9,8 @@
   neovim,
   shellcheck-minimal,
   starship,
-  nixbits,
   nur,
+  nixbits,
 }:
 let
   inherit (nixbits) direnv;

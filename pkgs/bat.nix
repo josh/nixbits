@@ -1,9 +1,9 @@
 {
   stdenvNoCC,
-  makeWrapper,
-  testers,
-  runCommand,
   lndir,
+  makeWrapper,
+  runCommand,
+  testers,
   bat,
   nixbits,
   theme ? null,
