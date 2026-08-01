@@ -41,7 +41,10 @@ class CalendarParamType(click.ParamType):
             self.fail(f"{value!r} is not a valid calendar spec", param, ctx)
         events = []
         for line in process.stdout.decode("utf-8").splitlines():
-            if m := re.search(r": \w+ (.+) UTC", line):
+            if m := re.search(
+                r"(?:Next elapse|Iter(?:ation|\.) #\d+): \w+ (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) UTC",
+                line,
+            ):
                 events.append(datetime.strptime(m.group(1), "%Y-%m-%d %H:%M:%S"))
         if len(events) < 2:
             self.fail(f"{value!r} does not repeat", param, ctx)
@@ -72,6 +75,8 @@ def main(
     calendar: timedelta | None,
     randomized_delay: timedelta | None,
 ):
+    if timespan is not None and calendar is not None:
+        raise click.UsageError("--timespan and --calendar are mutually exclusive")
     if timespan is not None:
         if randomized_delay is not None:
             timespan = timespan + randomized_delay
