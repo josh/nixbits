@@ -30,7 +30,9 @@ writeShellApplication {
     coreutils
     gh
     gnugrep
-    nixbits.github-runner-config-remove
+    (nixbits.github-runner-config-remove.override {
+      inherit github-runner github-runner-root github-runner-use-gh-token;
+    })
   ];
   inheritPath = false;
   runtimeEnv = {

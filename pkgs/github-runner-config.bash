@@ -14,6 +14,7 @@ elif [ -n "${CREDENTIALS_DIRECTORY:-}" ] && [ -z "${RUNNER_PAT:-}" ]; then
     RUNNER_PAT=$(cat "${CREDENTIALS_DIRECTORY}/github-token")
   fi
 fi
+export RUNNER_PAT
 
 declare -a config_opts=(--unattended --disableupdate --replace)
 if [ -n "${RUNNER_URL:-}" ]; then
