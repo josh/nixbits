@@ -11,7 +11,7 @@ let
     ${nixbits.xtrace}/bin/x -s -- ${security}/bin/security find-generic-password "$@"
   '';
 in
-stdenvNoCC.mkDerivation (_finalAttrs: {
+stdenvNoCC.mkDerivation {
   name = "security-find-generic-password";
 
   __structuredAttrs = true;
@@ -56,4 +56,4 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
     mainProgram = "security-find-generic-password";
     platforms = lib.platforms.darwin;
   };
-})
+}

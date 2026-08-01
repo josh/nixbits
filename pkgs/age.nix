@@ -24,7 +24,6 @@ let
       nur.repos.josh.age-plugin-tpm
     else
       age-plugin-tpm;
-  age-plugin-yubikey' = age-plugin-yubikey;
 
   features =
     (lib.lists.optional seSupport "se")
@@ -47,7 +46,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   ]
   ++ (lib.lists.optional seSupport age-plugin-se')
   ++ (lib.lists.optional tpmSupport age-plugin-tpm')
-  ++ (lib.lists.optional yubikeySupport age-plugin-yubikey');
+  ++ (lib.lists.optional yubikeySupport age-plugin-yubikey);
 
   buildCommand = ''
     mkdir -p $out

@@ -5,7 +5,6 @@
   extraMCPServers ? { },
 }:
 let
-
   config = {
     mcpServers = {
       # Placeholder

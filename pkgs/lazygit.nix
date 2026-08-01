@@ -39,13 +39,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     "--set"
     "PATH"
     runtimePath
-  ]
-  ++ [
     "--set"
     "GIT_CONFIG_GLOBAL"
     git-config
-  ]
-  ++ [
     "--set"
     "LG_CONFIG_FILE"
     config

@@ -27,8 +27,6 @@ stdenvNoCC.mkDerivation {
       "--set"
       "GH_NO_UPDATE_NOTIFIER"
       "1"
-    ]
-    ++ [
       "--set"
       "GH_NO_EXTENSION_UPDATE_NOTIFIER"
       "1"
