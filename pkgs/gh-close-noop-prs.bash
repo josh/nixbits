@@ -10,31 +10,34 @@ case "${1:-}" in
   ;;
 esac
 
+stderr_file=$(mktemp)
+trap 'rm -f "$stderr_file"' EXIT
+
 urls_output=$(gh search prs --owner josh --state open --label noop --limit 1000 --json url --jq '.[].url')
 urls=()
 [ -z "$urls_output" ] || mapfile -t urls <<<"$urls_output"
 
-if [ "${#urls[@]}" -eq 0 ]; then
-  echo "No open noop PRs found." >&2
-  exit 0
-fi
-
-closed=()
-review=()
-deferred=()
-skipped=()
+needs_review=0
 errors=0
 
 for url in "${urls[@]}"; do
-  checks_json=$(gh pr checks "$url" --json name,bucket 2>/dev/null || true)
+  if checks_json=$(gh pr checks "$url" --json name,bucket 2>"$stderr_file"); then
+    :
+  elif [ -z "$checks_json" ]; then
+    checks_error=$(<"$stderr_file")
+    if [[ $checks_error != *"no checks reported"* ]]; then
+      errors=$((errors + 1))
+      echo "error $url (gh pr checks: $checks_error)" >&2
+      continue
+    fi
+  fi
   checks_json=${checks_json:-[]}
 
   lockfile_failed=$(jq --arg name "$lockfile_check" \
     'any(.[]; .name == $name and .bucket == "fail")' <<<"$checks_json")
 
   if [ "$lockfile_failed" != "true" ]; then
-    skipped+=("$url")
-    echo "skip   $url (${lockfile_check} not failing)" >&2
+    echo "skip $url (${lockfile_check} not failing)"
     continue
   fi
 
@@ -51,48 +54,25 @@ for url in "${urls[@]}"; do
     failed_checks=$(jq --raw-output --arg name "$lockfile_check" \
       '[ .[] | select(.name != $name and (.bucket == "fail" or .bucket == "cancel")) | .name ] | join(", ")' \
       <<<"$checks_json")
-    review+=("$url (failing: $failed_checks)")
-    echo "review $url (other checks failing: $failed_checks)" >&2
+    needs_review=$((needs_review + 1))
+    echo "review $url (other checks failing: $failed_checks)"
     ;;
   pending)
-    deferred+=("$url")
-    echo "defer  $url (other checks pending)" >&2
+    echo "defer $url (other checks pending)"
     ;;
   ok)
     if [ "$dry_run" = true ]; then
-      closed+=("$url")
-      echo "+ [dry-run] gh pr close $url --delete-branch" >&2
+      echo "close $url"
+    elif gh pr close "$url" --delete-branch >/dev/null 2>"$stderr_file"; then
+      echo "close $url"
     else
-      echo "+ gh pr close $url --delete-branch" >&2
-      if gh pr close "$url" --delete-branch; then
-        closed+=("$url")
-      else
-        errors=$((errors + 1))
-      fi
+      errors=$((errors + 1))
+      echo "error $url (gh pr close: $(<"$stderr_file"))" >&2
     fi
     ;;
   esac
 done
 
-report() {
-  local label=$1
-  shift
-  echo "${label} $#" >&2
-  if [ "$#" -gt 0 ]; then
-    printf '  %s\n' "$@" >&2
-  fi
-}
-
-echo >&2
-if [ "$dry_run" = true ]; then
-  report "Would close:  " "${closed[@]}"
-else
-  report "Closed:       " "${closed[@]}"
-fi
-report "Needs review: " "${review[@]}"
-report "Deferred:     " "${deferred[@]}"
-report "Skipped:      " "${skipped[@]}"
-
-if [ "${#review[@]}" -gt 0 ] || [ "$errors" -gt 0 ]; then
+if [ "$needs_review" -gt 0 ] || [ "$errors" -gt 0 ]; then
   exit 1
 fi
