@@ -1,13 +1,25 @@
 dir=""
 dry_run=0
 
+usage() {
+  echo "Usage: mas-activate /path/to/share/mas [--dry-run]" >&2
+}
+
 while [[ $# -gt 0 ]]; do
   case $1 in
   --dry-run)
     dry_run=1
     shift
     ;;
+  -*)
+    usage
+    exit 1
+    ;;
   *)
+    if [ -n "$dir" ]; then
+      usage
+      exit 1
+    fi
     dir=$1
     shift
     ;;
@@ -15,7 +27,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ ! -d "$dir" ]; then
-  echo "Usage: mas-activate /path/to/share/mas [--dry-run]" >&2
+  usage
   exit 1
 fi
 
