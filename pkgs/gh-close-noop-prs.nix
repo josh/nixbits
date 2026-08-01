@@ -1,8 +1,9 @@
 {
   lib,
   writeShellApplication,
-  nixbits,
+  coreutils,
   jq,
+  nixbits,
 }:
 let
   inherit (nixbits) gh;
@@ -10,6 +11,7 @@ in
 writeShellApplication {
   name = "gh-close-noop-prs";
   runtimeInputs = [
+    coreutils
     gh
     jq
   ];
