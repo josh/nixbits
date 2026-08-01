@@ -25,7 +25,7 @@ let
     let
       parts = lib.strings.splitString ":" model;
       modelName = builtins.elemAt parts 0;
-      modelTag = builtins.elemAt parts 1;
+      modelTag = if builtins.length parts > 1 then builtins.elemAt parts 1 else "latest";
       manifestPath = "${availableModels}/${modelName}/${modelTag}.json";
       manifest = builtins.fromJSON (builtins.readFile manifestPath);
       blobs = builtins.listToAttrs (
@@ -54,6 +54,11 @@ let
           ln -s "''${blobs[$sha256]}" "$out/blobs/sha256-$sha256"
         done
       '';
+
+      meta = {
+        description = "Ollama registry model ${modelName}:${modelTag}";
+        platforms = lib.platforms.all;
+      };
     };
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
