@@ -40,6 +40,8 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Tailscale from the Mac App Store";
+    license = lib.licenses.unfree;
+    sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
     mainProgram = "tailscale";
     platforms = lib.platforms.darwin;
   };

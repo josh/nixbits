@@ -10,6 +10,7 @@ writeShellApplication {
   text = builtins.readFile ./tailscale-lan-ip.bash;
   meta = {
     description = "Detect Tailscale node LAN IP";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

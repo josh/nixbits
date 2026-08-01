@@ -19,6 +19,7 @@ let
     text = builtins.readFile ./install-mac-app.bash;
     meta = {
       description = "Copy macOS App into /Applications";
+      license = lib.licenses.mit;
       platforms = lib.platforms.darwin;
     };
   };

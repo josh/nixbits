@@ -17,6 +17,7 @@ writeShellApplication {
   text = builtins.readFile ./shortcuts-check.bash;
   meta = {
     description = "Check if macOS Shortcut is available";
+    license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
   };
 }

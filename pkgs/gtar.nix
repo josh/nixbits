@@ -20,6 +20,7 @@ stdenvNoCC.mkDerivation {
       Alias gtar to gnutar for GitHub Actions workflows.
       <https://github.com/actions/upload-pages-artifact/blob/2d163be/action.yml#L41>
     '';
+    inherit (gnutar.meta) license;
     mainProgram = "gtar";
     platforms = lib.platforms.all;
   };

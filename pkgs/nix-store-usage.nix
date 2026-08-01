@@ -24,6 +24,7 @@ writeShellApplication {
   text = builtins.readFile ./nix-store-usage.bash;
   meta = {
     description = "Compute nix store usage";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

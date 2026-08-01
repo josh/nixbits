@@ -1,4 +1,5 @@
 {
+  lib,
   writeShellApplication,
   coreutils,
   nix,
@@ -12,5 +13,9 @@ writeShellApplication {
   inheritPath = false;
   text = builtins.readFile ./nix-profile-dry-run.bash;
 
-  meta.description = "Build new nix profile without modifying the current one";
+  meta = {
+    description = "Build new nix profile without modifying the current one";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

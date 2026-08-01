@@ -118,6 +118,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "NixOS remote build machines configuration";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 })

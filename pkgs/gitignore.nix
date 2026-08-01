@@ -80,5 +80,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
           '';
     };
 
-  meta.description = "Generated global gitignore file";
+  meta = {
+    description = "Generated global gitignore file";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 })

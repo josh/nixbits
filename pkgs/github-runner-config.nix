@@ -64,6 +64,7 @@ writeShellApplication {
 
   meta = {
     description = "Configure GitHub Actions runner";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

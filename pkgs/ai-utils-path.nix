@@ -1,4 +1,5 @@
 {
+  lib,
   symlinkJoin,
   # keep-sorted start
   claude-code,
@@ -15,5 +16,9 @@ symlinkJoin {
     opencode
     # keep-sorted end
   ];
-  meta.description = "Favorite AI utilities";
+  meta = {
+    description = "Favorite AI utilities";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

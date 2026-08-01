@@ -85,6 +85,7 @@ in
 config.overrideAttrs {
   meta = {
     description = "Jujutsu config";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

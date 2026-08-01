@@ -32,6 +32,7 @@ let
     text = builtins.readFile ./restic-age-init.bash;
     meta = {
       description = "Initialize restic repository with age key";
+      license = lib.licenses.mit;
       platforms = lib.platforms.all;
     };
   };

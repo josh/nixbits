@@ -10,6 +10,7 @@ writeShellApplication {
   text = builtins.readFile ./tmux-attach.bash;
   meta = {
     description = "Attach to existing tmux session or create a new one";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

@@ -23,6 +23,7 @@ writeShellApplication {
   text = builtins.readFile ./gh-dependabot.bash;
   meta = {
     description = "Open GitHub Insights -> Dependency graph -> Dependabot page";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

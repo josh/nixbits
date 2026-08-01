@@ -1,4 +1,5 @@
 {
+  lib,
   symlinkJoin,
   nixbits,
 }:
@@ -13,5 +14,9 @@ symlinkJoin {
     nixbits.lazyjj
     # keep-sorted end
   ];
-  meta.description = "Favorite VCS development tools";
+  meta = {
+    description = "Favorite VCS development tools";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

@@ -1,4 +1,5 @@
 {
+  lib,
   writeShellApplication,
   coreutils,
 }:
@@ -15,6 +16,8 @@ writeShellApplication {
   meta = {
     description = "Create a CACHEDIR.TAG file in the current directory";
     homepage = "http://www.brynosaurus.com/cachedir/";
+    license = lib.licenses.mit;
     mainProgram = "touch-cachedir-tag";
+    platforms = lib.platforms.all;
   };
 }

@@ -1,4 +1,5 @@
 {
+  lib,
   writeShellApplication,
   coreutils,
 }:
@@ -10,5 +11,9 @@ writeShellApplication {
     TEMPLATE_PATH = "${./new-sh-template.bash}";
   };
   text = builtins.readFile ./new-sh.bash;
-  meta.description = "Create new bash script";
+  meta = {
+    description = "Create new bash script";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

@@ -16,6 +16,7 @@ writeShellApplication {
   text = builtins.readFile ./zsh-history-sync.bash;
   meta = {
     description = "Sync zsh history with iCloud Drive";
+    license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
   };
 }

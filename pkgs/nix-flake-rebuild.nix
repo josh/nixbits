@@ -1,4 +1,5 @@
 {
+  lib,
   writeShellApplication,
   coreutils,
   nix,
@@ -14,5 +15,9 @@ writeShellApplication {
   inheritPath = false;
   text = builtins.readFile ./nix-flake-rebuild.bash;
 
-  meta.description = "Rebuild all packages in current nix flake";
+  meta = {
+    description = "Rebuild all packages in current nix flake";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

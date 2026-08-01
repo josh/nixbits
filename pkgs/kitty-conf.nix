@@ -30,6 +30,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Kitty config";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

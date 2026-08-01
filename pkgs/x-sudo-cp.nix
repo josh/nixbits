@@ -21,6 +21,7 @@ writeShellApplication {
   text = builtins.readFile ./x-sudo-cp.bash;
   meta = {
     description = "Conditionally copy files with sudo";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

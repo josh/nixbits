@@ -1,4 +1,5 @@
 {
+  lib,
   writeShellApplication,
   findutils,
 }:
@@ -10,5 +11,9 @@ writeShellApplication {
     find "''${@:-.}" -xtype l
   '';
 
-  meta.description = "Find dead symlinks";
+  meta = {
+    description = "Find dead symlinks";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

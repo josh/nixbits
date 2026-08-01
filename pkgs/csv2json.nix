@@ -15,6 +15,7 @@ let
     '';
     meta = {
       description = "Convert CSV to JSON";
+      license = lib.licenses.mit;
       platforms = lib.platforms.all;
     };
   };

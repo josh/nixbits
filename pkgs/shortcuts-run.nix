@@ -41,6 +41,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Run '${finalAttrs.shortcutName}' Shortcut";
+    license = lib.licenses.mit;
     mainProgram = finalAttrs.name;
     platforms = lib.platforms.darwin;
   };

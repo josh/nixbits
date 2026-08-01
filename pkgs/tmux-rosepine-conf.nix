@@ -30,6 +30,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Tmux rosepine config";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 })

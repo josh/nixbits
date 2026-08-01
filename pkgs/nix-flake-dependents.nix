@@ -38,6 +38,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Scan nix flake package dependents";
+    license = lib.licenses.mit;
     mainProgram = "nix-flake-dependents";
     platforms = lib.platforms.all;
   };

@@ -41,6 +41,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Tmux catppuccin config";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 })

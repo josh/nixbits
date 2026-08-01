@@ -19,6 +19,7 @@ derivation {
 // {
   meta = {
     description = "Empty file";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

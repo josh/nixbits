@@ -12,6 +12,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Skills for Claude Code";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

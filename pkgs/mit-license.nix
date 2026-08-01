@@ -52,6 +52,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Print MIT license";
+    license = lib.licenses.mit;
     mainProgram = "mit-license";
     platforms = lib.platforms.all;
   };

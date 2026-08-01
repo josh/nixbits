@@ -39,6 +39,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Static GitHub CLI configuration directory";
+    license = lib.licenses.mit;
     # BUG: Only works on macOS as linux expects this directory to be writable
     platforms = lib.platforms.darwin;
   };

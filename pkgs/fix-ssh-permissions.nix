@@ -15,6 +15,7 @@ writeShellApplication {
 
   meta = {
     description = "Fix SSH keys permissions";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

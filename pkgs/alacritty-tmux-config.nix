@@ -122,6 +122,7 @@ in
   name = "alacritty-tmux-config";
   meta = {
     description = "Alacritty tmux config";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

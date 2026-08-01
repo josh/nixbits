@@ -80,6 +80,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Decrypt secret using age identity";
+    license = lib.licenses.mit;
     mainProgram = "secret";
     platforms = lib.platforms.all;
   };

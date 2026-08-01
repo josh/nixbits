@@ -16,6 +16,7 @@ writeShellApplication {
   text = builtins.readFile ./nix-build-flake-outputs.bash;
   meta = {
     description = "Build all flake outputs as a nix package";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

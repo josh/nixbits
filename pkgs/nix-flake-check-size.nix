@@ -16,6 +16,7 @@ writeShellApplication {
   text = builtins.readFile ./nix-flake-check-size.bash;
   meta = {
     description = "Check NAR size of flake checks";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

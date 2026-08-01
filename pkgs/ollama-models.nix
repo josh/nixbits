@@ -81,5 +81,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     done
   '';
 
-  meta.description = "Ollama models fetched from the registry";
+  meta = {
+    description = "Ollama models fetched from the registry";
+    platforms = lib.platforms.all;
+  };
 })

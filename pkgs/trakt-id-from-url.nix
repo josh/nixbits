@@ -14,6 +14,7 @@ writeShellApplication {
   text = builtins.readFile ./trakt-id-from-url.bash;
   meta = {
     description = "Extract Trakt media ID from URL";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

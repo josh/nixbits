@@ -16,6 +16,7 @@ writeShellApplication {
   text = builtins.readFile ./x-ln-s.bash;
   meta = {
     description = "Conditionally update symlink";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

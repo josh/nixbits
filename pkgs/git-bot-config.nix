@@ -21,6 +21,7 @@ config.overrideAttrs {
 
   meta = {
     description = "GitHub Actions bot git config";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

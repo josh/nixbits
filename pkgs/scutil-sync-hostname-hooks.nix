@@ -22,6 +22,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Automatically update macOS computer name";
+    license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
   };
 }

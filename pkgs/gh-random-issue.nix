@@ -20,6 +20,7 @@ writeShellApplication {
 
   meta = {
     description = "Open a random GitHub issue";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

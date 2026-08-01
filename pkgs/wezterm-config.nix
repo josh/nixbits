@@ -44,6 +44,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Wezterm config";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

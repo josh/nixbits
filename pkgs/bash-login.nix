@@ -77,5 +77,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     longDescription = ''
       Source via ~/.bash_profile
     '';
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
   };
 })

@@ -74,6 +74,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Ensure stdout ends with a trailing newline";
+    license = lib.licenses.mit;
     mainProgram = "ensure-newline";
     platforms = lib.platforms.all;
   };

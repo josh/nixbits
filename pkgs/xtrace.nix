@@ -47,6 +47,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Explicit xtrace logging";
+    license = lib.licenses.mit;
     mainProgram = "x";
     platforms = lib.platforms.all;
   };

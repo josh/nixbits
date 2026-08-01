@@ -21,6 +21,7 @@ let
     '';
     meta = {
       description = "Detect default gateway";
+      license = lib.licenses.mit;
       platforms = lib.platforms.darwin;
     };
   };
@@ -38,6 +39,7 @@ let
     '';
     meta = {
       description = "Detect default gateway";
+      license = lib.licenses.mit;
       platforms = lib.platforms.linux;
     };
   };

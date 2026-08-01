@@ -15,6 +15,7 @@ let
     '';
     meta = {
       description = "Convert XML to JSON";
+      license = lib.licenses.mit;
       platforms = lib.platforms.all;
     };
   };

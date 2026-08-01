@@ -1,4 +1,5 @@
 {
+  lib,
   writeShellApplication,
   coreutils,
   nix,
@@ -14,5 +15,9 @@ writeShellApplication {
   inheritPath = false;
   text = builtins.readFile ./nix-profile-activate.bash;
 
-  meta.description = "Activate target nix profile";
+  meta = {
+    description = "Activate target nix profile";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

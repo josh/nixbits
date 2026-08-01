@@ -26,6 +26,7 @@ writeShellApplication {
   text = builtins.readFile ./jujutsu-git-set-upstream.bash;
   meta = {
     description = "Automatically configure jj git upstream remote";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }

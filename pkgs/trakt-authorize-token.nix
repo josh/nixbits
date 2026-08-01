@@ -22,6 +22,7 @@ writeShellApplication {
   text = builtins.readFile ./trakt-authorize-token.bash;
   meta = {
     description = "Generate Trakt OAuth access and refresh tokens";
+    license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
   };
 }

@@ -16,6 +16,7 @@ writeShellApplication {
   text = builtins.readFile ./fish-history-sync.bash;
   meta = {
     description = "Sync fish history with iCloud Drive";
+    license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
   };
 }

@@ -29,6 +29,7 @@ stdenvNoCC.mkDerivation {
 
   meta = {
     description = "Automatically install Mac App Store Apps in the current Nix profile";
+    license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
   };
 }

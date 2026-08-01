@@ -1,4 +1,5 @@
 {
+  lib,
   buildEnv,
   nixbits,
   # keep-sorted start
@@ -35,5 +36,9 @@ buildEnv {
     # keep-sorted end
   ];
   pathsToLink = [ "/bin" ];
-  meta.description = "Tools for self-hosted GitHub Actions runners";
+  meta = {
+    description = "Tools for self-hosted GitHub Actions runners";
+    license = lib.licenses.mit;
+    platforms = lib.platforms.all;
+  };
 }

@@ -18,6 +18,7 @@ writeShellApplication {
   text = builtins.readFile ./x-cp.bash;
   meta = {
     description = "Conditionally copy files";
+    license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
 }
