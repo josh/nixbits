@@ -30,8 +30,12 @@ for file in "$src"/*; do
   name=$(basename "$file")
   abs_src="$(readlink -f "$file")"
 
+  if [ -e "$dst/$name" ] && [ ! -L "$dst/$name" ]; then
+    x rm -rf "$dst/$name"
+  fi
+
   if [ ! -L "$dst/$name" ] || [ "$(readlink -f "$dst/$name")" != "$abs_src" ]; then
-    x ln -fs "$abs_src" "$dst/$name"
+    x ln -fns "$abs_src" "$dst/$name"
   fi
 done
 
