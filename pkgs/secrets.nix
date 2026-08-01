@@ -25,8 +25,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   inherit ageIdentity secretsPath;
 
-  env.SECRETS_PATH = builtins.concatStringsSep ":" finalAttrs.secretsPath;
-  env.AGE_IDENTITY_COMMAND = toExePath finalAttrs.ageIdentity;
+  env = {
+    SECRETS_PATH = builtins.concatStringsSep ":" finalAttrs.secretsPath;
+    AGE_IDENTITY_COMMAND = toExePath finalAttrs.ageIdentity;
+  };
 
   buildCommand = ''
     mkdir -p $out/bin

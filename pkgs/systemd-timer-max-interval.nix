@@ -47,7 +47,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
             expected="3600"
             if [ "$actual" != "$expected" ]; then
               echo "expected: '$expected' but was '$actual'"
-              return 1
+              exit 1
             fi
             touch $out
           '';
@@ -60,7 +60,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
             expected="86400"
             if [ "$actual" != "$expected" ]; then
               echo "expected: '$expected' but was '$actual'"
-              return 1
+              exit 1
             fi 
             touch $out
           '';
@@ -98,7 +98,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
             expected="3900"
             if [ "$actual" != "$expected" ]; then
               echo "expected: '$expected' but was '$actual'"
-              return 1
+              exit 1
             fi
             touch $out
           '';

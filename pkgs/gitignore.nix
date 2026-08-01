@@ -6,6 +6,7 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   name = "gitignore";
+
   __structuredAttrs = true;
 
   patterns = [

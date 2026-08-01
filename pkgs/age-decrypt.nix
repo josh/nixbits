@@ -14,6 +14,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   __structuredAttrs = true;
 
+  outputs = [
+    "out"
+  ]
+  ++ (lib.lists.optional finalAttrs.preinstallCheck "hooks");
+
   nativeBuildInputs = [ makeWrapper ];
 
   makeWrapperArgs = [ ];
@@ -34,11 +39,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       true
     else
       false;
-
-  outputs = [
-    "out"
-  ]
-  ++ (lib.lists.optional finalAttrs.preinstallCheck "hooks");
 
   buildCommand = ''
     if [ -n "$ageIdentity" ]; then

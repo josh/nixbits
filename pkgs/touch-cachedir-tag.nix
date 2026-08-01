@@ -5,10 +5,8 @@
 }:
 writeShellApplication {
   name = "touch-cachedir-tag";
-
   runtimeInputs = [ coreutils ];
   inheritPath = false;
-
   text = ''
     cat ${./cachedir-tag.txt} >CACHEDIR.TAG
   '';

@@ -9,7 +9,7 @@ build() {
   NIX_CONFIG="extra-access-tokens = github.com=$GH_TOKEN" \
     nix-profile-dry-run \
     upgrade --refresh "$@" \
-    --log-format internal-json --verbose 1>&1 2> >(nom --json)
+    --log-format internal-json --verbose 2> >(nom --json)
 }
 
 if [ "$(id -u)" -eq 0 ]; then

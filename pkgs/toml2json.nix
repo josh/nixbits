@@ -46,7 +46,7 @@ toml2json.overrideAttrs (
               actual="$(toml2json <${tomlFile} | jq --compact-output)"
               if [[ "$actual" != "$expected" ]]; then
                 echo "expected, '$expected' but was '$actual'"
-                return 1
+                exit 1
               fi
               touch $out
             '';

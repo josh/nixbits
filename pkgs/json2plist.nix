@@ -44,7 +44,7 @@ json2plist.overrideAttrs (
           actual="$(json2plist <${jsonFile})"
           if [[ "$actual" != "$expected" ]]; then
             echo "expected, '$expected' but was '$actual'"
-            return 1
+            exit 1
           fi
           touch $out
         '';
@@ -54,7 +54,7 @@ json2plist.overrideAttrs (
           actual="$(cat ${jsonFile} | json2plist)"
           if [[ "$actual" != "$expected" ]]; then
             echo "expected, '$expected' but was '$actual'"
-            return 1
+            exit 1
           fi
           touch $out
         '';
@@ -74,7 +74,7 @@ json2plist.overrideAttrs (
         error-empty = runCommand "test-json2plist-error-empty" { nativeBuildInputs = [ json2plist' ]; } ''
           if json2plist </dev/null >/dev/null 2>&1; then
             echo "expected empty input to fail"
-            return 1
+            exit 1
           fi
           touch $out
         '';
@@ -84,7 +84,7 @@ json2plist.overrideAttrs (
             ''
               if printf '{"unterminated"' | json2plist >/dev/null 2>&1; then
                 echo "expected invalid JSON to fail"
-                return 1
+                exit 1
               fi
               touch $out
             '';

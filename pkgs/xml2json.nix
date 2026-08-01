@@ -46,7 +46,7 @@ xml2json.overrideAttrs (
               actual="$(xml2json <${xmlFile} | jq --compact-output)"
               if [[ "$actual" != "$expected" ]]; then
                 echo "expected, '$expected' but was '$actual'"
-                return 1
+                exit 1
               fi
               touch $out
             '';
@@ -59,7 +59,7 @@ xml2json.overrideAttrs (
             ''
               if printf '<a>hello' | xml2json >/dev/null 2>&1; then
                 echo "expected truncated XML to fail"
-                return 1
+                exit 1
               fi
               touch $out
             '';
@@ -72,7 +72,7 @@ xml2json.overrideAttrs (
             ''
               if printf '<a><b></a>' | xml2json >/dev/null 2>&1; then
                 echo "expected mismatched tags to fail"
-                return 1
+                exit 1
               fi
               touch $out
             '';

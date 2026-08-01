@@ -16,9 +16,10 @@ stdenvNoCC.mkDerivation {
   name = "mcp-config.json";
 
   __structuredAttrs = true;
-  inherit config;
 
   nativeBuildInputs = [ jq ];
+
+  inherit config;
 
   buildCommand = ''
     jq '.config' <"$NIX_ATTRS_JSON_FILE" >"$out"
