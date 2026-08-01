@@ -39,7 +39,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         grep --quiet --extended-regexp 'Copyright \(c\) 20[0-9]{2} Joshua Peek' license.txt
         if grep --quiet '20XX' license.txt; then
           echo "year placeholder was not substituted"
-          return 1
+          exit 1
         fi
         touch $out
       '';

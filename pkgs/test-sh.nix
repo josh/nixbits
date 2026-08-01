@@ -7,6 +7,7 @@
 }:
 writeShellApplication {
   name = "test-sh";
+  inheritPath = true;
   runtimeEnv = {
     "BASH" = lib.getExe bash;
     "SHELLCHECK" = lib.getExe shellcheck;

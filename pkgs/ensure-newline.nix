@@ -35,7 +35,7 @@ stdenv.mkDerivation (finalAttrs: {
             if ! diff --text --unified expected.txt actual.txt >diff.txt; then
               echo "Files differ, showing diff:"
               cat diff.txt
-              return 1
+              exit 1
             fi
             touch $out
           '';

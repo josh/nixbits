@@ -48,6 +48,7 @@ stdenvNoCC.mkDerivation {
   meta = {
     description = "Command line tools for the Zed editor";
     homepage = "https://zed.dev";
+    license = lib.licenses.gpl3Plus;
     sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
     mainProgram = "zed";
     platforms = lib.platforms.darwin;

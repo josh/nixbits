@@ -52,7 +52,7 @@ plist2json.overrideAttrs (
               actual="$(plist2json <"$plistFile" | jq --compact-output --sort-keys)"
               if [[ "$actual" != "$expected" ]]; then
                 echo "expected '$expected' but was '$actual'"
-                return 1
+                exit 1
               fi
               touch $out
             '';
@@ -67,7 +67,7 @@ plist2json.overrideAttrs (
             ''
               if plist2json <"$fixture" >/dev/null 2>&1; then
                 echo "expected conversion to fail"
-                return 1
+                exit 1
               fi
               touch $out
             '';
@@ -106,7 +106,7 @@ plist2json.overrideAttrs (
               actual="$(plist2json <binary.plist | jq --compact-output --sort-keys)"
               if [[ "$actual" != '{"foo":"bar"}' ]]; then
                 echo "expected '{\"foo\":\"bar\"}' but was '$actual'"
-                return 1
+                exit 1
               fi
               touch $out
             '';
@@ -114,7 +114,7 @@ plist2json.overrideAttrs (
         error-empty = runCommand "test-plist2json-error-empty" { nativeBuildInputs = [ plist2json' ]; } ''
           if plist2json </dev/null >/dev/null 2>&1; then
             echo "expected empty input to fail"
-            return 1
+            exit 1
           fi
           touch $out
         '';
