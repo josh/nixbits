@@ -5,6 +5,13 @@ from typing import Iterable
 import click
 
 
+def _run_nix(args: list[str]) -> str:
+    result = subprocess.run(args, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise click.ClickException(f"{' '.join(args)} failed:\n{result.stderr.strip()}")
+    return result.stdout
+
+
 @click.command()
 @click.argument("root_flake_uris", nargs=-1, required=True)
 def main(root_flake_uris: list[str]) -> None:
@@ -50,8 +57,7 @@ def main(root_flake_uris: list[str]) -> None:
 
 def flake_inputs(flake_uri: str) -> set[str]:
     args = ["nix", "flake", "metadata", flake_uri, "--json"]
-    result = subprocess.run(args, check=True, capture_output=True, text=True)
-    metadata = json.loads(result.stdout)
+    metadata = json.loads(_run_nix(args))
 
     uris = set()
 
@@ -96,10 +102,9 @@ def flake_package_drv_map(flake_uri: str) -> dict[str, str]:
     ) flake.packages
     '''
     args = ["nix", "eval", "--json", "--expr", nix_expr]
-    result = subprocess.run(args, check=True, capture_output=True, text=True)
 
-    pkgs = json.loads(result.stdout)
-    for system, pkgs in pkgs.items():
+    pkgs_by_system = json.loads(_run_nix(args))
+    for pkgs in pkgs_by_system.values():
         for name, drv in pkgs.items():
             drv_map[drv] = f"{unpin_flake_uri}#{name}"
 
@@ -113,8 +118,7 @@ def input_derivation_paths(drv_paths: Iterable[str]) -> dict[str, set[str]]:
     for i in range(0, len(paths), chunk_size):
         chunk = paths[i : i + chunk_size]
         args = ["nix", "derivation", "show", *chunk]
-        result = subprocess.run(args, check=True, capture_output=True, text=True)
-        data = json.loads(result.stdout)
+        data = json.loads(_run_nix(args))
         input_drvs.update(
             {
                 drv_path: {d for d in drv_data["inputDrvs"].keys()}
