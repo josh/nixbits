@@ -3,6 +3,12 @@
   lib,
   ...
 }:
+let
+  nodeExporter = config.services.prometheus.exporters.node;
+  nodeExporterTarget = "${
+    if nodeExporter.listenAddress == "0.0.0.0" then "127.0.0.1" else nodeExporter.listenAddress
+  }:${toString nodeExporter.port}";
+in
 {
   config = lib.modules.mkMerge [
     {
@@ -67,11 +73,11 @@
           }
         ];
       })
-      ++ (lib.lists.optional config.services.prometheus.exporters.node.enable {
+      ++ (lib.lists.optional nodeExporter.enable {
         job_name = "node";
         scrape_interval = "30s";
         static_configs = [
-          { targets = [ "127.0.0.1:9100" ]; }
+          { targets = [ nodeExporterTarget ]; }
         ];
         relabel_configs = [
           {
