@@ -49,8 +49,21 @@ in
       };
 
       apiKey = lib.options.mkOption {
-        type = lib.types.str;
+        type = lib.types.nullOr lib.types.str;
+        default = null;
         description = "Healthchecks read-write API key";
+      };
+
+      apiKeyFile = lib.options.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Path to a file containing the read-write API key, read at runtime";
+      };
+
+      apiKeyCommand = lib.options.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Command printing the read-write API key on stdout, run at runtime";
       };
 
       pingKey = lib.options.mkOption {
@@ -65,9 +78,11 @@ in
           healthchecksConfig = {
             checksPath = pkgs.writers.writeJSON "healthchecks.json" cfg.checks;
             apiURL = cfg.url;
-            inherit (cfg) apiKey;
             delete = true;
-          };
+          }
+          // (lib.attrsets.optionalAttrs (cfg.apiKey != null) { inherit (cfg) apiKey; })
+          // (lib.attrsets.optionalAttrs (cfg.apiKeyFile != null) { inherit (cfg) apiKeyFile; })
+          // (lib.attrsets.optionalAttrs (cfg.apiKeyCommand != null) { inherit (cfg) apiKeyCommand; });
         };
       };
 
@@ -113,6 +128,29 @@ in
   };
 
   config = lib.modules.mkIf cfg.enable {
+    assertions =
+      let
+        slugCounts = lib.lists.foldl' (
+          counts: check: counts // { ${check.slug} = (counts.${check.slug} or 0) + 1; }
+        ) { } cfg.checks;
+        duplicateSlugs = builtins.attrNames (lib.attrsets.filterAttrs (_slug: count: count > 1) slugCounts);
+        apiKeySources = builtins.filter (source: source != null) [
+          cfg.apiKey
+          cfg.apiKeyFile
+          cfg.apiKeyCommand
+        ];
+      in
+      [
+        {
+          assertion = builtins.length apiKeySources <= 1;
+          message = "healthchecks: only one of apiKey, apiKeyFile or apiKeyCommand may be set";
+        }
+        {
+          assertion = duplicateSlugs == [ ];
+          message = "healthchecks.checks contains duplicate slugs: ${builtins.concatStringsSep ", " duplicateSlugs}";
+        }
+      ];
+
     systemd.services.healthchecks-apply = {
       description = "Sync healthchecks.io checks";
       wantedBy = [ "multi-user.target" ];
