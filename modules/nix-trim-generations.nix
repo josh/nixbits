@@ -20,11 +20,15 @@ in
   config = lib.modules.mkIf cfg.enable {
     systemd.paths.nix-trim-system-profile = {
       wantedBy = [ "multi-user.target" ];
-      pathConfig.PathChanged = "/nix/var/nix/profiles";
+      pathConfig = {
+        PathChanged = "/nix/var/nix/profiles";
+        TriggerLimitIntervalSec = 0;
+      };
     };
 
     systemd.services.nix-trim-system-profile = {
       description = "Trim system profile to the newest ${toString cfg.keep} generations";
+      startLimitIntervalSec = 0;
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${config.nix.package}/bin/nix-env --profile /nix/var/nix/profiles/system --delete-generations +${toString cfg.keep}";
