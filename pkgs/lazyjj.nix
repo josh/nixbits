@@ -30,13 +30,9 @@ stdenvNoCC.mkDerivation {
     "PATH"
     ":"
     (lib.strings.makeBinPath [ jujutsu ])
-  ]
-  ++ [
     "--set"
     "JJ_CONFIG"
     "${nixbits.jujutsu-config}"
-  ]
-  ++ [
     "--set"
     "GIT_CONFIG_GLOBAL"
     "${nixbits.git-config}"

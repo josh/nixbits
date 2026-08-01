@@ -113,7 +113,7 @@ let
         "${lib.getExe gh} auth git-credential"
       ];
     }
-    // (lib.attrsets.optionalAttrs stdenv.hostPlatform.isMacOS {
+    // (lib.attrsets.optionalAttrs stdenv.hostPlatform.isDarwin {
       helper = "osxkeychain";
     });
 

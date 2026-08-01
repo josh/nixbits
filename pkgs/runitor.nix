@@ -52,7 +52,7 @@ let
       timeout = checkTimeout;
     };
 in
-stdenvNoCC.mkDerivation (_finalAttrs: {
+stdenvNoCC.mkDerivation {
   inherit name;
 
   __structuredAttrs = true;
@@ -123,4 +123,4 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
     mainProgram = name;
     inherit (runitor.meta) platforms;
   };
-})
+}
