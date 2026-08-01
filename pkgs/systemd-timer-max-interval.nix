@@ -65,6 +65,31 @@ stdenvNoCC.mkDerivation (finalAttrs: {
             touch $out
           '';
 
+      calendar-utc-suffix =
+        runCommand "test-systemd-timer-max-interval-calendar-utc-suffix"
+          { nativeBuildInputs = [ systemd-timer-max-interval ]; }
+          ''
+            actual="$(systemd-timer-max-interval --calendar '*-*-* 04:00:00 UTC')"
+            expected="86400"
+            if [ "$actual" != "$expected" ]; then
+              echo "expected: '$expected' but was '$actual'"
+              exit 1
+            fi
+            touch $out
+          '';
+
+      timespan-calendar-exclusive =
+        runCommand "test-systemd-timer-max-interval-timespan-calendar-exclusive"
+          { nativeBuildInputs = [ systemd-timer-max-interval ]; }
+          ''
+            if systemd-timer-max-interval --timespan 1h --calendar daily 2>err.log; then
+              echo "expected --timespan with --calendar to fail"
+              exit 1
+            fi
+            grep --quiet "mutually exclusive" err.log
+            touch $out
+          '';
+
       timespan-randomized-delay =
         runCommand "test-systemd-timer-max-interval-timespan-randomized-delay"
           { nativeBuildInputs = [ systemd-timer-max-interval ]; }
