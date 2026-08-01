@@ -27,7 +27,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "systemd ExecStopPost script for Healthchecks.io";
+    description = "Systemd ExecStopPost script for Healthchecks.io";
     license = lib.licenses.mit;
     inherit (systemd.meta) platforms;
   };

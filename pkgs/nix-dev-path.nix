@@ -45,7 +45,7 @@ symlinkJoin {
     # keep-sorted end
   ];
   meta = {
-    description = "Favorite nix development tools";
+    description = "Bundle of Nix development tools";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

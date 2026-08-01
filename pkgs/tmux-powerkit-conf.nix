@@ -30,7 +30,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   '';
 
   meta = {
-    description = "Tmux powerkit config";
+    description = "Powerkit plugin configuration for tmux";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

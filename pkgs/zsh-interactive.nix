@@ -184,7 +184,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   };
 
   meta = {
-    description = "Zsh interactive shell initialization";
+    description = "Interactive shell initialization for Zsh";
     longDescription = ''
       Source via ~/.zshrc and ~/.zprofile
     '';

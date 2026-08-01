@@ -17,7 +17,7 @@ symlinkJoin {
     # keep-sorted end
   ];
   meta = {
-    description = "Favorite AI utilities";
+    description = "Bundle of AI command-line utilities";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

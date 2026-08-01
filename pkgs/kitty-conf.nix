@@ -29,7 +29,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "Kitty config";
+    description = "Configuration for the kitty terminal emulator";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

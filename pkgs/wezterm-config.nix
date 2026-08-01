@@ -43,7 +43,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "Wezterm config";
+    description = "Configuration for the WezTerm terminal emulator";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

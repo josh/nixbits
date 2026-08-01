@@ -15,7 +15,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "GNU tar alias";
+    description = "Alias exposing GNU tar under the gtar name";
     longDescription = ''
       Alias gtar to gnutar for GitHub Actions workflows.
       <https://github.com/actions/upload-pages-artifact/blob/2d163be/action.yml#L41>

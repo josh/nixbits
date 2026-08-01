@@ -84,7 +84,7 @@ let
 in
 config.overrideAttrs {
   meta = {
-    description = "Jujutsu config";
+    description = "Configuration for the Jujutsu version control system";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

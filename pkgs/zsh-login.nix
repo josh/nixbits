@@ -71,7 +71,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   };
 
   meta = {
-    description = "Zsh login shell initialization";
+    description = "Login shell initialization for Zsh";
     longDescription = ''
       Source via ~/.zprofile
     '';

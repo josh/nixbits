@@ -100,7 +100,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "Alacritty config";
+    description = "Configuration for the Alacritty terminal emulator";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

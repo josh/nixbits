@@ -15,7 +15,7 @@ symlinkJoin {
     # keep-sorted end
   ];
   meta = {
-    description = "Favorite VCS development tools";
+    description = "Bundle of version control tools";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

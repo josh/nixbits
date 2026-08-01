@@ -26,7 +26,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "systemd ExecStartPre script for Healthchecks.io";
+    description = "Systemd ExecStartPre script for Healthchecks.io";
     license = lib.licenses.mit;
     inherit (systemd.meta) platforms;
   };

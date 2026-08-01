@@ -73,7 +73,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   };
 
   meta = {
-    description = "Bash login shell initialization";
+    description = "Login shell initialization for Bash";
     longDescription = ''
       Source via ~/.bash_profile
     '';
