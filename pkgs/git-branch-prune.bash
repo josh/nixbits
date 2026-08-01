@@ -1,5 +1,3 @@
-current_branch=$(git rev-parse --abbrev-ref HEAD)
-
 default_branch=""
 if git show-ref --verify --quiet refs/heads/main; then
   default_branch="main"
@@ -10,13 +8,18 @@ else
   exit 1
 fi
 
-git branch --merged "$default_branch" |
-  { grep --invert-match --regexp "^[ *+]*$default_branch$" --regexp "^[ *+]*$current_branch$" || true; } |
-  while read -r branch; do
-    branch=${branch#"${branch%%[! ]*}"}
-    branch=${branch#"*"}
-    branch=${branch#"+"}
-    branch=${branch#" "}
+git branch --merged "$default_branch" --format=$'%(refname:short)\t%(worktreepath)' |
+  while IFS=$'\t' read -r branch worktree; do
+    case "$branch" in
+    "$default_branch" | "("*)
+      continue
+      ;;
+    esac
+
+    if [ -n "$worktree" ]; then
+      continue
+    fi
+
     echo "Removing branch: $branch" >&2
     git branch --delete "$branch"
   done
