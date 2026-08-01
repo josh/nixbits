@@ -16,7 +16,7 @@ let
     ];
     inheritPath = false;
     text = ''
-      curl --silent https://cloudflare.com/cdn-cgi/trace | grep ip= | cut -d= -f2
+      curl --silent --show-error --fail https://cloudflare.com/cdn-cgi/trace | grep '^ip=' | cut -d= -f2
     '';
   };
 in
