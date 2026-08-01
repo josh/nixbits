@@ -7,7 +7,7 @@ checks() {
     jq --raw-output \
       --arg system "${system}" \
       --arg prefix "${flake_uri}#checks.${system}." \
-      '.checks[$system] | keys | .[] | $prefix + .'
+      '(.checks[$system] // {}) | keys | .[] | $prefix + .'
 }
 
 nix flake check "${flake_uri}"
