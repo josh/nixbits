@@ -30,7 +30,7 @@ done
 
 actual_computer_name=$(scutil --get ComputerName)
 actual_local_host_name=$(scutil --get LocalHostName)
-actual_host_name=$(scutil --get HostName)
+actual_host_name=$(scutil --get HostName 2>/dev/null || true)
 
 if [ -z "$expected_computer_name" ]; then
   expected_computer_name="$actual_computer_name"
