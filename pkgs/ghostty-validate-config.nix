@@ -5,10 +5,10 @@
   ghostty,
 }:
 let
-  darwinScript = writeShellApplication {
+  darwin-script = writeShellApplication {
     name = "ghostty-validate-config";
-    text = builtins.readFile ./ghostty-validate-config-darwin.bash;
     inheritPath = false;
+    text = builtins.readFile ./ghostty-validate-config-darwin.bash;
     meta = {
       description = "Validate Ghostty configuration";
       license = lib.licenses.mit;
@@ -16,11 +16,11 @@ let
     };
   };
 
-  linuxScript = writeShellApplication {
+  linux-script = writeShellApplication {
     name = "ghostty-validate-config";
-    text = builtins.readFile ./ghostty-validate-config-linux.bash;
     runtimeInputs = [ ghostty ];
     inheritPath = false;
+    text = builtins.readFile ./ghostty-validate-config-linux.bash;
     meta = {
       description = "Validate Ghostty configuration";
       license = lib.licenses.mit;
@@ -28,4 +28,4 @@ let
     };
   };
 in
-if stdenv.hostPlatform.isDarwin then darwinScript else linuxScript
+if stdenv.hostPlatform.isDarwin then darwin-script else linux-script
