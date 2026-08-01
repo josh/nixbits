@@ -39,7 +39,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "Tailscale from the Mac App Store";
+    description = "Mesh VPN client from the Mac App Store";
     license = lib.licenses.unfree;
     sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
     mainProgram = "tailscale";

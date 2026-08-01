@@ -125,7 +125,7 @@ let
 in
 config.overrideAttrs {
   meta = {
-    description = "Git config";
+    description = "Configuration for the Git version control system";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

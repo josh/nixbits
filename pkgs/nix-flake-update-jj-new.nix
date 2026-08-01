@@ -17,7 +17,7 @@ writeShellApplication {
   };
   text = builtins.readFile ./nix-flake-update-jj-new.bash;
   meta = {
-    description = "Create a new jujutsu change, update nix flake input and create a new bookmark on success";
+    description = "Update a nix flake input in a new jujutsu change and bookmark it";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

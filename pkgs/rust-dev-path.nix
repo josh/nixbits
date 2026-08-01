@@ -21,7 +21,7 @@ symlinkJoin {
     # keep-sorted end
   ];
   meta = {
-    description = "Favorite Rust development tools";
+    description = "Bundle of Rust development tools";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

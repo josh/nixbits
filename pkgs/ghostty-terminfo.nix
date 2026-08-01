@@ -32,7 +32,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "Terminfo for ghostty";
+    description = "Terminfo entries for the Ghostty terminal emulator";
     homepage = "https://ghostty.org/docs/help/terminfo";
     inherit (ghostty.meta) license platforms broken;
   };

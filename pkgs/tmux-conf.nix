@@ -107,7 +107,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "Tmux config";
+    description = "Configuration for the tmux terminal multiplexer";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

@@ -33,7 +33,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "Zellij config";
+    description = "Configuration for the Zellij terminal multiplexer";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

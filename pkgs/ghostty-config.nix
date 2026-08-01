@@ -79,7 +79,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   '';
 
   meta = {
-    description = "Ghostty config";
+    description = "Configuration for the Ghostty terminal emulator";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

@@ -46,7 +46,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "Zed Command Line Tools";
+    description = "Command line tools for the Zed editor";
     homepage = "https://zed.dev";
     sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
     mainProgram = "zed";

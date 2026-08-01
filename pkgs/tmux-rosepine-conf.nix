@@ -29,7 +29,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   '';
 
   meta = {
-    description = "Tmux rosepine config";
+    description = "Rose Pine theme configuration for tmux";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

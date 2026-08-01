@@ -18,7 +18,7 @@ writeShellApplication {
   inheritPath = false;
   text = builtins.readFile ./gh-close-noop-prs.bash;
   meta = {
-    description = "Close my open PRs labeled noop whose only failing check is lockfile-drv-changed";
+    description = "Close noop PRs whose only failing check is lockfile-drv-changed";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

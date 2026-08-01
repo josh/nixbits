@@ -124,7 +124,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   };
 
   meta = {
-    description = "Bash interactive shell initialization";
+    description = "Interactive shell initialization for Bash";
     longDescription = ''
       Source via ~/.bashrc and ~/.bash_profile
     '';

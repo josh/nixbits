@@ -51,7 +51,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "BBEdit Command Line Tools";
+    description = "Command line tools for the BBEdit text editor";
     homepage = "https://www.barebones.com/products/bbedit/";
     license = lib.licenses.unfree;
     sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];

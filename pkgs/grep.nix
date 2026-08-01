@@ -33,7 +33,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "GNU grep with colors";
+    description = "Pattern search tool with colored output enabled";
     inherit (gnugrep.meta) license;
     mainProgram = "grep";
     inherit (gnugrep.meta) platforms;

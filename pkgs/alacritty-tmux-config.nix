@@ -121,7 +121,7 @@ in
 (writers.writeTOML "tmux.toml" config).overrideAttrs {
   name = "alacritty-tmux-config";
   meta = {
-    description = "Alacritty tmux config";
+    description = "Configuration for Alacritty that starts tmux";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };

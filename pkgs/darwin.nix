@@ -26,7 +26,7 @@ let
         outputHashMode = "nar";
 
         meta = {
-          description = "macOS system '${name}'";
+          description = "Impure macOS system command '${name}'";
           mainProgram = name;
           platforms = lib.platforms.darwin;
         };

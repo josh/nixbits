@@ -117,7 +117,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   '');
 
   meta = {
-    description = "Fish shell configuration";
+    description = "Configuration for the fish shell";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
