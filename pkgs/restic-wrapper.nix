@@ -122,10 +122,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         in
         runCommand "test-repository" { nativeBuildInputs = [ restic' ]; } ''
           export HOME=$(mktemp -d)
-          restic-wrapper --repo "$HOME/repo" init >/dev/null
-          restic-wrapper --repo "$HOME/repo" snapshots >/dev/null
-          restic-wrapper --repo="$HOME/repo" snapshots >/dev/null
-          RESTIC_REPOSITORY_FILE=/nonexistent restic-wrapper --repo "$HOME/repo" snapshots >/dev/null
+          ${lib.getExe restic'} --repo "$HOME/repo" init >/dev/null
+          ${lib.getExe restic'} --repo "$HOME/repo" snapshots >/dev/null
+          ${lib.getExe restic'} --repo="$HOME/repo" snapshots >/dev/null
+          RESTIC_REPOSITORY_FILE=/nonexistent ${lib.getExe restic'} --repo "$HOME/repo" snapshots >/dev/null
           touch $out
         '';
     };
