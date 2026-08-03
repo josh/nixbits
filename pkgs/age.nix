@@ -19,11 +19,6 @@ let
       nur.repos.josh.age-plugin-se
     else
       age-plugin-se;
-  age-plugin-tpm' =
-    if age-plugin-tpm.meta == pkgs.age-plugin-tpm.meta then
-      nur.repos.josh.age-plugin-tpm
-    else
-      age-plugin-tpm;
 
   features =
     (lib.lists.optional seSupport "se")
@@ -45,7 +40,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     age
   ]
   ++ (lib.lists.optional seSupport age-plugin-se')
-  ++ (lib.lists.optional tpmSupport age-plugin-tpm')
+  ++ (lib.lists.optional tpmSupport age-plugin-tpm)
   ++ (lib.lists.optional yubikeySupport age-plugin-yubikey);
 
   buildCommand = ''
