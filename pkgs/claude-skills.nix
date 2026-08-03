@@ -8,6 +8,7 @@ stdenvNoCC.mkDerivation {
     mkdir -p $out
     cp -R ${../.claude/skills/gh} $out/gh
     cp -R ${../.claude/skills/jj-describe} $out/jj-describe
+    cp -R ${../.claude/skills/jj-release} $out/jj-release
   '';
 
   meta = {
