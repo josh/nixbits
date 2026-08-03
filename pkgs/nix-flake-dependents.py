@@ -1,12 +1,12 @@
 import json
 import subprocess
-from typing import Iterable
+from collections.abc import Iterable
 
 import click
 
 
 def _run_nix(args: list[str]) -> str:
-    result = subprocess.run(args, capture_output=True, text=True)
+    result = subprocess.run(args, capture_output=True, text=True, check=False)
     if result.returncode != 0:
         raise click.ClickException(f"{' '.join(args)} failed:\n{result.stderr.strip()}")
     return result.stdout
@@ -121,7 +121,7 @@ def input_derivation_paths(drv_paths: Iterable[str]) -> dict[str, set[str]]:
         data = json.loads(_run_nix(args))
         input_drvs.update(
             {
-                drv_path: {d for d in drv_data["inputDrvs"].keys()}
+                drv_path: set(drv_data["inputDrvs"])
                 for drv_path, drv_data in data.items()
             }
         )

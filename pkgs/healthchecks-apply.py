@@ -11,6 +11,7 @@ import logging
 import re
 import shlex
 import subprocess
+import sys
 from pathlib import Path
 from typing import TypedDict
 
@@ -193,7 +194,7 @@ def main(
             else:
                 logger.warning(f"{slug} does not exist in local config")
 
-    exit(code)
+    sys.exit(code)
 
 
 def _load_checks_config(path: Path) -> dict[str, Check]:
@@ -232,8 +233,8 @@ def _hc_online(hc_api_url: str) -> bool:
     logger.debug(f"GET {url}")
     try:
         response = requests.get(url, timeout=(5, 10))
-    except Exception as e:
-        logger.error(f"Healthchecks instance is offline: {str(e)}")
+    except requests.RequestException as e:
+        logger.error(f"Healthchecks instance is offline: {e!s}")
         return False
     # Unauthenticated requests are expected to get a 4xx from a healthy server.
     if response.status_code >= 500:
@@ -274,8 +275,8 @@ def _hc_create_check(
         response = requests.post(url, headers=headers, json=check, timeout=(5, 30))
         response.raise_for_status()
         return True
-    except Exception as e:
-        logger.error(f"Error creating '{slug}' check: {str(e)}")
+    except requests.RequestException as e:
+        logger.error(f"Error creating '{slug}' check: {e!s}")
         return False
 
 
@@ -298,8 +299,8 @@ def _hc_update_check(
         response = requests.post(url, headers=headers, json=check, timeout=(5, 30))
         response.raise_for_status()
         return True
-    except Exception as e:
-        logger.error(f"Error updating '{slug}' check: {str(e)}")
+    except requests.RequestException as e:
+        logger.error(f"Error updating '{slug}' check: {e!s}")
         return False
 
 
@@ -321,8 +322,8 @@ def _hc_delete_check(
         response = requests.delete(url, headers=headers, timeout=(5, 30))
         response.raise_for_status()
         return True
-    except Exception as e:
-        logger.error(f"Error deleting '{slug}' check: {str(e)}")
+    except requests.RequestException as e:
+        logger.error(f"Error deleting '{slug}' check: {e!s}")
         return False
 
 
