@@ -1,7 +1,8 @@
 import os
 import re
 import subprocess
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
+from itertools import pairwise
 
 import click
 
@@ -15,6 +16,7 @@ class TimespanParamType(click.ParamType):
         process = subprocess.run(
             [SYSTEMD_ANALYZE, "timespan", str(value)],
             capture_output=True,
+            check=False,
         )
         if process.returncode != 0:
             self.fail(f"{value!r} is not a valid timespan", param, ctx)
@@ -35,6 +37,7 @@ class CalendarParamType(click.ParamType):
         process = subprocess.run(
             [SYSTEMD_ANALYZE, "calendar", "--iterations=12", value],
             capture_output=True,
+            check=False,
             env={**os.environ, "TZ": "UTC"},
         )
         if process.returncode != 0:
@@ -45,10 +48,14 @@ class CalendarParamType(click.ParamType):
                 r"(?:Next elapse|Iter(?:ation|\.) #\d+): \w+ (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) UTC",
                 line,
             ):
-                events.append(datetime.strptime(m.group(1), "%Y-%m-%d %H:%M:%S"))
+                events.append(
+                    datetime.strptime(m.group(1), "%Y-%m-%d %H:%M:%S").replace(
+                        tzinfo=UTC
+                    )
+                )
         if len(events) < 2:
             self.fail(f"{value!r} does not repeat", param, ctx)
-        return max(b - a for a, b in zip(events[:-1], events[1:]))
+        return max(b - a for a, b in pairwise(events))
 
 
 CALENDAR = CalendarParamType()
