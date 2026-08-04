@@ -1,10 +1,14 @@
 ---
 name: jj-release
-description: Cut and push a tagged release in a jj repository colocated with git. Use when the user asks to release, cut, or tag a new version (e.g. "release 0.7.1", "ship a patch version").
+description: Cut and push a tagged release in a jj repository colocated with git. Use only when the user names a version to release, cut, or tag (e.g. "release 0.7.1", "ship a patch version"). For committing, describing, or pushing ordinary work — including bumping a version string without tagging — use jj-describe instead.
 allowed-tools: Bash(git log:*), Bash(git show:*), Bash(git tag:*), Bash(git push:*), Bash(git ls-remote:*), Bash(jj log:*), Bash(jj diff:*), Bash(jj status:*), Bash(jj describe:*), Bash(jj bookmark:*), Bash(jj git push:*), Read, Edit
 ---
 
 # Release workflow (jj colocated with git)
+
+**Confirm before running anything.** This skill gets invoked when `jj-describe` was meant. State the
+package, version, and trunk bookmark you are about to release and wait for a yes. No version number
+in the request means it was almost certainly a mistake — ask, don't infer one.
 
 **jj cannot push tags.** This is a jj limitation, not a missing flag waiting to be found.
 `jj git push` pushes **bookmarks only** — there is no `--tag`. `jj tag set` writes a tag to the
