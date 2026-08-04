@@ -23,10 +23,15 @@ logger = logging.getLogger("healthchecks")
 
 SESSION = requests.Session()
 _ADAPTER = HTTPAdapter(
-    max_retries=Retry(total=None, connect=5, read=0, status=0, backoff_factor=2)
+    max_retries=Retry(total=None, connect=5, read=0, status=0, backoff_factor=0.5)
 )
 SESSION.mount("https://", _ADAPTER)
 SESSION.mount("http://", _ADAPTER)
+
+PROBE_SESSION = requests.Session()
+_PROBE_ADAPTER = HTTPAdapter(max_retries=0)
+PROBE_SESSION.mount("https://", _PROBE_ADAPTER)
+PROBE_SESSION.mount("http://", _PROBE_ADAPTER)
 
 
 class Check(TypedDict, total=False):
@@ -240,7 +245,7 @@ def _hc_online(hc_api_url: str) -> bool:
     url = _api_url(hc_api_url, "api/v3/checks/")
     logger.debug(f"GET {url}")
     try:
-        response = SESSION.get(url, timeout=(5, 10))
+        response = PROBE_SESSION.get(url, timeout=(5, 10))
     except requests.RequestException as e:
         logger.error(f"Healthchecks instance is offline: {e!s}")
         return False
