@@ -157,10 +157,17 @@ in
       wants = [ "network-online.target" ];
       after = [ "network-online.target" ];
       restartTriggers = [ cfg.activationPackage ];
+      unitConfig = {
+        StartLimitIntervalSec = 3600;
+        StartLimitBurst = 10;
+      };
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
         ExecStart = lib.getExe cfg.activationPackage;
+        Restart = "on-failure";
+        RestartSec = 30;
+        TimeoutStartSec = 300;
       };
     };
   };

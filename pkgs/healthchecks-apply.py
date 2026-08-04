@@ -17,8 +17,16 @@ from typing import TypedDict
 
 import click
 import requests
+from requests.adapters import HTTPAdapter, Retry
 
 logger = logging.getLogger("healthchecks")
+
+SESSION = requests.Session()
+_ADAPTER = HTTPAdapter(
+    max_retries=Retry(total=None, connect=5, read=0, status=0, backoff_factor=2)
+)
+SESSION.mount("https://", _ADAPTER)
+SESSION.mount("http://", _ADAPTER)
 
 
 class Check(TypedDict, total=False):
@@ -232,7 +240,7 @@ def _hc_online(hc_api_url: str) -> bool:
     url = _api_url(hc_api_url, "api/v3/checks/")
     logger.debug(f"GET {url}")
     try:
-        response = requests.get(url, timeout=(5, 10))
+        response = SESSION.get(url, timeout=(5, 10))
     except requests.RequestException as e:
         logger.error(f"Healthchecks instance is offline: {e!s}")
         return False
@@ -250,8 +258,11 @@ def _hc_list_check(
     url = _api_url(api_url, "api/v3/checks/")
     headers = {"X-Api-Key": api_key}
     logger.debug(f"GET {url}")
-    response = requests.get(url, headers=headers, timeout=(5, 30))
-    response.raise_for_status()
+    try:
+        response = SESSION.get(url, headers=headers, timeout=(5, 30))
+        response.raise_for_status()
+    except requests.RequestException as e:
+        raise click.ClickException(f"Error listing checks: {e!s}") from e
     return response.json()["checks"]
 
 
@@ -272,7 +283,7 @@ def _hc_create_check(
 
     try:
         logger.info(f"POST {url}")
-        response = requests.post(url, headers=headers, json=check, timeout=(5, 30))
+        response = SESSION.post(url, headers=headers, json=check, timeout=(5, 30))
         response.raise_for_status()
         return True
     except requests.RequestException as e:
@@ -296,7 +307,7 @@ def _hc_update_check(
 
     try:
         logger.info(f"POST {url}")
-        response = requests.post(url, headers=headers, json=check, timeout=(5, 30))
+        response = SESSION.post(url, headers=headers, json=check, timeout=(5, 30))
         response.raise_for_status()
         return True
     except requests.RequestException as e:
@@ -319,7 +330,7 @@ def _hc_delete_check(
 
     try:
         logger.info(f"DELETE {url}")
-        response = requests.delete(url, headers=headers, timeout=(5, 30))
+        response = SESSION.delete(url, headers=headers, timeout=(5, 30))
         response.raise_for_status()
         return True
     except requests.RequestException as e:

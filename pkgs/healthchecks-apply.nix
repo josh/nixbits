@@ -114,6 +114,19 @@ stdenvNoCC.mkDerivation (finalAttrs: {
             touch $out
           '';
 
+      list-error =
+        runCommand "test-healthchecks-apply-list-error" { nativeBuildInputs = [ healthchecks-apply ]; }
+          ''
+            if HC_API_URL="http://127.0.0.1:1" HC_API_KEY="test-token" \
+              healthchecks-apply ${checksFixture} 2>err.log; then
+              echo "expected unreachable server to fail" >&2
+              exit 1
+            fi
+            grep --quiet 'Error listing checks' err.log
+            ! grep --quiet 'Traceback' err.log
+            touch $out
+          '';
+
       duplicate-slug =
         runCommand "test-healthchecks-apply-duplicate-slug" { nativeBuildInputs = [ healthchecks-apply ]; }
           ''
