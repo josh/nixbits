@@ -11,7 +11,7 @@ let
     ${nixbits.xtrace}/bin/x -s -- ${security}/bin/security find-generic-password "$@"
   '';
 in
-stdenvNoCC.mkDerivation {
+stdenvNoCC.mkDerivation (finalAttrs: {
   name = "security-find-generic-password";
 
   __structuredAttrs = true;
@@ -53,7 +53,7 @@ stdenvNoCC.mkDerivation {
   meta = {
     description = "Find a generic password item in macOS Keychain";
     license = lib.licenses.mit;
-    mainProgram = "security-find-generic-password";
+    mainProgram = finalAttrs.name;
     platforms = lib.platforms.darwin;
   };
-}
+})
