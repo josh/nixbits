@@ -134,6 +134,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       license
       platforms
       ;
-    mainProgram = "age-decrypt";
+    mainProgram = finalAttrs.name;
   };
 })
