@@ -106,9 +106,12 @@ no body, and no `Co-authored-by`. Use a unique, short, bare hyphenated bookmark 
 `healthchecks-retry-backoff`; add no prefix. If that name already exists locally or remotely, choose
 a more specific slug rather than moving or deleting it.
 
-After the focused tests and checks pass:
+Each independent fix runs this cycle (the first one reuses the investigation change from step 1):
 
 ```bash
+jj git fetch --remote <remote>
+jj new <trunk>@<remote> -m "one line, under 72 characters"
+# test, fix, check
 jj bookmark create <slug> -r @
 jj git push --remote <remote> --bookmark <slug>
 ```

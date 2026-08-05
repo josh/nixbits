@@ -29,8 +29,17 @@ jj log -r @ -T 'change_id'        # SAVE THIS — the starting change
 - **The test runner**, including how to run a single test.
 - **The formatter and check gate** that has to pass before a push.
 
-Then run the existing suite once to establish a **baseline**. Record what already fails. Anything on
-that list is pre-existing and must not be reported as something the hunt introduced.
+Then branch off fresh trunk and take the **baseline** there — not on the starting change, which may
+be stale or carry the user's in-progress work:
+
+```bash
+jj git fetch --remote <remote>
+jj new <trunk>@<remote> -m "bug hunt baseline"
+```
+
+Run the existing suite once and record what already fails. Anything on that list is pre-existing and
+must not be reported as something the hunt introduced. Every fix branches from this same fetched
+trunk, so the baseline and the fixes share a base.
 
 **Never set up a test suite.** If the repository has none, fixes still land; the report marks them
 `no test coverage`.
@@ -106,11 +115,11 @@ patch-safe, cannot ship alone, or is a behavior change wearing a bug's clothes.
 One bug, one change, one bookmark. Fetch fresh trunk before each independent change:
 
 ```bash
-jj git fetch
+jj git fetch --remote <remote>
 jj new <trunk>@<remote> -m "one line, under 72 characters, why not what"
 # test, fix, check
 jj bookmark create <slug> -r @
-jj git push --bookmark <slug>
+jj git push --remote <remote> --bookmark <slug>
 ```
 
 - **Bookmark**: a bare descriptive slug, no prefix — `healthchecks-retry-backoff`. If the name
