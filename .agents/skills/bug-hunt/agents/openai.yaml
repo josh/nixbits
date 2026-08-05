@@ -1,0 +1,7 @@
+interface:
+  display_name: "Bug Hunt"
+  short_description: "Find, test, and publish atomic bug fixes"
+  default_prompt: "Use $bug-hunt to run a deep, test-driven bug hunt and publish each confirmed fix as its own Jujutsu bookmark."
+
+policy:
+  allow_implicit_invocation: false
