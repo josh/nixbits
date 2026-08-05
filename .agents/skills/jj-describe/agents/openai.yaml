@@ -1,0 +1,7 @@
+interface:
+  display_name: "Jujutsu Describe"
+  short_description: "Describe the current Jujutsu working copy"
+  default_prompt: "Use $jj-describe to describe the current Jujutsu working-copy change."
+
+policy:
+  allow_implicit_invocation: true

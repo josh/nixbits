@@ -1,0 +1,7 @@
+interface:
+  display_name: "GitHub Issues"
+  short_description: "Inspect, triage, and fix GitHub issues"
+  default_prompt: "Use $gh to inspect and work on a GitHub issue."
+
+policy:
+  allow_implicit_invocation: true

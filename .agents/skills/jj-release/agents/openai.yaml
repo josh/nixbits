@@ -1,0 +1,7 @@
+interface:
+  display_name: "Jujutsu Release"
+  short_description: "Cut and push a tagged Jujutsu release"
+  default_prompt: "Use $jj-release to cut and push a requested tagged release."
+
+policy:
+  allow_implicit_invocation: true
