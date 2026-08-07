@@ -29,17 +29,21 @@ jj log -r @ -T 'change_id'        # SAVE THIS — the starting change
 - **The test runner**, including how to run a single test.
 - **The formatter and check gate** that has to pass before a push.
 
-Then branch off fresh trunk and take the **baseline** there — not on the starting change, which may
-be stale or carry the user's in-progress work:
+Then take the **baseline** on fresh trunk — not on the starting change, which may be stale or carry
+the user's in-progress work:
 
 ```bash
 jj git fetch --remote <remote>
-jj new <trunk>@<remote> -m "bug hunt baseline"
+jj new <trunk>@<remote>
 ```
 
-Run the existing suite once and record what already fails. Anything on that list is pre-existing and
-must not be reported as something the hunt introduced. Every fix branches from this same fetched
-trunk, so the baseline and the fixes share a base.
+Leave that change undescribed; it is a workspace, not a commit to keep. Run the existing suite once
+there and record what already fails. Anything on that list is pre-existing and must not be reported
+as something the hunt introduced. Every fix branches from this same fetched trunk, so the baseline
+and the fixes share a base.
+
+The first confirmed fix reuses this change — `jj describe -m "<message>"` when it is ready to
+publish. Otherwise it stays empty and undescribed, and step 7 leaves it behind on exit.
 
 **Never set up a test suite.** If the repository has none, fixes still land; the report marks them
 `no test coverage`.
@@ -112,7 +116,8 @@ patch-safe, cannot ship alone, or is a behavior change wearing a bug's clothes.
 
 ## Step 5: Publish atomic changes
 
-One bug, one change, one bookmark. Fetch fresh trunk before each independent change:
+One bug, one change, one bookmark. The first fix reuses the step 1 baseline change (`jj describe -m
+"..."` instead of `jj new`). Fetch fresh trunk before every later independent change:
 
 ```bash
 jj git fetch --remote <remote>
