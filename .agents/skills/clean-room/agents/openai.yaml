@@ -1,0 +1,7 @@
+interface:
+  display_name: "Clean-Room Rewrite"
+  short_description: "Rebuild files without reading their originals"
+  default_prompt: "Use $clean-room to rebuild named files without reading their originals."
+
+policy:
+  allow_implicit_invocation: false
