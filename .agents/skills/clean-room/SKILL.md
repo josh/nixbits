@@ -92,16 +92,16 @@ targets, type signatures inferred from call sites, descriptive documentation, an
 
 The following bans bind both the primary session and the subagent from phase 1 until phase 4:
 
-| Channel | Closed |
-| --- | --- |
-| VCS content | `git show`, `cat-file`, `diff`, `log -p`, `blame`, `grep <rev>`, `stash show -p`, `archive`, `fsck`, and reflog; `jj show`, `diff`, `file show`, `log -p`, and `interdiff` |
-| VCS resurrection | `jj undo`, `jj op restore`, `jj op log -p`, `jj restore`, `git checkout -- <path>`, and `git restore`; these can silently bring masked files back |
-| Repository internals | `.git/` and `.jj/`, including objects, packfiles, `ORIG_HEAD`, `COMMIT_EDITMSG`, `.jj/repo/store`, and `.jj/working_copy` |
-| Host copies | Repository content or diffs through `gh`, other hosting APIs, raw-content URLs, releases, CI logs that echo source, or web copies of the repository or an upstream project whose file was vendored |
-| Build output and caches | `dist/`, `build/`, `target/`, `out/`, `.next/`, cache directories, bytecode caches, sourcemaps, coverage HTML, generated API docs, `/nix/store/*-source/`, and `result/` |
-| Editor and OS detritus | `*.orig`, `*.rej`, `*~`, `.#*`, `*.swp`, editor shelves or local history, OS trash, `tags`, and `cscope.out` |
-| Agent-side history | Memory or conversation-history search; Codex or ChatGPT session transcripts, exports, traces, prior scratchpads, or repository instruction files that quote a target |
-| Quarantine | `$QUARANTINE` is off-limits to every file read, search, directory listing, shell expansion, and other access until phase 4 |
+| Channel                 | Closed                                                                                                                                                                                             |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| VCS content             | `git show`, `cat-file`, `diff`, `log -p`, `blame`, `grep <rev>`, `stash show -p`, `archive`, `fsck`, and reflog; `jj show`, `diff`, `file show`, `log -p`, and `interdiff`                         |
+| VCS resurrection        | `jj undo`, `jj op restore`, `jj op log -p`, `jj restore`, `git checkout -- <path>`, and `git restore`; these can silently bring masked files back                                                  |
+| Repository internals    | `.git/` and `.jj/`, including objects, packfiles, `ORIG_HEAD`, `COMMIT_EDITMSG`, `.jj/repo/store`, and `.jj/working_copy`                                                                          |
+| Host copies             | Repository content or diffs through `gh`, other hosting APIs, raw-content URLs, releases, CI logs that echo source, or web copies of the repository or an upstream project whose file was vendored |
+| Build output and caches | `dist/`, `build/`, `target/`, `out/`, `.next/`, cache directories, bytecode caches, sourcemaps, coverage HTML, generated API docs, `/nix/store/*-source/`, and `result/`                           |
+| Editor and OS detritus  | `*.orig`, `*.rej`, `*~`, `.#*`, `*.swp`, editor shelves or local history, OS trash, `tags`, and `cscope.out`                                                                                       |
+| Agent-side history      | Memory or conversation-history search; Codex or ChatGPT session transcripts, exports, traces, prior scratchpads, or repository instruction files that quote a target                               |
+| Quarantine              | `$QUARANTINE` is off-limits to every file read, search, directory listing, shell expansion, and other access until phase 4                                                                         |
 
 If anyone sees an original through a stray sourcemap, resurrection command, editor backup, or any
 other channel, mark the rewrite **contaminated**. Name the channel plainly in the final report. Do
@@ -146,13 +146,13 @@ diff -u "$QUARANTINE/<path>" "<path>"
 
 Report one section per file:
 
-| Axis | State |
-| --- | --- |
-| Interface parity | Signatures or exports that moved and every affected caller |
-| Behavior parity | Where versions agree, where they diverge, and which behavior is correct |
-| **New-only** | What the rewrite does that the original never did—the ideas worth taking |
-| **Old-only** | What the original did that the rewrite lacks |
-| Size and dependencies | Line-count delta and dependencies added or removed |
+| Axis                  | State                                                                    |
+| --------------------- | ------------------------------------------------------------------------ |
+| Interface parity      | Signatures or exports that moved and every affected caller               |
+| Behavior parity       | Where versions agree, where they diverge, and which behavior is correct  |
+| **New-only**          | What the rewrite does that the original never did—the ideas worth taking |
+| **Old-only**          | What the original did that the rewrite lacks                             |
+| Size and dependencies | Line-count delta and dependencies added or removed                       |
 
 Flag every old-only behavior as **likely encoding history the rewrite could not know**: an
 unpredictable input guard, an upstream workaround, or an ordering constraint learned the hard way.
