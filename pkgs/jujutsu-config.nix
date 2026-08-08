@@ -28,11 +28,6 @@ let
       auto-track-bookmarks = "glob:push-*";
     };
 
-    # No longer supported on darwin
-    # merge-tools.kdiff3 = {
-    #   program = lib.getExe kdiff3;
-    # };
-
     merge-tools.meld = {
       program = lib.getExe meld;
     };
@@ -76,7 +71,7 @@ let
         "rebase"
         "--branch"
         "bookmarks()"
-        "--destination"
+        "--onto"
         "trunk()"
       ];
     };

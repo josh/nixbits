@@ -1,12 +1,14 @@
 {
   lib,
   writeShellApplication,
+  gnugrep,
   jujutsu,
   nixbits,
 }:
 writeShellApplication {
   name = "jj-bookmark-clean";
   runtimeInputs = [
+    gnugrep
     jujutsu
   ];
   inheritPath = false;

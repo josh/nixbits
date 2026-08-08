@@ -6,4 +6,4 @@ usage() {
 source "$XTRACE_PATH/share/bash/xtrace.bash"
 
 x jj git fetch --all-remotes
-x jj rebase --destination 'trunk()'
+x jj rebase --onto 'trunk()'
