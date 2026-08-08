@@ -20,6 +20,7 @@ writeShellApplication {
   ];
   inheritPath = false;
   runtimeEnv = {
+    GIT_CONFIG_GLOBAL = nixbits.git-config;
     JJ_CONFIG = nixbits.jujutsu-config;
     XTRACE_PATH = nixbits.xtrace;
   };

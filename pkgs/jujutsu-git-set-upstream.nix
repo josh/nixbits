@@ -21,6 +21,7 @@ writeShellApplication {
   ];
   inheritPath = false;
   runtimeEnv = {
+    GIT_CONFIG_GLOBAL = nixbits.git-config;
     XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./jujutsu-git-set-upstream.bash;
