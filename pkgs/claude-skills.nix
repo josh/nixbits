@@ -7,6 +7,7 @@ stdenvNoCC.mkDerivation {
   buildCommand = ''
     mkdir -p $out
     cp -R ${../.claude/skills/bug-hunt} $out/bug-hunt
+    cp -R ${../.claude/skills/clean-room} $out/clean-room
     cp -R ${../.claude/skills/gh} $out/gh
     cp -R ${../.claude/skills/jj-describe} $out/jj-describe
     cp -R ${../.claude/skills/jj-release} $out/jj-release
