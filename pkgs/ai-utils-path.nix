@@ -5,6 +5,7 @@
   claude-code,
   codex,
   opencode,
+  pi-coding-agent,
   # keep-sorted end
 }:
 symlinkJoin {
@@ -14,6 +15,7 @@ symlinkJoin {
     claude-code
     codex
     opencode
+    pi-coding-agent
     # keep-sorted end
   ];
   meta = {
