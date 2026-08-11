@@ -20,6 +20,7 @@ let
       nixbits.jujutsu-git-set-upstream
       nixbits.jujutsu-new-main
       nixbits.jujutsu-pull
+      nixbits.jujutsu-untracked
     ]
     ++ (lib.lists.optional watchman.meta.available watchman);
     nativeBuildInputs = [ makeWrapper ];
