@@ -21,6 +21,12 @@ symlinkJoin {
   name = "nix-dev-path";
   paths = [
     # keep-sorted start
+    (nixbits.nix-check.override { inherit nix; })
+    (nixbits.nix-flake-diff-packages.override { inherit nix; })
+    (nixbits.nix-flake-rebuild.override { inherit nix; })
+    (nixbits.nix-flake-update-jj-main.override { inherit nix; })
+    (nixbits.nix-flake-update-jj-new.override { inherit nix; })
+    (nixbits.nix-profile-upgrade.override { inherit nix; })
     deadnix
     nh
     nil
@@ -28,12 +34,6 @@ symlinkJoin {
     nix-tree
     nixbits.gh
     nixbits.git
-    nixbits.nix-check
-    nixbits.nix-flake-diff-packages
-    nixbits.nix-flake-rebuild
-    nixbits.nix-flake-update-jj-main
-    nixbits.nix-flake-update-jj-new
-    nixbits.nix-profile-upgrade
     nixbits.nixpkgs-review-pr
     nixd
     nixfmt
