@@ -37,7 +37,7 @@ if [ ! -d "$parent_dir" ]; then
   x-dry-run $dry_run -- mkdir -p "$parent_dir"
 fi
 
-x-dry-run $dry_run -- cp "$src" "$dst"
+x-dry-run $dry_run -- cp -f "$src" "$dst"
 
 if [ "$dry_run" = true ]; then
   exit 0
