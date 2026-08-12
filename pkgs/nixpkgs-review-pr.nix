@@ -2,6 +2,7 @@
   lib,
   writeShellApplication,
   gum,
+  nix,
   nixpkgs-review,
   nixbits,
 }:
@@ -13,7 +14,7 @@ writeShellApplication {
   runtimeInputs = [
     gh
     gum
-    nixpkgs-review
+    (nixpkgs-review.override { inherit nix; })
   ];
   inheritPath = false;
   text = builtins.readFile ./nixpkgs-review-pr.bash;

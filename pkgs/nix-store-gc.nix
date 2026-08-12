@@ -13,7 +13,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   runtimePath = [
     nix
-    nixbits.nix-store-usage
+    (nixbits.nix-store-usage.override { inherit nix; })
   ];
 
   nixStoreGCMax = 100 * 1024 * 1024 * 1024; # 100GB

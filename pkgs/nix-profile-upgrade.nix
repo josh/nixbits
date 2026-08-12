@@ -17,8 +17,8 @@ writeShellApplication {
     gh
     nix
     nix-output-monitor
-    nixbits.nix-profile-activate
-    nixbits.nix-profile-dry-run
+    (nixbits.nix-profile-activate.override { inherit nix; })
+    (nixbits.nix-profile-dry-run.override { inherit nix; })
     nixbits.nix-profile-run-hooks
     nvd
   ];

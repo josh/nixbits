@@ -27,6 +27,8 @@ symlinkJoin {
     (nixbits.nix-flake-update-jj-main.override { inherit nix; })
     (nixbits.nix-flake-update-jj-new.override { inherit nix; })
     (nixbits.nix-profile-upgrade.override { inherit nix; })
+    (nixbits.nixpkgs-review-pr.override { inherit nix; })
+    (nixpkgs-review.override { inherit nix; })
     deadnix
     nh
     nil
@@ -34,10 +36,8 @@ symlinkJoin {
     nix-tree
     nixbits.gh
     nixbits.git
-    nixbits.nixpkgs-review-pr
     nixd
     nixfmt
-    nixpkgs-review
     shellcheck
     shfmt
     statix
