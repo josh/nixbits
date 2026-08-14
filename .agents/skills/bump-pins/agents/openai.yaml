@@ -1,0 +1,7 @@
+interface:
+  display_name: "Bump Pinned Versions"
+  short_description: "Refresh external pins as atomic changes"
+  default_prompt: "Use $bump-pins to check and refresh pinned external versions as separate Jujutsu changes."
+
+policy:
+  allow_implicit_invocation: true
