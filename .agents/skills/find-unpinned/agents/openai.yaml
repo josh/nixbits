@@ -1,0 +1,7 @@
+interface:
+  display_name: "Find Unpinned Dependencies"
+  short_description: "Audit floating dependency versions and risks"
+  default_prompt: "Use $find-unpinned to audit this repository for floating dependencies and recommend maintainable pins."
+
+policy:
+  allow_implicit_invocation: true
