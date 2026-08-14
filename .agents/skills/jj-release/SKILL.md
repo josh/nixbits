@@ -55,6 +55,19 @@ jj diff --stat
 Stop if any other file moved. If the working copy already contains unrelated changes, ask before
 including them in the release change.
 
+Keep `pyproject.toml` and `uv.lock` in lockstep. The lockfile records the project's own version, so
+a version bump in `pyproject.toml` leaves it stale. Re-lock before verifying the diff:
+
+```bash
+uv lock
+```
+
+Include `uv.lock` in every release that bumps a version in `pyproject.toml`. Apply this rule even if
+the previous release omitted the lockfile; that omission is a mistake to avoid repeating, not a file
+set to copy. This does not apply when the version is dynamic — for example `hatch-vcs` or
+`setuptools-scm` — and `pyproject.toml` carries no version string. If `uv lock` changes anything
+beyond the project's own version entry, report that drift before committing.
+
 ## 3. Describe and push with Jujutsu
 
 Resolve the trunk bookmark from the repository rather than assuming `main`:
@@ -106,7 +119,8 @@ not poll CI unless asked.
 - Never create a GitHub Release object, release notes, changelog body, or release assets. Do not run
   `gh release create` or any other `gh release` command.
 - Never start a release the user did not request or invent a version number.
-- Bump only the files the previous release bumped.
+- Bump only the files the previous release bumped, plus `uv.lock` whenever the version in
+  `pyproject.toml` moved.
 - Never use a Jujutsu tag command.
 - Stop and report any failed step; do not retry a rejected push with different flags.
 - Never delete, move, or replace an existing tag.

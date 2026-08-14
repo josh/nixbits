@@ -1,7 +1,7 @@
 ---
 name: jj-release
 description: Cut and push a tagged release in a jj repository colocated with git. Use only when the user names a version to release, cut, or tag (e.g. "release 0.7.1", "ship a patch version"). For committing, describing, or pushing ordinary work — including bumping a version string without tagging — use jj-describe instead.
-allowed-tools: Bash(git log:*), Bash(git show:*), Bash(git tag:*), Bash(git push:*), Bash(git ls-remote:*), Bash(jj log:*), Bash(jj diff:*), Bash(jj status:*), Bash(jj describe:*), Bash(jj bookmark:*), Bash(jj git push:*), Read, Edit
+allowed-tools: Bash(git log:*), Bash(git show:*), Bash(git tag:*), Bash(git push:*), Bash(git ls-remote:*), Bash(jj log:*), Bash(jj diff:*), Bash(jj status:*), Bash(jj describe:*), Bash(jj bookmark:*), Bash(jj git push:*), Bash(uv lock:*), Read, Edit
 ---
 
 # Release workflow (jj colocated with git)
@@ -69,6 +69,20 @@ jj diff --stat
 Stop if anything else moved. If the working copy already had unrelated changes, ask before folding
 them into a release commit.
 
+**`pyproject.toml` and `uv.lock` move in lockstep.** The lockfile pins the project's own version, so
+bumping `pyproject.toml` leaves it stale. Re-lock before the diff check:
+
+```bash
+uv lock
+```
+
+`uv.lock` ships in every release that bumped a version in `pyproject.toml` — this one is a rule, not
+something to read off the previous release. A release that forgot the lockfile looks exactly like a
+release that never needed one, so copying its file set repeats the miss. The exception is a dynamic
+version (`hatch-vcs`, `setuptools-scm`), where `pyproject.toml` carries no version string to bump.
+If `uv lock` rewrites anything beyond the project's own version entry, that is pre-existing drift —
+say so before committing.
+
 ## Step 3: Commit and push (jj)
 
 Resolve the trunk bookmark rather than assuming `main`:
@@ -116,7 +130,8 @@ Do not poll CI afterwards unless asked.
   body, no assets — not even in repositories that already have some. A pushed `v<version>` git tag
   _is_ the release. `gh` is deliberately absent from `allowed-tools`.
 - Never start a release the user didn't ask for, and never invent the version number.
-- Bump only the files the previous release bumped.
+- Bump only the files the previous release bumped, plus `uv.lock` whenever `pyproject.toml`'s
+  version moved.
 - Never reach for a jj tag command — see the top of this file.
 - If a step fails, stop and report — do not retry a rejected push with different flags.
 - Never delete or move an existing tag.
