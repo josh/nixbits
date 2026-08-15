@@ -199,7 +199,7 @@ thing this skill may ever force-push. Defer to `jj-describe` for message convent
 restating it. Re-read the head sha immediately before and after the push; if it moved underneath,
 someone else pushed and the poll baseline is wrong — stop and report.
 
-Poll every 30 seconds, for at most 20 minutes from the push time `T`:
+Poll every 30 seconds, for at most 60 minutes from the push time `T`:
 
 | State           | Predicate                                          |
 | --------------- | -------------------------------------------------- |
@@ -211,17 +211,17 @@ Poll every 30 seconds, for at most 20 minutes from the push time `T`:
 **The `created_at > T` comparison is load-bearing.** A `+1` left by an earlier pass sits there
 indefinitely and reads as approval if its timestamp is not checked against the push.
 
-Twenty minutes is not padding. Observed latency from push to review runs several minutes, and push to
-`+1` has taken over ten. On timeout having never once observed `eyes`, classify it as _never
-triggered_ rather than _still running_, and offer `@codex review` once as recovery — charged against
-the pass budget.
+An hour is not padding. Observed latency from push to review runs several minutes, and push to `+1`
+has taken over ten, so the wait has to outlast a queue that is backed up rather than broken. On
+timeout having never once observed `eyes`, classify it as _never triggered_ rather than _still
+running_, and offer `@codex review` once as recovery — charged against the pass budget.
 
 ## Step 7: Terminate
 
 Four bounds, all of them required, or the loop runs until something else stops it:
 
-- **Pass budget of 3.** A pass is one push plus one wait; the initial triage is pass 0.
-- **The 20-minute per-pass timeout** from step 6.
+- **Pass budget of 10.** A pass is one push plus one wait; the initial triage is pass 0.
+- **The 60-minute per-pass timeout** from step 6.
 - **The content bound.** Key a seen-set on the normalized `(path, bold title)` of every finding
   handled. A repeat is auto-dismissed with no deliberation. **Thread ids are useless for this** — a
   resolve is permanent, but Codex re-raises the same complaint under a fresh thread id after a
