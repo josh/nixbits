@@ -110,6 +110,38 @@ release index, or the registry. Then apply these, which are the reason this skil
 - **A major-version jump is report-only** unless the user asked for majors. Say what the new major
   is and what it would take.
 
+### Latest is not the only candidate
+
+A version in a nixpkgs channel was already built against everything else in that channel; a tag cut
+yesterday has been integrated with nothing. So every dependency has three candidates — nixpkgs
+stable, nixpkgs unstable, upstream latest. nixpkgs is queried over the network, so none of this
+needs a flake or any Nix file in the repository.
+
+```bash
+STABLE=$(git ls-remote --heads https://github.com/NixOS/nixpkgs 'refs/heads/nixos-*' |
+  grep -oE 'nixos-[0-9]{2}\.[0-9]{2}$' | sort -V | tail -1)
+SYS=$(nix eval --raw --impure --expr builtins.currentSystem)
+VERSIONS='p: builtins.listToAttrs (map (n: { name = n; value = let r = builtins.tryEval (p.${n}.version or null); in if r.success then r.value else null; }) [ "go" "golangci-lint" "restic" ])'
+for ref in "$STABLE" nixpkgs-unstable; do
+  nix eval --json github:NixOS/nixpkgs/$ref#legacyPackages.$SYS --apply "$VERSIONS"
+done
+```
+
+Put every dependency in that one list — a batched eval is under a second, while `nix search`
+evaluates the whole package set and costs ~20s. Use search only when a name comes back `null`,
+anchored (`nix search github:NixOS/nixpkgs/$STABLE '^ripgrep$'`), since the attribute is not always
+the tool name. `search.nixos.org` shows the same versions where Nix is unavailable.
+
+**Agreeing candidates need no question** — bump and move on. **Diverging ones do**, and the split
+goes by kind of dependency:
+
+- **Toolchains follow stable.** A compiler ahead of the channel is built against what nothing else
+  in that channel is.
+- **Linters and formatters follow latest.** New diagnostics are the whole point.
+
+Recommend on that basis, ask once for all divergent dependencies at the same time, and take
+whatever the user picks. Record the chosen channel in the report.
+
 Divergent pins are a finding worth reporting even when nothing is bumpable: the same dependency
 pinned to two different versions in two files is drift that no upstream check will surface.
 
@@ -144,10 +176,10 @@ jj bookmark create bump-<dep>-<new> -r @
 
 Restore the saved starting change, then report one row per dependency:
 
-| Dependency | Sites | Current | Latest | Bookmark or held | Reason |
-| ---------- | ----- | ------- | ------ | ---------------- | ------ |
+| Dependency | Sites | Current | Stable / unstable / latest | Chosen | Bookmark or held | Reason |
+| ---------- | ----- | ------- | -------------------------- | ------ | ---------------- | ------ |
 
-After the table, explain every held pin, every ecosystem skipped because automation already covers
+Write `-` for a channel that does not package it. After the table, explain every held pin, every ecosystem skipped because automation already covers
 it, every non-semver or major-version pin left for the user, and any divergent pin found along the
 way. Confirm that nothing was pushed and that the starting change was restored.
 
@@ -157,6 +189,7 @@ way. Confirm that nothing was pushed and that the starting change was restored.
 - Never bump the project's own version, and never mix an own-version bump into a dependency change.
 - Never bump a matrix row that a comment marks as a compatibility floor.
 - Never bump a version in an ecosystem that `dependabot.yml` or `renovate.json` already declares.
+- Never choose between diverging nixpkgs and upstream versions unilaterally — ask.
 - Never hand-edit a generated lockfile — regenerate it with the tool that owns it.
 - Never change anything in `.github/workflows/` beyond the version literal itself.
 - Never force-push, move or delete a pre-existing bookmark, or run `jj abandon`, `jj squash`, or

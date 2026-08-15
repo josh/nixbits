@@ -75,7 +75,7 @@ dependency pair for this skill.
 ## 4. Decide which pins should move
 
 Check each external dependency's authoritative release source, such as its GitHub releases, vendor
-release index, or registry. Then apply these rules:
+release index, or registry. Resolve nixpkgs candidates as described below. Then apply these rules:
 
 - Keep matrix rows that carry a compatibility channel or release comment. Update only a row marked
   as tracking latest. Ask before changing uncommented rows whose policy is unclear.
@@ -88,6 +88,30 @@ release index, or registry. Then apply these rules:
 - Report major-version upgrades without changing them unless the user explicitly requested majors.
 
 Record every deliberate hold and its reason. Treat a held pin as a result rather than a failure.
+
+### Ask which version, not just the latest
+
+Every dependency has three candidate versions: nixpkgs stable, nixpkgs unstable, and the newest
+upstream release. Query nixpkgs over the network; the repository need not contain any Nix file.
+
+```bash
+STABLE=$(git ls-remote --heads https://github.com/NixOS/nixpkgs 'refs/heads/nixos-*' |
+  grep -oE 'nixos-[0-9]{2}\.[0-9]{2}$' | sort -V | tail -1)
+SYS=$(nix eval --raw --impure --expr builtins.currentSystem)
+VERSIONS='p: builtins.listToAttrs (map (n: { name = n; value = let r = builtins.tryEval (p.${n}.version or null); in if r.success then r.value else null; }) [ "go" "golangci-lint" "restic" ])'
+for ref in "$STABLE" nixpkgs-unstable; do
+  nix eval --json github:NixOS/nixpkgs/$ref#legacyPackages.$SYS --apply "$VERSIONS"
+done
+```
+
+List every dependency in that one evaluation per channel; `null` means nixpkgs has no such
+attribute. Find a real attribute name with `nix search github:NixOS/nixpkgs/$STABLE '^<name>$'`, or
+use `search.nixos.org` where Nix is unavailable.
+
+Bump without asking when the candidates agree. Otherwise ask once for all divergent dependencies,
+recommending nixpkgs stable for compilers, runtimes, and toolchains, and upstream latest for
+linters, formatters, and other tooling. Take the user's answer, and record the chosen channel in
+the report.
 
 ## 5. Create one change per dependency
 
@@ -119,11 +143,12 @@ Never push a bookmark or open a pull request. Let the user review and publish th
 
 Restore the saved starting change before reporting one row per dependency:
 
-| Dependency | Sites | Current | Latest | Bookmark or held | Reason |
-| ---------- | ----- | ------- | ------ | ---------------- | ------ |
+| Dependency | Sites | Current | Stable / unstable / latest | Chosen | Bookmark or held | Reason |
+| ---------- | ----- | ------- | -------------------------- | ------ | ---------------- | ------ |
 
-Explain every held pin, bot-managed ecosystem, ambiguous non-semver pin, unrequested major upgrade,
-divergent pin, and failed change after the table. Confirm that nothing was pushed and that the
+Write `-` for a channel that does not package the dependency. Explain every
+held pin, bot-managed ecosystem, ambiguous non-semver pin, unrequested major upgrade, divergent pin,
+and failed change after the table. Confirm that nothing was pushed and that the
 starting working-copy change was restored.
 
 ## Safety Rules
@@ -132,6 +157,7 @@ starting working-copy change was restored.
 - Never change the project's own version or mix it into a dependency bump.
 - Never change a compatibility row identified by a channel or release comment.
 - Never change an ecosystem already covered by Dependabot or Renovate.
+- Never pick between diverging nixpkgs and upstream candidates without asking.
 - Never hand-edit a generated lockfile.
 - Never change `.github/workflows/` beyond a dependency version literal.
 - Never force-push, move or delete an existing bookmark, or run `jj abandon`, `jj squash`, or
