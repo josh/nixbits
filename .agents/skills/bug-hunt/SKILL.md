@@ -25,11 +25,11 @@ below.
 
    ```bash
    jj git fetch --remote <remote>
-   jj new <trunk>@<remote> -m "Deep bug hunt"
+   jj new <trunk>@<remote>
    ```
 
-Reuse this investigation change for the first confirmed fix and replace its placeholder description
-with `jj describe --message "<message>"` before publishing it. Before every later independent fix,
+Reuse this investigation change for the first confirmed fix and set its description with
+`jj describe --message "<message>"` before publishing it. Before every later independent fix,
 fetch again and create another change from fetched remote trunk. On every terminal path, restore the
 saved starting change with `jj edit <saved-change-id>`. Abandon the investigation change only when it
 is verified empty, unbookmarked, and created by this run; never abandon another change.
