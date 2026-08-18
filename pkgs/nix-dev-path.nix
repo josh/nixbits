@@ -34,8 +34,6 @@ symlinkJoin {
     nil
     nix
     nix-tree
-    nixbits.gh
-    nixbits.git
     nixd
     nixfmt
     shellcheck
