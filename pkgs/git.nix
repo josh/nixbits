@@ -1,15 +1,20 @@
 {
+  lib,
+  stdenv,
   symlinkJoin,
   makeWrapper,
   runCommand,
   testers,
   git,
   nixbits,
+  git-config ? nixbits.git-config,
 }:
 let
   git' = symlinkJoin {
     pname = "git";
     inherit (git) version;
+
+    __structuredAttrs = true;
 
     paths = [
       git
@@ -19,7 +24,7 @@ let
     nativeBuildInputs = [ makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/git \
-        --set GIT_CONFIG_GLOBAL ${nixbits.git-config}
+        --set GIT_CONFIG_GLOBAL "$gitConfig"
     '';
 
     meta = {
@@ -35,9 +40,22 @@ let
 in
 git'.overrideAttrs (
   finalAttrs: _previousAttrs: {
+    gitConfig = git-config;
+
     passthru.tests =
       let
         git = finalAttrs.finalPackage;
+
+        git-with-extra-credentials = finalAttrs.finalPackage.overrideAttrs {
+          gitConfig = git-config.override {
+            extraCredentials = {
+              "https://git.example.com".helper = [
+                ""
+                "example-credential-helper"
+              ];
+            };
+          };
+        };
       in
       {
         version = testers.testVersion {
@@ -80,6 +98,56 @@ git'.overrideAttrs (
           fi
           touch $out
         '';
+
+        credential-helpers = runCommand "test-git-credential-helpers" { nativeBuildInputs = [ git ]; } ''
+          expected="${lib.getExe nixbits.gh} auth git-credential"
+          for url in https://github.com https://gist.github.com; do
+            actual="$(git config get --url=$url credential.helper)"
+            if [[ "$actual" != "$expected" ]]; then
+              echo "expected, '$expected' but was '$actual' for $url"
+              return 1
+            fi
+          done
+          touch $out
+        '';
+
+        extra-credentials =
+          runCommand "test-git-extra-credentials" { nativeBuildInputs = [ git-with-extra-credentials ]; }
+            ''
+              expected="example-credential-helper"
+              actual="$(git config get --url=https://git.example.com credential.helper)"
+              if [[ "$actual" != "$expected" ]]; then
+                echo "expected, '$expected' but was '$actual'"
+                return 1
+              fi
+
+              if git config get --url=https://github.com credential.helper | grep --quiet example-credential-helper; then
+                echo "expected 'example-credential-helper' to not apply to github.com"
+                return 1
+              fi
+
+              expected="${lib.getExe nixbits.gh} auth git-credential"
+              actual="$(git config get --url=https://github.com credential.helper)"
+              if [[ "$actual" != "$expected" ]]; then
+                echo "expected, '$expected' but was '$actual'"
+                return 1
+              fi
+              ${lib.strings.optionalString stdenv.hostPlatform.isDarwin ''
+
+                actual="$(git config get --url=https://example.com credential.helper)"
+                if [[ "$actual" != "osxkeychain" ]]; then
+                  echo "expected, 'osxkeychain' but was '$actual'"
+                  return 1
+                fi
+                actual="$(git config get --url=https://git.example.com credential.helper)"
+                if [[ "$actual" == "osxkeychain" ]]; then
+                  echo "expected 'osxkeychain' to be reset for git.example.com"
+                  return 1
+                fi
+              ''}
+
+              touch $out
+            '';
       };
   }
 )

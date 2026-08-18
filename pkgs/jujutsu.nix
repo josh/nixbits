@@ -7,6 +7,7 @@
   jujutsu,
   watchman,
   nixbits,
+  git-config ? nixbits.git-config,
 }:
 let
   jujutsu' = symlinkJoin {
@@ -27,7 +28,7 @@ let
     postBuild = ''
       wrapProgram $out/bin/jj \
         --set JJ_CONFIG ${nixbits.jujutsu-config} \
-        --set GIT_CONFIG_GLOBAL ${nixbits.git-config}
+        --set GIT_CONFIG_GLOBAL ${git-config}
     '';
 
     meta = {

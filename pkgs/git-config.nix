@@ -5,6 +5,7 @@
   diff-so-fancy,
   less,
   nixbits,
+  extraCredentials ? { },
 }:
 let
   inherit (nixbits) gh;
@@ -115,7 +116,8 @@ let
     }
     // (lib.attrsets.optionalAttrs stdenv.hostPlatform.isDarwin {
       helper = "osxkeychain";
-    });
+    })
+    // extraCredentials;
 
     # diff-so-fancy
     core.pager = "${lib.getExe diff-so-fancy} | ${lib.getExe less} --tabs=4 -RF";
