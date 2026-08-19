@@ -1,18 +1,25 @@
 ---
 name: codex-triage
-description: Work through Codex review feedback on a GitHub pull request — disprove each finding where possible, fix only what survives, resolve every thread without replying, and repeat until the bot stops objecting. Use only when the user asks to triage, address, dismiss, or clear Codex review feedback on a pull request. For reviewing a diff yourself, use code-review. For GitHub issues, use gh.
+description: Work through Codex review feedback on a GitHub pull request — dismiss by default, fix only the rare finding that survives a real attempt at disproof, resolve every thread without replying, and repeat until the bot stops objecting. Use only when the user asks to triage, address, dismiss, or clear Codex review feedback on a pull request. For reviewing a diff yourself, use code-review. For GitHub issues, use gh.
 ---
 
 # Triage Codex review feedback
 
 `chatgpt-codex-connector` reviews every pull request and re-reviews after every push. It has no
-authority. It did not write the change, was not told why the change is being made, and cannot see
-the plan the author is working from. Its most common failure is not a wrong detail inside a correct
-premise — it is a confident finding resting on a premise the author already ruled out.
+authority, no context, and no stake in the change. It did not write the code, was not told what the
+change is for, cannot see the plan the author is working from, and has no idea what machine, what
+directory, or what kind of data the program will ever touch. It pattern-matches a diff against a
+generic notion of Robust Software and emits confident prose with a severity badge it assigned itself.
 
-So the burden of proof runs the other way here. Each finding is an accusation to be disproven, and
-only the ones that survive a real attempt at disproof get a fix. The author's stated intent outranks
-the bot every time.
+Its output is adversarial noise with a low hit rate. **The default verdict is dismissal.** A finding
+buys a fix only by surviving a real attempt to kill it; sounding plausible buys nothing. The author's
+stated intent outranks the bot every time, and so does the author's knowledge of where the program
+actually runs — a thing the bot is structurally incapable of knowing and will never admit to not
+knowing.
+
+**The severity badge is self-assigned and worthless.** `P1` on a scenario that cannot occur is still
+nothing. It is styling, not evidence. Never let it stand in for a reachability argument, and never
+let it hurry a verdict.
 
 Invoking this skill authorizes resolving Codex threads, reacting to them, and force-pushing the PR's
 own branch without asking per push. It does not authorize replying to a review comment, pushing
@@ -136,32 +143,57 @@ you cannot restate is already dismissed.
 
 Dismiss only under one of these, and only with the evidence named:
 
-| Category                       | What counts as disproof                                                    |
-| ------------------------------ | -------------------------------------------------------------------------- |
-| Nonexistent code path          | grep showing zero callers, or the guard upstream that makes it unreachable |
-| Already handled elsewhere      | `file:line` of a check that dominates the flagged site                     |
-| Contradicted by a passing test | the test name and its assertion                                            |
-| Intentional per the author     | the PR body, commit message, or doc line that says so                      |
-| False premise about semantics  | a doc citation or a one-line demonstration                                 |
-| Pre-existing, not introduced   | `git blame` or `git log -S` showing it predates the diff                   |
+| Category                       | What counts as disproof                                                                                      |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| Nonexistent code path          | grep showing zero callers, or the guard upstream that makes it unreachable                                   |
+| Already handled elsewhere      | `file:line` of a check that dominates the flagged site                                                       |
+| Contradicted by a passing test | the test name and its assertion                                                                              |
+| Intentional per the author     | the PR body, commit message, doc line, or a direct instruction from the author                               |
+| False premise about semantics  | a doc citation or a one-line demonstration                                                                   |
+| Pre-existing, not introduced   | `git blame` or `git log -S` showing it predates the diff                                                     |
+| Out of scope for where it runs | name the program's actual domain — the directory it walks, the machine it runs on, the inputs it can receive |
 
-**The intent category should fire most.** It is the bot's structural blind spot: it sees the diff and
-not the reason for it. A flagged behavior that is the entire point of the change is the single most
-common shape of a wrong finding.
+**Intent and scope are where nearly every finding dies.** They are the bot's two structural blind
+spots: it sees the diff and not the reason for it, and it sees the code and not the world the code
+lives in. A flagged behavior that is the entire point of the change, or a hazard that the program's
+environment cannot produce, is the overwhelmingly common shape of a wrong finding. Reach for these
+two first and expect them to land.
+
+**Reachability in the real deployment, not in a laboratory.** Building a fixture to prove a scenario
+"can" happen proves only that you can build fixtures. If reaching the failure meant constructing a
+repository layout, a filename, a remote topology, or an input the author would never produce, you
+have _disproven_ the finding, not confirmed it. Write that down as the disproof and move on. A
+synthetic repro is the single easiest way to talk yourself into a pointless fix.
 
 **"Contradicted by a passing test" is unavailable without an existing test.** Writing one to
 manufacture a dismissal inverts the whole exercise. If no test covers it, this category does not
 apply.
 
 These are not disproofs, and they will be reached for if they are not named: "I read it and it looks
-fine", "unlikely in practice", "it's only a P3", "the fix would be ugly", "no test covers it so I
-can't verify". Absence of evidence is not disproof. Anything resting on one of these is accepted.
+fine", "it's only a P3", "the fix would be ugly", "no test covers it so I can't verify". Absence of
+evidence is not disproof.
+
+Do not confuse those with a scope argument, which is a real disproof. "This input cannot arise in the
+directory this tool audits" is disproof when you name the scope. "This input is unlikely" is not.
+State which of the two you actually have, and if it is the second, go find the first.
+
+**A fix that introduces a concept is a red flag.** If satisfying a finding means adding a state, a
+flag, a helper, a dependency, or a new failure mode to guard against something the author has never
+encountered, stop and ask the author before writing a line. A cheap guard on a real hazard is worth
+it. New machinery against an imagined one makes the program worse, and shipping it is the most
+expensive way this skill can fail — worse than missing a real bug, because the author now carries the
+weight forever.
 
 ## Step 5: Act on the verdict
 
-- **Dismissed** — react `-1`, resolve the thread, write nothing.
+- **Dismissed** — react `-1`, resolve the thread, write nothing. This is the expected outcome.
 - **Accepted** — make the narrowest change that renders the claim false, run the check gate, react
-  `+1`, resolve the thread, write nothing.
+  `+1`, resolve the thread, write nothing. If the narrowest change still adds a concept, ask the
+  author first rather than accepting on your own authority.
+
+If the author later overrules an acceptance, revert the change and flip the reaction to `-1`: delete
+the `+1` by its reaction id, then post the `-1`. The reaction records the finding's quality, so it
+has to end up matching the verdict that actually stood.
 
 The reaction is feedback to the review system about the finding's quality, not a message to the
 author. React on the **review comment** id — the REST `id`, which is neither the thread id
@@ -243,6 +275,9 @@ One row per finding, in the order they were handled:
 | Finding | Path | Verdict | Disproof category or fix | Reaction | Resolved |
 | ------- | ---- | ------- | ------------------------ | -------- | -------- |
 
+Report the accept-to-dismiss ratio. Accepting most of a pass is itself a signal that the intent and
+scope tests were skipped — say so plainly rather than presenting it as thoroughness.
+
 After the table, give the terminal state and the pass count, then the evidence behind every
 dismissal — a verdict without its `file:line`, test name, or citation is an assertion, and this
 skill exists to not make those. Name every human thread left untouched, every recurrence that
@@ -253,7 +288,11 @@ tripped a bound, and confirm that no reply comment was posted.
 - **Never post a reply to a review comment.** Not an agreement, not a rebuttal, not a note
   explaining the dismissal. The reaction and the resolve are the entire response.
 - Never resolve or react to a thread a human has participated in.
-- Never accept a finding without restating it as a concrete failure path first.
+- Never accept a finding without restating it as a concrete failure path first, reachable in the
+  environment the program actually runs in.
+- Never accept a finding you could only reach through a fixture you built yourself.
+- Never add a state, flag, helper, or dependency to satisfy a finding without asking the author.
+- Never treat the self-assigned severity badge as evidence of anything.
 - Never dismiss a finding on confidence alone — a disproof category without its evidence is a
   dismissal that ships a real bug.
 - Never force-push anything but the PR's own head bookmark, and never push trunk.
