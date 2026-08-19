@@ -110,7 +110,7 @@ _rsync() {
 _rsync \
   --archive \
   --checksum \
-  --chmod=-w \
+  --chmod=u+w \
   --copy-unsafe-links \
   --delete \
   --no-group \
