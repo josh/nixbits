@@ -22,6 +22,7 @@ let
       nixbits.jujutsu-new-main
       nixbits.jujutsu-pull
       nixbits.jujutsu-untracked
+      nixbits.jujutsu-wip-changes
     ]
     ++ (lib.lists.optional watchman.meta.available watchman);
     nativeBuildInputs = [ makeWrapper ];
