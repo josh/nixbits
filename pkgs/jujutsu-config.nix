@@ -37,7 +37,6 @@ let
     };
 
     revset-aliases = {
-      "closest_bookmark(to)" = "heads(::to & bookmarks())";
       "closest_pushable(to)" = "heads(::to & ~description(exact:\"\") & (~empty() | merges()))";
     };
 
@@ -55,9 +54,7 @@ let
       ];
       tug = [
         "bookmark"
-        "move"
-        "--from"
-        "closest_bookmark(@)"
+        "advance"
         "--to"
         "closest_pushable(@)"
       ];
