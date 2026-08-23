@@ -27,8 +27,8 @@ stdenvNoCC.mkDerivation (
     resolvedSymlinkPath = resolvePath "symlinkPath" finalAttrs.symlinkPath;
 
     mkSecret =
+      name:
       {
-        name,
         sopsFile,
         key ? name,
         format ? "json",
@@ -51,8 +51,8 @@ stdenvNoCC.mkDerivation (
       };
 
     mkTemplate =
+      name:
       {
-        name,
         path,
         content,
         mode ? "0400",
@@ -67,8 +67,13 @@ stdenvNoCC.mkDerivation (
         gid = 0;
       };
 
-    allSecrets = map mkSecret finalAttrs.sopsSecrets;
-    allTemplates = map mkTemplate finalAttrs.sopsTemplates;
+    secretsByName = lib.attrsets.mergeAttrsList (map (config: config.secrets or { }) finalAttrs.sops);
+    templatesByName = lib.attrsets.mergeAttrsList (
+      map (config: config.templates or { }) finalAttrs.sops
+    );
+
+    allSecrets = lib.attrsets.mapAttrsToList mkSecret secretsByName;
+    allTemplates = lib.attrsets.mapAttrsToList mkTemplate templatesByName;
   in
   {
     name = "sops-manifest.json";
@@ -81,16 +86,13 @@ stdenvNoCC.mkDerivation (
         "%r/secrets"
       else
         "${finalAttrs.homeDirectory}/.config/sops-nix/secrets";
-    sopsSecrets = [ ];
-    sopsTemplates = [ ];
+    sops = [ ];
 
     manifest = {
       symlinkPath = resolvedSymlinkPath;
       secrets = allSecrets;
       templates = allTemplates;
-      placeholderBySecretName = lib.listToAttrs (
-        map (secret: lib.nameValuePair secret.name (mkPlaceholder secret.name)) allSecrets
-      );
+      placeholderBySecretName = lib.attrsets.mapAttrs (name: _: mkPlaceholder name) secretsByName;
       secretsMountPoint = "%r/secrets.d";
       keepGenerations = 1;
       userMode = true;
@@ -133,23 +135,21 @@ stdenvNoCC.mkDerivation (
                   --input-type json --output-type json plain.json >$out/secret.json
               '';
 
-          testPackage = finalAttrs.finalPackage.overrideAttrs (previousAttrs: {
+          testPackage = finalAttrs.finalPackage.overrideAttrs {
             homeDirectory = "/tmp/sops-manifest-test";
-            sopsSecrets = previousAttrs.sopsSecrets ++ [
+            sops = [
               {
-                name = "foo";
-                key = "FOO";
-                sopsFile = "${testdata}/secret.json";
+                secrets.foo = {
+                  key = "FOO";
+                  sopsFile = "${testdata}/secret.json";
+                };
+                templates."foo.conf" = {
+                  path = "foo.conf";
+                  content = "foo=${mkPlaceholder "foo"}";
+                };
               }
             ];
-            sopsTemplates = previousAttrs.sopsTemplates ++ [
-              {
-                name = "foo.conf";
-                path = "foo.conf";
-                content = "foo=${mkPlaceholder "foo"}";
-              }
-            ];
-          });
+          };
         in
         {
           paths =
