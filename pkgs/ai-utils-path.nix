@@ -4,6 +4,7 @@
   # keep-sorted start
   claude-code,
   codex,
+  grok-cli,
   opencode,
   pi-coding-agent,
   # keep-sorted end
@@ -14,6 +15,7 @@ symlinkJoin {
     # keep-sorted start
     claude-code
     codex
+    grok-cli
     opencode
     pi-coding-agent
     # keep-sorted end
