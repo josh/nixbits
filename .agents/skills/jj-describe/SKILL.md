@@ -31,6 +31,7 @@ changes are automatically tracked.
 
 - Never push unless the user explicitly asks.
 - Never run `jj commit`, `jj new`, `jj abandon`, `jj squash`, or `jj rebase`.
+- Never run `jj tag`. Tagging a release belongs to jj-release, not to this skill.
 - Do not perform any mutation other than `jj describe` as part of this workflow.
 - When invoked as `$jj-describe` in Codex or `@jj-describe` in ChatGPT, describe the current
   working-copy change; no positional argument is required.
