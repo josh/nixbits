@@ -9,19 +9,23 @@ description: Cut and push a versioned release in a Jujutsu repository colocated 
 bookmark you are about to release, then wait for an explicit yes. Treat an invocation without a
 version number as likely accidental: ask for the version and do not infer one.
 
-Jujutsu cannot publish tags. `jj git push` pushes bookmarks, not tags, and `jj tag set` only writes
-a tag to the local store. Let Jujutsu own the commit and Git own the tag's entire lifecycle. This
-works because a colocated repository shares its object store between both tools.
+Jujutsu owns the entire release: describe, bookmark, tag, and push. `jj tag set` creates the tag and
+`jj git push --bookmark <trunk> --tag v<version>` publishes both refs in one command. Use Git only to
+read history during this workflow; never run a Git command that writes.
 
 ## 1. Find and inspect the previous release
 
 Read the release shape from the latest existing release:
 
 ```bash
-git tag --sort=-v:refname | head -3
+git for-each-ref --sort=-v:refname --format='%(refname:short)' refs/tags | head -3
 git show <previous-tag>
 git log <previous-tag>..<trunk> --oneline
 ```
+
+The sort must be version-aware. A lexicographic sort ranks `v0.9.0` above `v0.10.0`, which reads the
+wrong release as the latest and bumps from the wrong base. `-v:refname` sorts by version; check any
+substitute against that case before trusting it.
 
 Use `git show` to determine both:
 
@@ -68,39 +72,36 @@ set to copy. This does not apply when the version is dynamic — for example `ha
 `setuptools-scm` — and `pyproject.toml` carries no version string. If `uv lock` changes anything
 beyond the project's own version entry, report that drift before committing.
 
-## 3. Describe and push with Jujutsu
+## 3. Describe, tag, and push with Jujutsu
 
 Resolve the trunk bookmark from the repository rather than assuming `main`:
 
 ```bash
 jj describe --message "<package name> <version>"
 jj bookmark set <trunk> -r @
-jj git push --bookmark <trunk>
+jj tag set v<version> -r <trunk>
+jj git push --bookmark <trunk> --tag v<version>
 ```
+
+Run these in order. `jj tag set` resolves `<trunk>`, so moving the bookmark first is what places the
+tag on the release commit rather than on its parent. No commit ID needs to be read or copied, and a
+later commit ID rewrite cannot strand the tag.
+
+Push the bookmark and the tag in one command. Pushing only the tag publishes the release commit under
+that tag while leaving `<trunk>` on the parent commit, which releases a version that is not on the
+branch.
+
+Name the exact tag. `--tag` matches glob patterns and `--all` pushes every bookmark and tag; neither
+belongs in a release.
+
+If `jj tag set` reports that it refuses to move the tag, the version is already released. Stop and
+ask the user; do not pass `--allow-move`.
 
 Treat `Bypassed rule violations` as a successful admin bypass of required status checks. If the
 push is rejected, stop and explain that the release needs a pull request; do not retry with
 different flags.
 
-## 4. Tag the pushed SHA with Git
-
-Tag the pushed SHA, not `HEAD`. Jujutsu can rewrite commit IDs as the working copy moves, so read
-the trunk commit ID after the push:
-
-```bash
-jj log -r <trunk> --no-graph -T 'commit_id'
-```
-
-Copy that exact commit ID into the following commands:
-
-```bash
-git tag v<version> <pushed-sha>
-git push origin v<version>
-```
-
-Create a lightweight tag: do not pass `-a`, `-m`, or signing options.
-
-## 5. Confirm the remote refs
+## 4. Confirm the remote refs
 
 ```bash
 git ls-remote origin refs/heads/<trunk> refs/tags/v<version>
@@ -108,6 +109,9 @@ git ls-remote origin refs/heads/<trunk> refs/tags/v<version>
 
 Both refs must resolve to the same SHA. Report that plainly and stop; the pushed tag is the entire
 release.
+
+`git ls-remote` queries the remote, whereas `jj tag list -a` shows only Jujutsu's local record of
+what it last pushed or fetched. Confirm with the remote query.
 
 ## Report tag-triggered automation
 
@@ -121,8 +125,12 @@ not poll CI unless asked.
 - Never start a release the user did not request or invent a version number.
 - Bump only the files the previous release bumped, plus `uv.lock` whenever the version in
   `pyproject.toml` moved.
-- Never use a Jujutsu tag command.
+- Never run a Git command that writes. Git reads history in this workflow; Jujutsu performs every
+  mutation.
 - Stop and report any failed step; do not retry a rejected push with different flags.
-- Never delete, move, or replace an existing tag.
+- Never delete, move, or replace an existing tag. Once a tag is tracked — and `jj git fetch` tracks
+  remote tags automatically — a local move or deletion is published on the next `jj git push` or
+  `jj git push --deleted`. Do not count on a safety check to catch it.
+- Create lightweight tags: no annotation, no message, no signing.
 - When invoked as `$jj-release` in Codex or `@jj-release` in ChatGPT, take the requested version
   from the prompt rather than expecting a positional argument.
