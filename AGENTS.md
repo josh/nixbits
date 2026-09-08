@@ -41,7 +41,11 @@ Packages defined under `pkgs/` are automatically exposed in the flake's package 
 - A file evaluating to an attrset with `recurseForDerivations` (currently only `pkgs/darwin.nix`) has its members exposed under their derivation names, e.g. `nix build .#open-impure-darwin` for `darwin.open`.
 - Packages whose `meta.available` is false on the current system are omitted from `packages` and `checks` entirely.
 
+`overlays.default` is not self-contained. It expects `nurpkgs.overlays.default` (providing `nur`) and `overlays.wrappers` (providing `wlibEvalPackage`, from [nix-wrapper-modules](https://github.com/nix-community/nix-wrapper-modules)) to be applied first.
+
 ## Modules
+
+`modules/` holds two unrelated kinds of module. NixOS modules are listed by hand in `modules/default.nix` and `nixosModules`; [nix-wrapper-modules](https://github.com/nix-community/nix-wrapper-modules) wrapper modules (currently `modules/helix-wrapper.nix`) are listed in neither, and are imported directly by the package that evaluates them. The rest of this section applies only to the NixOS modules.
 
 NixOS modules under `modules/` are exported as `nixosModules.*` but are NOT evaluated by `nix flake check` — a module that fails to evaluate still passes the full check. After changing a module, evaluate it against a minimal system:
 

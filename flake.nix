@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nurpkgs.url = "github:josh/nurpkgs";
+    nix-wrapper-modules.url = "github:nix-community/nix-wrapper-modules";
   };
 
   outputs =
@@ -11,6 +12,7 @@
       self,
       nixpkgs,
       nurpkgs,
+      nix-wrapper-modules,
     }:
     let
       internal-inputs = builtins.mapAttrs (
@@ -31,6 +33,7 @@
           overlays = [
             self.overlays.broken
             nurpkgs.overlays.default
+            self.overlays.wrappers
             self.overlays.default
           ];
           config.allowUnfreePredicate = _pkg: true;
@@ -84,6 +87,10 @@
       overlays = {
         default = import ./overlay.nix;
         broken = import ./overlays/broken.nix;
+        wrappers = final: _prev: {
+          wlibEvalPackage =
+            module: nix-wrapper-modules.lib.evalPackage ([ { pkgs = final; } ] ++ lib.lists.toList module);
+        };
       };
 
       packages = eachSystem (system: mkPackages (importNixpkgs nixpkgs system));
