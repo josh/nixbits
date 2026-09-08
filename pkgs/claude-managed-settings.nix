@@ -11,6 +11,8 @@ let
       pr = "";
       sessionUrl = false;
     };
+    cleanupPeriodDays = 30;
+    desktopSessionCleanupPeriodDays = 30;
     feedbackDrafts = "off";
   } extraSettings;
 in
