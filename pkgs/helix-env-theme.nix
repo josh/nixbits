@@ -1,7 +1,6 @@
 {
   lib,
   writeShellApplication,
-  helix,
   nixbits,
   helixConfig ? { },
 }:
@@ -12,10 +11,7 @@ let
       themeAttrs = lib.attrsets.optionalAttrs (theme != null) { inherit theme; };
       helixConfig' = helixConfig // themeAttrs;
     in
-    nixbits.helix.override {
-      inherit helix;
-      helixConfig = helixConfig';
-    };
+    nixbits.helix.override { helixConfig = helixConfig'; };
   mkHelixExe = theme: lib.getExe (mkHelix theme);
 in
 writeShellApplication {
@@ -67,8 +63,6 @@ writeShellApplication {
     esac
   '';
   meta = {
-    # The wrapper may swap the helix argument for evil-helix; describe the
-    # package that is actually executed.
     inherit ((mkHelix null).meta)
       description
       license

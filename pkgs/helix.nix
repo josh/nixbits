@@ -1,20 +1,17 @@
 {
   lib,
-  pkgs,
   stdenvNoCC,
   writers,
   lndir,
   makeWrapper,
-  evil-helix,
-  helix ? evil-helix,
+  helix,
   helixConfig ? { },
 }:
 let
-  helix' = if helix == pkgs.helix then evil-helix else helix;
   helixConfigFile = writers.writeTOML "helix-config.toml" helixConfig;
 in
 stdenvNoCC.mkDerivation {
-  inherit (helix') pname version;
+  inherit (helix) pname version;
 
   __structuredAttrs = true;
 
@@ -30,14 +27,14 @@ stdenvNoCC.mkDerivation {
 
   buildCommand = ''
     mkdir -p $out
-    lndir -silent ${helix'} $out
+    lndir -silent ${helix} $out
 
     rm $out/bin/hx
-    makeWrapper ${lib.getExe helix'} $out/bin/hx "''${makeWrapperArgs[@]}"
+    makeWrapper ${lib.getExe helix} $out/bin/hx "''${makeWrapperArgs[@]}"
   '';
 
   meta = {
-    inherit (helix'.meta) description license platforms;
+    inherit (helix.meta) description license;
     mainProgram = "hx";
   };
 }
