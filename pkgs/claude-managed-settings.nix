@@ -11,6 +11,7 @@ let
       pr = "";
       sessionUrl = false;
     };
+    feedbackDrafts = "off";
   } extraSettings;
 in
 stdenvNoCC.mkDerivation {
