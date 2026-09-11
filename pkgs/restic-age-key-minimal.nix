@@ -3,9 +3,9 @@
   runCommand,
   testers,
   rclone,
-  nixbits,
+  nur,
 }:
-nixbits.restic-age-key.overrideAttrs (
+nur.repos.josh.restic-age-key.overrideAttrs (
   finalAttrs: previousAttrs: {
     ldflags = builtins.filter (
       flag: !(lib.strings.hasPrefix "-X main.RcloneProgram=" flag)
