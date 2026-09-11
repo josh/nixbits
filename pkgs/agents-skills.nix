@@ -9,8 +9,10 @@ stdenvNoCC.mkDerivation {
     cp -R ${../.agents/skills/bug-hunt} $out/bug-hunt
     cp -R ${../.agents/skills/bump-pins} $out/bump-pins
     cp -R ${../.agents/skills/clean-room} $out/clean-room
+    cp -R ${../.agents/skills/codex-triage} $out/codex-triage
     cp -R ${../.agents/skills/find-unpinned} $out/find-unpinned
     cp -R ${../.agents/skills/gh} $out/gh
+    cp -R ${../.agents/skills/gh-pr-ci} $out/gh-pr-ci
     cp -R ${../.agents/skills/jj-describe} $out/jj-describe
     cp -R ${../.agents/skills/jj-release} $out/jj-release
   '';

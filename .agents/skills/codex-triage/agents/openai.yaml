@@ -1,0 +1,7 @@
+interface:
+  display_name: "Codex Review Triage"
+  short_description: "Triage and resolve Codex pull request findings"
+  default_prompt: "Use $codex-triage to triage and resolve Codex review feedback on a pull request."
+
+policy:
+  allow_implicit_invocation: true
