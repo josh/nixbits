@@ -1,0 +1,7 @@
+interface:
+  display_name: "Pull Request CI"
+  short_description: "Diagnose and fix a pull request's failing checks"
+  default_prompt: "Use $gh-pr-ci to investigate and fix the failing checks on a pull request."
+
+policy:
+  allow_implicit_invocation: true
