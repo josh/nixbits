@@ -33,7 +33,6 @@
           overlays = [
             self.overlays.broken
             nurpkgs.overlays.default
-            self.overlays.wrappers
             self.overlays.default
           ];
           config.allowUnfreePredicate = _pkg: true;
@@ -85,7 +84,7 @@
     in
     {
       overlays = {
-        default = import ./overlay.nix;
+        default = lib.fixedPoints.composeExtensions self.overlays.wrappers (import ./overlay.nix);
         broken = import ./overlays/broken.nix;
         wrappers = final: _prev: {
           wlibEvalPackage =

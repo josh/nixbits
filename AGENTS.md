@@ -41,7 +41,7 @@ Packages defined under `pkgs/` are automatically exposed in the flake's package 
 - A file evaluating to an attrset with `recurseForDerivations` (currently only `pkgs/darwin.nix`) has its members exposed under their derivation names, e.g. `nix build .#open-impure-darwin` for `darwin.open`.
 - Packages whose `meta.available` is false on the current system are omitted from `packages` and `checks` entirely.
 
-`overlays.default` is not self-contained. It expects `nurpkgs.overlays.default` (providing `nur`) and `overlays.wrappers` (providing `wlibEvalPackage`, from [nix-wrapper-modules](https://github.com/nix-community/nix-wrapper-modules)) to be applied first.
+`overlays.default` is not self-contained. It expects `nurpkgs.overlays.default` (providing `nur`) to be applied first.
 
 ## Modules
 
