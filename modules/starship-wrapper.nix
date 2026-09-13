@@ -18,7 +18,7 @@
     custom.jj = {
       description = "Current jj change / bookmarks";
       when = "${pkgs.jujutsu}/bin/jj root --ignore-working-copy";
-      symbol = "󰠬 ";
+      symbol = " ";
       style = "bold purple";
       format = "on [$symbol]($style)$output ";
       command = "${pkgs.nixbits.starship-jj-command}/bin/starship-jj-command";
