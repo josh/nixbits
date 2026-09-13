@@ -14,6 +14,11 @@ let
     cleanupPeriodDays = 30;
     desktopSessionCleanupPeriodDays = 30;
     feedbackDrafts = "off";
+    env = {
+      CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY = "1";
+      DISABLE_BUG_COMMAND = "1";
+      DISABLE_FEEDBACK_COMMAND = "1";
+    };
   } extraSettings;
 in
 stdenvNoCC.mkDerivation {
