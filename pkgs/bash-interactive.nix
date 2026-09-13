@@ -8,12 +8,11 @@
   fzf,
   neovim,
   shellcheck-minimal,
-  starship,
   nur,
   nixbits,
 }:
 let
-  inherit (nixbits) direnv;
+  inherit (nixbits) direnv starship;
   inherit (nur.repos.josh) iterm2-shell-integration;
 
   path = symlinkJoin {
