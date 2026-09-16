@@ -62,10 +62,8 @@ fi
 x jj edit "$branch"
 
 skills=(
-  # keep-sorted start
-  codex-triage
   gh-pr-ci
-  # keep-sorted end
+  codex-triage
 )
 
 skill=$(printf '%s\n' "${skills[@]}" | gum choose --header "Skill") || exit $?
