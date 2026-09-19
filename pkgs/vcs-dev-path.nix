@@ -2,6 +2,7 @@
   lib,
   symlinkJoin,
   runCommand,
+  jjui,
   tea,
   nixbits,
   extraGitCredentials ? { },
@@ -19,6 +20,7 @@ let
       # keep-sorted start
       gh
       git
+      jjui
       jujutsu
       lazygit
       lazyjj
