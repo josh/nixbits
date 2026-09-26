@@ -1,33 +1,8 @@
 {
-  symlinkJoin,
-  makeWrapper,
-  zellij,
-  nixbits,
+  wlibEvalPackage,
   zellijTheme ? null,
 }:
-let
-  configDir = nixbits.zellij-config.override { inherit zellijTheme; };
-in
-symlinkJoin {
-  pname = "zellij";
-  inherit (zellij) version;
-
-  paths = [
-    zellij
-  ];
-  nativeBuildInputs = [ makeWrapper ];
-  postBuild = ''
-    wrapProgram $out/bin/zellij \
-      --set ZELLIJ_CONFIG_DIR '${configDir}'
-  '';
-
-  meta = {
-    inherit (zellij.meta)
-      description
-      homepage
-      license
-      platforms
-      ;
-    mainProgram = "zellij";
-  };
-}
+wlibEvalPackage [
+  { inherit zellijTheme; }
+  ../modules/zellij-wrapper.nix
+]
