@@ -2,7 +2,6 @@
   lib,
   stdenvNoCC,
   runtimeShell,
-  jq,
 }:
 let
   app = "/Applications/Zed.app";
@@ -11,8 +10,6 @@ stdenvNoCC.mkDerivation {
   name = "zed-cli";
 
   __structuredAttrs = true;
-
-  nativeBuildInputs = [ jq ];
 
   wrapper = ''
     #!${runtimeShell} -e
@@ -27,12 +24,6 @@ stdenvNoCC.mkDerivation {
     fi
   '';
 
-  tccpolicyPolicy = {
-    "dev.zed.Zed" = {
-      "SystemPolicyAllFiles" = true;
-    };
-  };
-
   buildCommand = ''
     mkdir -p $out/bin $out/share/nix/hooks/pre-install.d
     echo "$wrapper" >$out/bin/zed
@@ -40,9 +31,6 @@ stdenvNoCC.mkDerivation {
 
     echo "$preInstallHook" >$out/share/nix/hooks/pre-install.d/zed
     chmod +x $out/share/nix/hooks/pre-install.d/zed
-
-    mkdir -p $out/share/tccpolicy.d
-    jq --raw-output '.tccpolicyPolicy' <"$NIX_ATTRS_JSON_FILE" >$out/share/tccpolicy.d/zed.json
   '';
 
   meta = {

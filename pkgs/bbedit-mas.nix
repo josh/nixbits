@@ -1,24 +1,15 @@
 {
   lib,
   stdenvNoCC,
-  jq,
 }:
 stdenvNoCC.mkDerivation {
   name = "bbedit-mas";
 
   __structuredAttrs = true;
 
-  nativeBuildInputs = [ jq ];
-
   appPath = "/Applications/BBEdit.app";
 
   masID = 404009241;
-
-  tccpolicyPolicy = {
-    "com.barebones.bbedit" = {
-      "SystemPolicyAllFiles" = true;
-    };
-  };
 
   preinstallHookScript = ''
     if [ ! -d "/Applications/BBEdit.app" ]; then
@@ -45,9 +36,6 @@ stdenvNoCC.mkDerivation {
 
     mkdir -p $out/share/mas
     echo "BBEdit" >$out/share/mas/$masID
-
-    mkdir -p $out/share/tccpolicy.d
-    jq --raw-output '.tccpolicyPolicy' <"$NIX_ATTRS_JSON_FILE" >$out/share/tccpolicy.d/bbedit.json
   '';
 
   meta = {
