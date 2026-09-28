@@ -1,0 +1,7 @@
+interface:
+  display_name: "Jujutsu"
+  short_description: "Work with Jujutsu history, stacks, and bookmarks"
+  default_prompt: "Use $jj to work with the history of this Jujutsu repository."
+
+policy:
+  allow_implicit_invocation: true

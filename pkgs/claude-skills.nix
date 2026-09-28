@@ -13,6 +13,7 @@ stdenvNoCC.mkDerivation {
     cp -R ${../.claude/skills/find-unpinned} $out/find-unpinned
     cp -R ${../.claude/skills/gh} $out/gh
     cp -R ${../.claude/skills/gh-pr-ci} $out/gh-pr-ci
+    cp -R ${../.claude/skills/jj} $out/jj
     cp -R ${../.claude/skills/jj-describe} $out/jj-describe
     cp -R ${../.claude/skills/jj-release} $out/jj-release
   '';

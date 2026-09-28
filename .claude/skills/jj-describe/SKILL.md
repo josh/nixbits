@@ -40,7 +40,7 @@ jj describe --message "Commit message here"
 
 ## Arguments
 
-When invoked as `/jj`, describe the current working copy changes using `jj describe`.
+When invoked as `/jj-describe`, describe the current working copy changes using `jj describe`.
 
 ## Tip
 
