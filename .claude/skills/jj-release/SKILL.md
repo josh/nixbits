@@ -1,14 +1,20 @@
 ---
 name: jj-release
-description: Cut and push a tagged release in a jj repository colocated with git. Use only when the user names a version to release, cut, or tag (e.g. "release 0.7.1", "ship a patch version"). For committing, describing, or pushing ordinary work — including bumping a version string without tagging — use jj-describe instead.
-allowed-tools: Bash(git log:*), Bash(git show:*), Bash(git for-each-ref:*), Bash(git ls-remote:*), Bash(jj log:*), Bash(jj diff:*), Bash(jj status:*), Bash(jj describe:*), Bash(jj bookmark:*), Bash(jj tag:*), Bash(jj git push:*), Bash(uv lock:*), Read, Edit
+description: Cut and push a tagged release in a jj repository colocated with git. Use when the user asks to release, cut, or tag a version — whether they name the number ("release 0.7.1"), only the level ("ship a patch version"), or nothing at all ("cut a release"). For committing, describing, or pushing ordinary work — including bumping a version string without tagging — use jj-describe instead.
+allowed-tools: Bash(git log:*), Bash(git show:*), Bash(git for-each-ref:*), Bash(git grep:*), Bash(git ls-remote:*), Bash(jj log:*), Bash(jj diff:*), Bash(jj status:*), Bash(jj describe:*), Bash(jj bookmark:*), Bash(jj tag:*), Bash(jj git push:*), Bash(uv lock:*), Read, Edit
 ---
 
 # Release workflow (jj colocated with git)
 
-**Confirm before running anything.** This skill gets invoked when `jj-describe` was meant. State the
-package, version, and trunk bookmark you are about to release and wait for a yes. No version number
-in the request means it was almost certainly a mistake — ask, don't infer one.
+**Confirm before writing anything — but never ask empty-handed.** Reading history is free and safe,
+so run Step 1 and work out a version _before_ saying a word to the user. The confirmation names the
+package, the trunk bookmark, the previous tag, the unreleased commits, and one concrete version —
+the one the user named, or the one you propose. Then wait for an explicit yes before editing a file
+or running anything that writes.
+
+Replying "which version do you want to release?" without having listed the tags is the failure this
+skill exists to prevent. The answer is sitting in `git for-each-ref`; go get it. A request with no
+version is a request for you to propose one, not a mistake to bounce back.
 
 **jj owns the whole release** — describe, bookmark, tag, push. `jj tag set` creates the tag and
 `jj git push --bookmark <trunk> --tag v<version>` publishes both refs in one command. Git is kept
@@ -20,7 +26,7 @@ from `allowed-tools`.
 Nothing about the release shape is assumed — read it off the last one.
 
 ```bash
-git for-each-ref --sort=-v:refname --format='%(refname:short)' refs/tags | head -3
+git for-each-ref --sort=-v:refname --format='%(refname:short)' refs/tags | head -10
 git show <previous-tag>                     # commit subject AND the files carrying the version
 git log <previous-tag>..<trunk> --oneline   # what is actually unreleased
 ```
@@ -38,8 +44,32 @@ Two things come out of `git show`, and both matter:
   format to reverse-engineer from scratch. If it deviates, follow the repository.
 
 If the unreleased changes warrant a different bump level than the user asked for, say so in a
-sentence, then proceed with what they asked. If there is no prior tag, ask for the version-file set
-rather than guessing at it.
+sentence, then proceed with what they asked.
+
+If there is no prior tag, find the version yourself: `git grep` the manifests (`pyproject.toml`,
+`Cargo.toml`, `package.json`, `go.mod`, `Chart.yaml`, `version.go`, …) for the current version
+string, then propose both the file set and the version in the confirmation. Ask only after looking.
+
+## Proposing the version
+
+Whenever the user didn't name an exact version — a bare "release", or only a level like "ship a
+patch" — compute it from the latest tag and the unreleased log. Do not ask until you have a
+number to put in front of the user.
+
+- **Read the commits, not just the count.** Removed or renamed public API, flags, config keys, or
+  changed defaults → major (minor while below `1.0`). New features or options → minor. Only fixes,
+  dependency bumps, docs, or internal changes → patch.
+- **Match the repository's habits.** The last ten tags show how this project actually bumps — a
+  repo that has only ever shipped patch releases while adding features wants another patch, not a
+  sudden minor.
+- **Continue a prerelease series.** If the latest tag is `v1.2.0-rc.1`, propose `v1.2.0-rc.2` and
+  mention `v1.2.0` as the alternative.
+- **Recommend one version** with a one-line reason citing the commits that drove it. Mention the
+  runner-up only if it is a genuine judgement call — do not present a menu.
+
+If `git log <previous-tag>..<trunk>` is empty, there is nothing to release: say that trunk is
+already at `<previous-tag>` and stop. That is the only case where the confirmation carries no
+proposed version.
 
 ## The two formats
 
@@ -134,7 +164,8 @@ Do not poll CI afterwards unless asked.
 - **Never create a GitHub Release object.** No `gh release create`, no release notes, no changelog
   body, no assets — not even in repositories that already have some. A pushed `v<version>` git tag
   _is_ the release. `gh` is deliberately absent from `allowed-tools`.
-- Never start a release the user didn't ask for, and never invent the version number.
+- Never start a release the user didn't ask for, and never write a version the user hasn't
+  confirmed. Proposing one is required; committing to one without a yes is not allowed.
 - Bump only the files the previous release bumped, plus `uv.lock` whenever `pyproject.toml`'s
   version moved.
 - Never run a git command that writes. Git reads history here; jj does every mutation.

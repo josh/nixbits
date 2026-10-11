@@ -1,13 +1,18 @@
 ---
 name: jj-release
-description: Cut and push a versioned release in a Jujutsu repository colocated with Git. Use only when the user explicitly asks to release, cut, or tag a named version. Do not use for ordinary commits, pushes, or version bumps without a tag; use jj-describe instead.
+description: Cut and push a versioned release in a Jujutsu repository colocated with Git. Use when the user asks to release, cut, or tag a version, whether they name the exact number, only the bump level, or no version at all. Do not use for ordinary commits, pushes, or version bumps without a tag; use jj-describe instead.
 ---
 
 # Release Workflow for Jujutsu Colocated with Git
 
-**Confirm before running any command or editing any file.** State the package, version, and trunk
-bookmark you are about to release, then wait for an explicit yes. Treat an invocation without a
-version number as likely accidental: ask for the version and do not infer one.
+**Confirm before editing any file or running any command that writes, but never ask empty-handed.**
+Reading history is safe, so run step 1 and determine a version before replying. The confirmation
+must state the package, the trunk bookmark, the previous tag, the unreleased commits, and one
+concrete version: the version the user requested, or the version you propose. Then wait for an
+explicit yes.
+
+Do not reply "Which version should I release?" without first listing the existing tags. A request
+without a version is a request for you to propose one, not an accidental invocation.
 
 Jujutsu owns the entire release: describe, bookmark, tag, and push. `jj tag set` creates the tag and
 `jj git push --bookmark <trunk> --tag v<version>` publishes both refs in one command. Use Git only to
@@ -18,7 +23,7 @@ read history during this workflow; never run a Git command that writes.
 Read the release shape from the latest existing release:
 
 ```bash
-git for-each-ref --sort=-v:refname --format='%(refname:short)' refs/tags | head -3
+git for-each-ref --sort=-v:refname --format='%(refname:short)' refs/tags | head -10
 git show <previous-tag>
 git log <previous-tag>..<trunk> --oneline
 ```
@@ -35,8 +40,30 @@ Use `git show` to determine both:
   differs, follow the repository's established convention.
 
 If the unreleased changes suggest a different bump level, mention that once and continue with the
-version the user requested. If no prior tag exists, ask the user for the version-file set instead
-of guessing.
+version the user requested.
+
+If no prior tag exists, find the current version yourself: run `git grep` over the manifests
+(`pyproject.toml`, `Cargo.toml`, `package.json`, `go.mod`, `Chart.yaml`, `version.go`, and similar),
+then propose both the file set and the version in the confirmation. Ask only after looking.
+
+## Propose the version
+
+When the user did not request an exact version, whether they named only a bump level or nothing at
+all, compute the version from the latest tag and the unreleased log. Do not ask until you have a
+version to propose.
+
+- **Read the commits.** Removed or renamed public API, flags, or config keys, or changed defaults,
+  require a major bump, or a minor bump below `1.0`. New features or options require a minor bump.
+  Fixes, dependency bumps, docs, and internal changes require a patch bump.
+- **Follow the repository's habits.** Use the last ten tags to see how the project actually bumps.
+  If it has shipped only patch releases while adding features, propose another patch release.
+- **Continue a prerelease series.** If the latest tag is `v1.2.0-rc.1`, propose `v1.2.0-rc.2` and
+  mention `v1.2.0` as the alternative.
+- **Recommend exactly one version** with a one-line reason that cites the commits behind it.
+  Mention a runner-up only for a genuine judgment call; do not present a menu.
+
+If `git log <previous-tag>..<trunk>` is empty, report that trunk is already at `<previous-tag>` and
+stop. This is the only case where the confirmation omits a proposed version.
 
 ## Release formats
 
@@ -122,7 +149,8 @@ not poll CI unless asked.
 
 - Never create a GitHub Release object, release notes, changelog body, or release assets. Do not run
   `gh release create` or any other `gh release` command.
-- Never start a release the user did not request or invent a version number.
+- Never start a release the user did not request, and never write a version the user has not
+  confirmed. Proposing a version is required; committing to one without a yes is not allowed.
 - Bump only the files the previous release bumped, plus `uv.lock` whenever the version in
   `pyproject.toml` moved.
 - Never run a Git command that writes. Git reads history in this workflow; Jujutsu performs every
@@ -133,4 +161,4 @@ not poll CI unless asked.
   `jj git push --deleted`. Do not count on a safety check to catch it.
 - Create lightweight tags: no annotation, no message, no signing.
 - When invoked as `$jj-release` in Codex or `@jj-release` in ChatGPT, take the requested version
-  from the prompt rather than expecting a positional argument.
+  from the prompt rather than expecting a positional argument. If the prompt has none, propose one.
