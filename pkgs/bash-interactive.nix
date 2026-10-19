@@ -25,7 +25,7 @@ let
   direnv-init = runCommand "direnv-init.bash" { nativeBuildInputs = [ direnv ]; } ''
     direnv hook bash | sed 's|/bin/\.direnv-wrapped|/bin/direnv|g' >$out
     ! grep --quiet --fixed-strings '.direnv-wrapped' $out
-    grep --quiet --fixed-strings '/bin/direnv"' $out
+    grep --quiet --extended-regexp "/bin/direnv['\"]" $out
   '';
   fzf-init = runCommand "fzf-init.bash" { nativeBuildInputs = [ fzf ]; } ''
     fzf --bash >$out
