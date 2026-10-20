@@ -79,14 +79,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       echo "WARN: $HOME/.local/state/nix/profiles/profile/share/zsh/site-functions not found" >&2
     fi
 
-    if [ -d "$XDG_CACHE_HOME" ]; then
-      autoload -Uz compinit
-      mkdir -p "$XDG_CACHE_HOME/zsh"
-      compinit -d "$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
-    else
-      autoload -Uz compinit
-      compinit
+    zcompdump_dir="''${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+    zcompdump="$zcompdump_dir/zcompdump-$ZSH_VERSION-''${''${fpath[1]:A}:h:h:h:t}"
+    mkdir -p "$zcompdump_dir"
+    if [[ ! -f "$zcompdump" ]]; then
+      rm -f "$zcompdump_dir"/zcompdump-*(N)
     fi
+    autoload -Uz compinit
+    compinit -d "$zcompdump"
 
     HISTSIZE=50000
     SAVEHIST=50000
