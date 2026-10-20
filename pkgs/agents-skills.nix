@@ -13,6 +13,8 @@ stdenvNoCC.mkDerivation {
     cp -R ${../.agents/skills/find-unpinned} $out/find-unpinned
     cp -R ${../.agents/skills/gh} $out/gh
     cp -R ${../.agents/skills/gh-pr-ci} $out/gh-pr-ci
+    cp -R ${../.agents/skills/golf-audit} $out/golf-audit
+    cp -R ${../.agents/skills/golf-review} $out/golf-review
     cp -R ${../.agents/skills/jj} $out/jj
     cp -R ${../.agents/skills/jj-describe} $out/jj-describe
     cp -R ${../.agents/skills/jj-release} $out/jj-release

@@ -64,6 +64,8 @@ x jj edit "$branch"
 skills=(
   gh-pr-ci
   codex-triage
+  golf-review
+  golf-audit
 )
 
 skill=$(printf '%s\n' "${skills[@]}" | gum choose --header "Skill") || exit $?

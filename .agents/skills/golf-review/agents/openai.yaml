@@ -1,0 +1,7 @@
+interface:
+  display_name: "Golf Review"
+  short_description: "Review a diff for over-engineering and what to cut"
+  default_prompt: "Use $golf-review to review these changes for unnecessary complexity and list what to delete."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,12 +1,12 @@
 ---
-name: ponytail-review
+name: golf-review
 description: >
   Code review focused exclusively on over-engineering. Finds what to delete:
   reinvented standard library, unneeded dependencies, speculative abstractions,
   dead flexibility. One line per finding: location, what to cut, what replaces
   it. Use when the user says "review for over-engineering", "what can we
   delete", "is this over-engineered", "simplify review", or invokes
-  /ponytail-review. Complements correctness-focused review, this one only
+  /golf-review. Complements correctness-focused review, this one only
   hunts complexity.
 ---
 
@@ -27,7 +27,6 @@ Tags:
 - `reuse:` equivalent helper, util, or pattern already in this repo. Name the path.
 - `yagni:` abstraction with one implementation, config nobody sets, layer with one caller.
 - `shrink:` same logic, fewer lines. Show the shorter form.
-
 
 ## Examples
 
@@ -57,6 +56,6 @@ If there is nothing to cut, say `Lean already. Ship.` and stop.
 Scope: over-engineering and complexity only. Correctness bugs, security holes,
 and performance are explicitly out of scope. Route them to a normal review
 pass, not this one. A single smoke test or `assert`-based
-self-check is the ponytail minimum, not bloat, never flag it for deletion.
+self-check is the minimum, not bloat, never flag it for deletion.
 Does not apply the fixes, only lists them.
-"stop ponytail-review" or "normal mode": revert to verbose review style.
+"stop golf-review" or "normal mode": revert to verbose review style.
