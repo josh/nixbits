@@ -1,6 +1,7 @@
 {
   lib,
   writeShellApplication,
+  runCommand,
   nixbits,
 }:
 let
@@ -11,52 +12,28 @@ writeShellApplication {
   name = "bat";
   text = ''
     case "''${THEME:-}" in
-    tokyonight_day)
-      exec ${mkBatExe "tokyonight_day"} "$@"
-      ;;
-    tokyonight_moon)
-      exec ${mkBatExe "tokyonight_moon"} "$@"
-      ;;
-    tokyonight_storm)
-      exec ${mkBatExe "tokyonight_storm"} "$@"
-      ;;
-    tokyonight_night)
-      exec ${mkBatExe "tokyonight_night"} "$@"
-      ;;
-    tokyonight*)
-      exec ${mkBatExe "tokyonight_night"} "$@"
-      ;;
-    catppuccin_frappe)
-      exec ${mkBatExe "catppuccin_frappe"} "$@"
-      ;;
-    catppuccin_latte)
-      exec ${mkBatExe "catppuccin_latte"} "$@"
-      ;;
-    catppuccin_macchiato)
-      exec ${mkBatExe "catppuccin_macchiato"} "$@"
-      ;;
-    catppuccin_mocha)
-      exec ${mkBatExe "catppuccin_mocha"} "$@"
-      ;;
-    catppuccin*)
-      exec ${mkBatExe "catppuccin_mocha"} "$@"
-      ;;
-    rosepine_moon)
-      exec ${mkBatExe "rosepine_moon"} "$@"
-      ;;
-    rosepine_dawn)
-      exec ${mkBatExe "rosepine_dawn"} "$@"
-      ;;
-    rosepine*)
-      exec ${mkBatExe "rosepine"} "$@"
-      ;;
-    ansi*)
-      exec ${mkBatExe "ansi"} "$@"
-      ;;
+    ${lib.strings.concatMapStrings (t: ''
+      ${t.pattern})
+        exec ${mkBatExe t.bat} "$@"
+        ;;
+    '') nixbits.themes}
     *)
       exec ${mkBatExe null} "$@"
       ;;
     esac
+  '';
+  passthru.tests.themes = runCommand "test-bat-env-theme" { } ''
+    for case in "tokyonight_bogus:Tokyo Night Night" "rosepine_moon:Rose Pine Moon" \
+                "ansi_light:ansi" "ansi_dark:ansi"; do
+      theme="''${case%%:*}"
+      expected="''${case#*:}"
+      actual="$(THEME="$theme" ${lib.getExe nixbits.bat-env-theme} --diagnostic | sed -n 's/^BAT_THEME=//p' | tr -d "'")"
+      if [[ "$actual" != "$expected" ]]; then
+        echo "THEME=$theme expected '$expected' but was '$actual'"
+        return 1
+      fi
+    done
+    touch $out
   '';
   meta = {
     inherit (bat.meta) description license platforms;

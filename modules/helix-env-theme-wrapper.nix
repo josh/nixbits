@@ -6,60 +6,10 @@
   ...
 }:
 let
-  themes = [
-    {
-      pattern = "tokyonight_day";
-      theme = "tokyonight_day";
-    }
-    {
-      pattern = "tokyonight_moon";
-      theme = "tokyonight_moon";
-    }
-    {
-      pattern = "tokyonight_storm";
-      theme = "tokyonight_storm";
-    }
-    {
-      pattern = "tokyonight*";
-      theme = "tokyonight";
-    }
-    {
-      pattern = "catppuccin_frappe";
-      theme = "catppuccin_frappe";
-    }
-    {
-      pattern = "catppuccin_latte";
-      theme = "catppuccin_latte";
-    }
-    {
-      pattern = "catppuccin_macchiato";
-      theme = "catppuccin_macchiato";
-    }
-    {
-      pattern = "catppuccin*";
-      theme = "catppuccin_mocha";
-    }
-    {
-      pattern = "rosepine_moon";
-      theme = "rose_pine_moon";
-    }
-    {
-      pattern = "rosepine_dawn";
-      theme = "rose_pine_dawn";
-    }
-    {
-      pattern = "rosepine*";
-      theme = "rose_pine";
-    }
-    {
-      pattern = "ansi_light";
-      theme = "term16_light";
-    }
-    {
-      pattern = "ansi*";
-      theme = "term16_dark";
-    }
-  ];
+  themes = map (t: {
+    inherit (t) pattern;
+    theme = t.helix;
+  }) pkgs.nixbits.themes;
 
   configDir = name: "${placeholder config.outputName}/${config.binName}-config-${name}";
 
