@@ -58,6 +58,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     typeset -U path fpath
 
+    if [[ "''${TERM_PROGRAM:-}" == rex && -z "''${THEME:-}" ]]; then
+      if [[ "$(${lib.getExe nixbits.term-scheme})" == light ]]; then
+        export THEME=ansi_light COLORFGBG='0;15'
+      else
+        export THEME=ansi_dark COLORFGBG='15;0'
+      fi
+    fi
+
     path=("${path}/bin" $path)
 
     # TODO: statically link this path

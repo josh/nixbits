@@ -21,8 +21,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   makeWrapperArgs = [ ];
 
-  tmtheme = if theme != null then nixbits.tmtheme.override { inherit theme; } else null;
-  themeName = if theme != null then finalAttrs.tmtheme.themeName else null;
+  tmtheme =
+    if theme != null && theme != "ansi" then nixbits.tmtheme.override { inherit theme; } else null;
+  themeName =
+    if theme == "ansi" then
+      "ansi"
+    else if theme != null then
+      finalAttrs.tmtheme.themeName
+    else
+      null;
 
   buildCommand = ''
     mkdir -p $out

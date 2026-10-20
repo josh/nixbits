@@ -50,6 +50,9 @@ writeShellApplication {
     rosepine*)
       exec ${mkBatExe "rosepine"} "$@"
       ;;
+    ansi*)
+      exec ${mkBatExe "ansi"} "$@"
+      ;;
     *)
       exec ${mkBatExe null} "$@"
       ;;

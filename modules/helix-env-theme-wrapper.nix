@@ -51,6 +51,14 @@ let
       pattern = "rosepine*";
       theme = "rose_pine";
     }
+    {
+      pattern = "ansi_light";
+      theme = "term16_light";
+    }
+    {
+      pattern = "ansi*";
+      theme = "term16_dark";
+    }
   ];
 
   configDir = name: "${placeholder config.outputName}/${config.binName}-config-${name}";
@@ -93,7 +101,8 @@ in
         ''
           export HOME="$PWD"
           for case in tokyonight_moon:tokyonight_moon tokyonight_bogus:tokyonight \
-                      catppuccin_bogus:catppuccin_mocha rosepine_moon:rose_pine_moon; do
+                      catppuccin_bogus:catppuccin_mocha rosepine_moon:rose_pine_moon \
+                      ansi_light:term16_light ansi_dark:term16_dark; do
             theme="''${case%%:*}"
             expected="''${case##*:}"
             actual="$(THEME="$theme" hx --health | sed -n '1s|.*/hx-config-\(.*\)/helix/config.toml|\1|p')"
