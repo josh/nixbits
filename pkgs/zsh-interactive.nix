@@ -66,6 +66,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       fi
     fi
 
+    if [[ "''${THEME:-}" == ansi* ]]; then
+      export FZF_DEFAULT_OPTS="''${FZF_DEFAULT_OPTS:+$FZF_DEFAULT_OPTS }--color=base16"
+    fi
+
+    export MANPAGER="sh -c 'col -bx | ${lib.getExe nixbits.bat-env-theme} --language=man --plain'"
+
     path=("${path}/bin" $path)
 
     # TODO: statically link this path
