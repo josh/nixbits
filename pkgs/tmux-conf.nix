@@ -8,86 +8,38 @@
   theme ? null,
 }:
 let
-  validThemes = builtins.attrNames sourceThemes;
+  validThemes = builtins.attrNames themeConfs;
 
   sourceTheme =
     if theme == null then
       envTheme
     else
       assert (lib.asserts.assertOneOf "theme" theme validThemes);
-      sourceThemes.${theme};
+      "source-file '${themeConfs.${theme}}'";
 
-  sourceThemes = {
-    "tokyonight_day" = ''
-      source-file '${nixbits.tmux-powerkit-conf.override { powerkitThemeVariation = "day"; }}'
-    '';
-    "tokyonight_moon" = ''
-      source-file '${nixbits.tmux-powerkit-conf.override { powerkitThemeVariation = "moon"; }}'
-    '';
-    "tokyonight_storm" = ''
-      source-file '${nixbits.tmux-powerkit-conf.override { powerkitThemeVariation = "storm"; }}'
-    '';
-    "tokyonight_night" = ''
-      source-file '${nixbits.tmux-powerkit-conf.override { powerkitThemeVariation = "night"; }}'
-    '';
-    "catppuccin_frappe" = ''
-      source-file '${nixbits.tmux-catppuccin-conf.override { catppuccinFlavor = "frappe"; }}'
-    '';
-    "catppuccin_latte" = ''
-      source-file '${nixbits.tmux-catppuccin-conf.override { catppuccinFlavor = "latte"; }}'
-    '';
-    "catppuccin_macchiato" = ''
-      source-file '${nixbits.tmux-catppuccin-conf.override { catppuccinFlavor = "macchiato"; }}'
-    '';
-    "catppuccin_mocha" = ''
-      source-file '${nixbits.tmux-catppuccin-conf.override { catppuccinFlavor = "mocha"; }}'
-    '';
-    "rosepine_moon" = ''
-      source-file '${nixbits.tmux-rosepine-conf.override { rosepineVariant = "moon"; }}'
-    '';
-    "rosepine_dawn" = ''
-      source-file '${nixbits.tmux-rosepine-conf.override { rosepineVariant = "dawn"; }}'
-    '';
-    "rosepine" = ''
-      source-file '${nixbits.tmux-rosepine-conf.override { rosepineVariant = "main"; }}'
-    '';
+  themeConfs = {
+    "tokyonight_day" = nixbits.tmux-powerkit-conf.override { powerkitThemeVariation = "day"; };
+    "tokyonight_moon" = nixbits.tmux-powerkit-conf.override { powerkitThemeVariation = "moon"; };
+    "tokyonight_storm" = nixbits.tmux-powerkit-conf.override { powerkitThemeVariation = "storm"; };
+    "tokyonight_night" = nixbits.tmux-powerkit-conf.override { powerkitThemeVariation = "night"; };
+    "catppuccin_frappe" = nixbits.tmux-catppuccin-conf.override { catppuccinFlavor = "frappe"; };
+    "catppuccin_latte" = nixbits.tmux-catppuccin-conf.override { catppuccinFlavor = "latte"; };
+    "catppuccin_macchiato" = nixbits.tmux-catppuccin-conf.override { catppuccinFlavor = "macchiato"; };
+    "catppuccin_mocha" = nixbits.tmux-catppuccin-conf.override { catppuccinFlavor = "mocha"; };
+    "rosepine_moon" = nixbits.tmux-rosepine-conf.override { rosepineVariant = "moon"; };
+    "rosepine_dawn" = nixbits.tmux-rosepine-conf.override { rosepineVariant = "dawn"; };
+    "rosepine" = nixbits.tmux-rosepine-conf.override { rosepineVariant = "main"; };
   };
 
-  envTheme = ''
-    if-shell '[ "$THEME" = "tokyonight_day" ]' {
-      ${sourceThemes.tokyonight_day}
-    }
-    if-shell '[ "$THEME" = "tokyonight_moon" ]' {
-      ${sourceThemes.tokyonight_moon}
-    }
-    if-shell '[ "$THEME" = "tokyonight_storm" ]' {
-      ${sourceThemes.tokyonight_storm}
-    }
-    if-shell '[ "$THEME" = "tokyonight_night" ]' {
-      ${sourceThemes.tokyonight_night}
-    }
-    if-shell '[ "$THEME" = "catppuccin_frappe" ]' {
-      ${sourceThemes.catppuccin_frappe}
-    }
-    if-shell '[ "$THEME" = "catppuccin_latte" ]' {
-      ${sourceThemes.catppuccin_latte}
-    }
-    if-shell '[ "$THEME" = "catppuccin_macchiato" ]' {
-      ${sourceThemes.catppuccin_macchiato}
-    }
-    if-shell '[ "$THEME" = "catppuccin_mocha" ]' {
-      ${sourceThemes.catppuccin_mocha}
-    }
-    if-shell '[ "$THEME" = "rosepine_moon" ]' {
-      ${sourceThemes.rosepine_moon}
-    }
-    if-shell '[ "$THEME" = "rosepine_dawn" ]' {
-      ${sourceThemes.rosepine_dawn}
-    }
-    if-shell '[ "$THEME" = "rosepine" ]' {
-      ${sourceThemes.rosepine}
-    }
-  '';
+  envTheme = "run-shell 'case \"$THEME\" in ${
+    lib.strings.concatMapStrings (
+      t:
+      if t.tmux == null then
+        "${t.pattern}) ;; "
+      else
+        "${t.pattern}) tmux source-file \"${themeConfs.${t.tmux}}\" ;; "
+    ) nixbits.themes
+  }esac'";
 in
 stdenvNoCC.mkDerivation {
   name = "tmux-conf";

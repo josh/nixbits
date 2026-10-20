@@ -18,12 +18,6 @@ let
       "${nur.repos.josh.tokyonight-extras}/share/tokyonight/fish/tokyonight_night.fish";
     "tokyonight_storm" =
       "${nur.repos.josh.tokyonight-extras}/share/tokyonight/fish/tokyonight_storm.fish";
-    "catppuccin_frappe" =
-      "${nur.repos.josh.fish-catppuccin}/share/fish/vendor_conf.d/catppuccin_frappe.fish";
-    "catppuccin_latte" =
-      "${nur.repos.josh.fish-catppuccin}/share/fish/vendor_conf.d/catppuccin_latte.fish";
-    "catppuccin_macchiato" =
-      "${nur.repos.josh.fish-catppuccin}/share/fish/vendor_conf.d/catppuccin_macchiato.fish";
     "catppuccin_mocha" =
       "${nur.repos.josh.fish-catppuccin}/share/fish/vendor_conf.d/catppuccin_mocha.fish";
   };
@@ -42,7 +36,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   fishEnvVars = { };
   extraFishEnvVars = lib.attrsets.optionalAttrs (finalAttrs.themeName != null) {
-    THEME = finalAttrs.themeName;
+    THEME =
+      assert (lib.asserts.assertOneOf "theme" finalAttrs.themeName (builtins.attrNames availableThemes));
+      finalAttrs.themeName;
   };
 
   fishEnvVarsScript = builtins.concatStringsSep "\n" (
@@ -59,12 +55,16 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   themeName = null;
 
-  themePath =
-    if finalAttrs.themeName == null then
-      null
-    else
-      assert (lib.asserts.assertOneOf "theme" finalAttrs.themeName (builtins.attrNames availableThemes));
-      availableThemes.${finalAttrs.themeName};
+  themeScript = ''
+    switch "$THEME"
+    ${
+      lib.strings.concatMapStrings (
+        t:
+        "    case '${t.pattern}'\n"
+        + lib.strings.optionalString (t.fish != null) "        source ${availableThemes.${t.fish}}\n"
+      ) nixbits.themes
+    }end
+  '';
 
   interactiveShellInit = "";
   loginShellInit = "";
@@ -106,9 +106,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       --replace-fail '@interactiveShellInit@' "$interactiveShellInit" \
       --replace-fail '@direnv-init@' "$direnvInit"
 
-    if [ -f "$themePath" ] && [ -n "$themeName" ]; then
-      cp "$themePath" $out/conf.d/$themeName.fish
-    fi
+    echo -n "$themeScript" >$out/conf.d/theme.fish
   ''
   + (lib.strings.optionalString stdenvNoCC.hostPlatform.isDarwin ''
     cat ${./fish-config-darwin.fish} >$out/conf.d/darwin.fish
