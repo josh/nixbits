@@ -64,7 +64,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       fi
     fi
 
-    export MANPAGER="sh -c 'col -bx | ${lib.getExe nixbits.bat-env-theme} --language=man --plain'"
+    export MANPAGER="sh -c 'col -bx | ${lib.getExe nixbits.bat} --language=man --plain'"
 
     path=("${path}/bin" $path)
 
