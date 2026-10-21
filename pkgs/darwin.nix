@@ -120,6 +120,11 @@ in
     hash = "sha256-6o+n0SQWJ0TsOG477BEn9vAPa22JLF+Gmp3CT64EJlQ=";
     manpage = "route.8";
   };
+  sc_auth = mkDarwinImpureDrv {
+    command = "/usr/sbin/sc_auth";
+    hash = "sha256-csO/j/0hyJdOmB2L7VrMZiMA9Nq4UKaGInt7Tp12oH4=";
+    manpage = "sc_auth.8";
+  };
   scutil = mkDarwinImpureDrv {
     command = "/usr/sbin/scutil";
     hash = "sha256-9APm3GmGIJWiYmjz8MdpZrFOQ7Z8YRkEo+nvIJdCZFc=";
@@ -139,6 +144,11 @@ in
     command = "/usr/bin/shortcuts";
     hash = "sha256-HZfyqd/bCCYCfFhpRwHGV7oZxKqU+E+SzBIosiHm6Xc=";
     manpage = "shortcuts.1";
+  };
+  ssh-keygen = mkDarwinImpureDrv {
+    command = "/usr/bin/ssh-keygen";
+    hash = "sha256-LqQuI57Rvirkst6UpHlDyTIViDMxROB+Lo+CNL4mkxw=";
+    manpage = "ssh-keygen.1";
   };
   sudo = mkDarwinImpureDrv {
     command = "/usr/bin/sudo";
