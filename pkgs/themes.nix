@@ -5,6 +5,7 @@ _: [
     helix = "tokyonight_day";
     fish = "tokyonight_day";
     tmux = "tokyonight_day";
+    fzf = null;
   }
   {
     pattern = "tokyonight_moon";
@@ -12,6 +13,7 @@ _: [
     helix = "tokyonight_moon";
     fish = "tokyonight_moon";
     tmux = "tokyonight_moon";
+    fzf = null;
   }
   {
     pattern = "tokyonight_storm";
@@ -19,6 +21,7 @@ _: [
     helix = "tokyonight_storm";
     fish = "tokyonight_storm";
     tmux = "tokyonight_storm";
+    fzf = null;
   }
   {
     pattern = "tokyonight*";
@@ -26,6 +29,7 @@ _: [
     helix = "tokyonight";
     fish = "tokyonight_night";
     tmux = "tokyonight_night";
+    fzf = null;
   }
   {
     pattern = "catppuccin_frappe";
@@ -33,6 +37,7 @@ _: [
     helix = "catppuccin_frappe";
     fish = null;
     tmux = "catppuccin_frappe";
+    fzf = null;
   }
   {
     pattern = "catppuccin_latte";
@@ -40,6 +45,7 @@ _: [
     helix = "catppuccin_latte";
     fish = null;
     tmux = "catppuccin_latte";
+    fzf = null;
   }
   {
     pattern = "catppuccin_macchiato";
@@ -47,6 +53,7 @@ _: [
     helix = "catppuccin_macchiato";
     fish = null;
     tmux = "catppuccin_macchiato";
+    fzf = null;
   }
   {
     pattern = "catppuccin*";
@@ -54,6 +61,7 @@ _: [
     helix = "catppuccin_mocha";
     fish = "catppuccin_mocha";
     tmux = "catppuccin_mocha";
+    fzf = null;
   }
   {
     pattern = "rosepine_moon";
@@ -61,6 +69,7 @@ _: [
     helix = "rose_pine_moon";
     fish = null;
     tmux = "rosepine_moon";
+    fzf = null;
   }
   {
     pattern = "rosepine_dawn";
@@ -68,6 +77,7 @@ _: [
     helix = "rose_pine_dawn";
     fish = null;
     tmux = "rosepine_dawn";
+    fzf = null;
   }
   {
     pattern = "rosepine*";
@@ -75,6 +85,7 @@ _: [
     helix = "rose_pine";
     fish = null;
     tmux = "rosepine";
+    fzf = null;
   }
   {
     pattern = "ansi_light";
@@ -82,6 +93,7 @@ _: [
     helix = "term16_light";
     fish = null;
     tmux = null;
+    fzf = "base16";
   }
   {
     pattern = "ansi*";
@@ -89,5 +101,6 @@ _: [
     helix = "term16_dark";
     fish = null;
     tmux = null;
+    fzf = "base16";
   }
 ]

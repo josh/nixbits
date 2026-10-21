@@ -4,7 +4,6 @@
   runCommand,
   symlinkJoin,
   bash,
-  fzf,
   neovim,
   shellcheck-minimal,
   nur,
@@ -26,7 +25,7 @@ let
     ! grep --quiet --fixed-strings '.direnv-wrapped' $out
     grep --quiet --extended-regexp "/bin/direnv['\"]" $out
   '';
-  fzf-init = runCommand "fzf-init.bash" { nativeBuildInputs = [ fzf ]; } ''
+  fzf-init = runCommand "fzf-init.bash" { nativeBuildInputs = [ nixbits.fzf ]; } ''
     fzf --bash >$out
   '';
   starship-init = runCommand "starship-init.bash" { nativeBuildInputs = [ starship ]; } ''

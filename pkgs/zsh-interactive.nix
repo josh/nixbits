@@ -3,7 +3,6 @@
   stdenvNoCC,
   runCommand,
   symlinkJoin,
-  fzf,
   neovim,
   zoxide,
   zsh,
@@ -31,11 +30,11 @@ let
   starship-init = runCommand "starship-init.zsh" { nativeBuildInputs = [ starship ]; } ''
     starship init zsh >$out
   '';
-  fzf-init = runCommand "fzf-init.zsh" { nativeBuildInputs = [ fzf ]; } ''
+  fzf-init = runCommand "fzf-init.zsh" { nativeBuildInputs = [ nixbits.fzf ]; } ''
     fzf --zsh >out
     substitute out $out \
-      --replace-fail 'echo "fzf"' 'echo "${fzf}/bin/fzf"' \
-      --replace-fail 'echo "fzf-tmux ' 'echo "${fzf}/bin/fzf-tmux '
+      --replace-fail 'echo "fzf"' 'echo "${nixbits.fzf}/bin/fzf"' \
+      --replace-fail 'echo "fzf-tmux ' 'echo "${nixbits.fzf}/bin/fzf-tmux '
   '';
   zoxide-init = runCommand "zoxide-init.zsh" { nativeBuildInputs = [ zoxide ]; } ''
     zoxide init zsh >out
@@ -63,10 +62,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       else
         export THEME=ansi_dark COLORFGBG='15;0'
       fi
-    fi
-
-    if [[ "''${THEME:-}" == ansi* ]]; then
-      export FZF_DEFAULT_OPTS="''${FZF_DEFAULT_OPTS:+$FZF_DEFAULT_OPTS }--color=base16"
     fi
 
     export MANPAGER="sh -c 'col -bx | ${lib.getExe nixbits.bat-env-theme} --language=man --plain'"
