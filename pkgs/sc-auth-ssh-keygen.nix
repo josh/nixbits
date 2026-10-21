@@ -3,7 +3,6 @@
   writeShellApplication,
   coreutils,
   gawk,
-  gnugrep,
   nixbits,
 }:
 writeShellApplication {
@@ -11,7 +10,6 @@ writeShellApplication {
   runtimeInputs = [
     coreutils
     gawk
-    gnugrep
     nixbits.darwin.sc_auth
     nixbits.darwin.scutil
     nixbits.darwin.ssh-keygen

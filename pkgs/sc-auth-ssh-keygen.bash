@@ -27,17 +27,17 @@ for arg in "$@"; do
   esac
 done
 
-list_fingerprints() {
-  sc_auth list-ctk-identities -t ssh | awk '$1 == "p-256-ne" { print $2 }'
+list_identities() {
+  sc_auth list-ctk-identities -t ssh | awk '$1 == "p-256-ne" { print $2, $4 }'
 }
 
-has_fingerprint() {
-  ssh-keygen -lf "$1" | awk '{ print $2 }' | grep -qxF -f <(echo "$fingerprints")
+key_label() {
+  ssh-keygen -lf "$1" | awk 'NR == FNR { labels[$1] = $2; next } { print labels[$2] }' <(echo "$identities") -
 }
 
-fingerprints=$(list_fingerprints)
+identities=$(list_identities)
 
-if [ -z "$fingerprints" ]; then
+if [ -z "$identities" ]; then
   if [ -z "$label" ]; then
     label="$USER@$(scutil --get LocalHostName).local"
     echo "warn: using '$label' as key label" >&2
@@ -46,14 +46,20 @@ if [ -z "$fingerprints" ]; then
   if [ "$dry_run" = true ]; then
     exit 0
   fi
-  fingerprints=$(list_fingerprints)
+  identities=$(list_identities)
 fi
 
 stub="$HOME/.ssh/id_ecdsa_sk_rk"
 
-if [ -f "$stub" ] && [ -f "$stub.pub" ] && has_fingerprint "$stub.pub"; then
-  cat "$stub.pub"
-  exit 0
+if [ -f "$stub" ] && [ -f "$stub.pub" ]; then
+  stub_label=$(key_label "$stub.pub")
+  if [ -n "$stub_label" ]; then
+    if [ "$(awk '{ print $3 }' "$stub.pub")" != "$stub_label" ]; then
+      x-dry-run $dry_run -- ssh-keygen -c -C "$stub_label" -f "$stub" >&2
+    fi
+    cat "$stub.pub"
+    exit 0
+  fi
 fi
 
 if [ -e "$stub" ] || [ -e "$stub.pub" ]; then
@@ -67,7 +73,9 @@ cd "$tmpdir" || exit 1
 ssh-keygen -K -N "" -q
 
 for pub in "$tmpdir"/*.pub; do
-  if has_fingerprint "$pub"; then
+  pub_label=$(key_label "$pub")
+  if [ -n "$pub_label" ]; then
+    ssh-keygen -c -C "$pub_label" -f "${pub%.pub}" >&2
     if [ ! -d "$HOME/.ssh" ]; then
       x-dry-run $dry_run -- install -d -m 700 "$HOME/.ssh"
     fi
