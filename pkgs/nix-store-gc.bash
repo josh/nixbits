@@ -6,4 +6,6 @@ if [ "$used_bytes" -gt "$NIX_STORE_GC_MAX" ]; then
   x nix store gc --max "$free_bytes"
 fi
 
-x nix store optimise
+if [ "$NIX_STORE_OPTIMISE" = true ]; then
+  x nix store optimise
+fi

@@ -18,6 +18,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   nixStoreGCMax = 100 * 1024 * 1024 * 1024; # 100GB
   nixProfileWipeHistoryOlderThan = "7d";
+  nixStoreOptimise = true;
 
   text = ''
     #!${runtimeShell}
@@ -32,6 +33,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     NIX_STORE_GC_MAX=${builtins.toString finalAttrs.nixStoreGCMax}
     NIX_PROFILE_WIPE_HISTORY_OLDER_THAN=${finalAttrs.nixProfileWipeHistoryOlderThan}
+    NIX_STORE_OPTIMISE=${lib.boolToString finalAttrs.nixStoreOptimise}
 
     ${builtins.readFile ./nix-store-gc.bash}
   '';
