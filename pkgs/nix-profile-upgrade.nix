@@ -20,6 +20,7 @@ writeShellApplication {
     (nixbits.nix-profile-activate.override { inherit nix; })
     (nixbits.nix-profile-dry-run.override { inherit nix; })
     nixbits.nix-profile-run-hooks
+    nixbits.term-status
     nvd
   ];
   inheritPath = false;

@@ -3,7 +3,11 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
+status() { term-status --app nix-profile-upgrade "$@"; }
+trap 'status error "Profile upgrade failed"' ERR
+
 echo "Building profile" >&2
+status working "Building profile"
 build() {
   GH_TOKEN=$(gh auth token)
   NIX_CONFIG="extra-access-tokens = github.com=$GH_TOKEN" \
@@ -23,10 +27,13 @@ new_profile=$(build "$@")
 if [ "$old_profile" = "$new_profile" ]; then
   echo "No profile changes" >&2
   nix-profile-run-hooks post-install "$new_profile" "$old_profile"
+  status "done" "No profile changes"
   exit 0
 fi
 
 echo "Comparing changes" >&2
 nvd diff "$old_profile" "$new_profile"
 
+status working "Activating profile"
 nix-profile-activate "$new_profile"
+status "done" "Profile upgraded"

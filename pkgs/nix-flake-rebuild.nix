@@ -4,6 +4,7 @@
   coreutils,
   jq,
   nix,
+  nixbits,
 }:
 writeShellApplication {
   name = "nix-flake-rebuild";
@@ -11,6 +12,7 @@ writeShellApplication {
     coreutils
     jq
     nix
+    nixbits.term-status
   ];
   inheritPath = false;
   text = builtins.readFile ./nix-flake-rebuild.bash;

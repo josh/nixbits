@@ -10,6 +10,7 @@ writeShellApplication {
     nix
     nixbits.git
     nixbits.jujutsu
+    nixbits.term-status
   ];
   inheritPath = false;
   runtimeEnv = {

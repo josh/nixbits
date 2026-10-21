@@ -10,6 +10,7 @@ writeShellApplication {
   name = "gh-actions-rerun-failed";
   runtimeInputs = [
     gh
+    nixbits.term-status
   ];
   inheritPath = false;
   text = builtins.readFile ./gh-actions-rerun-failed.bash;
