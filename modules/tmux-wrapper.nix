@@ -56,7 +56,7 @@ in
     displayPanesColour = "blue";
     escapeTime = 10;
     historyLimit = 50000;
-    allowPassthrough = false;
+    allowPassthrough = true;
     modeKeys = "vi";
     disableConfirmationPrompt = false;
     plugins = [ pkgs.tmuxPlugins.yank ];
