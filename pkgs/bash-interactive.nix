@@ -4,7 +4,6 @@
   runCommand,
   symlinkJoin,
   bash,
-  eza,
   fzf,
   neovim,
   shellcheck-minimal,
@@ -60,11 +59,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     source ${fzf-init}
     source ${starship-init}
 
-    alias ls='${lib.getExe eza}'
-    alias ll='${lib.getExe eza} --long'
-    alias la='${lib.getExe eza} --all'
-    alias lt='${lib.getExe eza} --tree'
-    alias lla='${lib.getExe eza} --long --all'
+    alias ls='${lib.getExe nixbits.eza}'
+    alias ll='${lib.getExe nixbits.eza} --long'
+    alias la='${lib.getExe nixbits.eza} --all'
+    alias lt='${lib.getExe nixbits.eza} --tree'
+    alias lla='${lib.getExe nixbits.eza} --long --all'
   ''
   + (
     if stdenvNoCC.hostPlatform.isDarwin then
