@@ -1,21 +1,12 @@
 {
+  config,
   lib,
-  stdenvNoCC,
-  bash,
-  tmuxPlugins,
-  nixbits,
-  interactiveShell ? "${bash}/bin/bash",
-  theme ? null,
+  pkgs,
+  wlib,
+  ...
 }:
 let
-  validThemes = builtins.attrNames themeConfs;
-
-  sourceTheme =
-    if theme == null then
-      envTheme
-    else
-      assert (lib.asserts.assertOneOf "theme" theme validThemes);
-      "source-file '${themeConfs.${theme}}'";
+  inherit (pkgs) nixbits;
 
   themeConfs = {
     "tokyonight_day" = nixbits.tmux-powerkit-conf.override { powerkitThemeVariation = "day"; };
@@ -40,27 +31,50 @@ let
         "${t.pattern}) tmux source-file \"${themeConfs.${t.tmux}}\" ;; "
     ) nixbits.themes
   }esac'";
+
+  sourceTheme =
+    if config.theme == null then
+      envTheme
+    else
+      assert (lib.asserts.assertOneOf "theme" config.theme (builtins.attrNames themeConfs));
+      "source-file '${themeConfs.${config.theme}}'";
 in
-stdenvNoCC.mkDerivation {
-  name = "tmux-conf";
+{
+  imports = [ wlib.wrapperModules.tmux ];
 
-  __structuredAttrs = true;
+  options.theme = lib.mkOption {
+    type = lib.types.nullOr lib.types.str;
+    default = null;
+    description = "Fixed theme to use instead of selecting one from `$THEME` at startup.";
+  };
 
-  inherit (tmuxPlugins) sensible yank;
-  inherit sourceTheme;
-  inherit interactiveShell;
+  config = {
+    sourceSensible = true;
+    prefix = "C-Space";
+    terminal = "tmux-256color";
+    updateEnvironment = [ ];
+    displayPanesColour = "blue";
+    escapeTime = 10;
+    historyLimit = 50000;
+    allowPassthrough = false;
+    modeKeys = "vi";
+    disableConfirmationPrompt = false;
+    plugins = [ pkgs.tmuxPlugins.yank ];
 
-  buildCommand = ''
-    substitute ${./tmux.conf} $out \
-      --replace-fail '@sensible@' "$sensible" \
-      --replace-fail '@yank@' "$yank" \
-      --replace-fail '@sourceTheme@' "$sourceTheme" \
-      --replace-fail '@interactiveShell@' "$interactiveShell"
-  '';
+    configAfter = ''
+      set -g default-command '${config.shell}'
 
-  meta = {
-    description = "Configuration for the tmux terminal multiplexer";
-    license = lib.licenses.mit;
-    platforms = lib.platforms.all;
+      ${sourceTheme}
+
+      ${builtins.readFile ./tmux.conf}
+    '';
+
+    passthru.tests = {
+      version = pkgs.testers.testVersion {
+        package = config.wrapper;
+        command = "tmux -V";
+        inherit (config.wrapper) version;
+      };
+    };
   };
 }
