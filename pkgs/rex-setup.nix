@@ -9,6 +9,7 @@
 let
   fakeRex = writeShellScript "rex" ''
     case "$*" in
+    version) ;;
     "terminfo setup --dry-run"*)
       echo '{"entry":{"status":"already installed"},"guard":{"status":"already current"}}'
       ;;

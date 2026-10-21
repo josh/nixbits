@@ -15,6 +15,8 @@ else
   exit 0
 fi
 
+"$rex" version >/dev/null 2>&1 || exit 0
+
 terminfo_plan="$("$rex" terminfo setup --dry-run --json --autostart=false 2>/dev/null || true)"
 if ! jq --exit-status '.entry.status == "already installed" and .guard.status == "already current"' <<<"$terminfo_plan" >/dev/null 2>&1; then
   x "$rex" terminfo setup --autostart=false || echo "warn: rex terminfo setup failed" >&2
