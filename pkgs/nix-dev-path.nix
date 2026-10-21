@@ -3,6 +3,7 @@
   symlinkJoin,
   # keep-sorted start
   deadnix,
+  nh,
   nil,
   nix,
   nix-tree,
@@ -29,10 +30,10 @@ symlinkJoin {
     (nixbits.nixpkgs-review-pr.override { inherit nix; })
     (nixpkgs-review.override { inherit nix; })
     deadnix
+    nh
     nil
     nix
     nix-tree
-    nixbits.nh
     nixd
     nixfmt
     shellcheck
