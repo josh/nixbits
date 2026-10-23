@@ -1,7 +1,0 @@
-interface:
-  display_name: "Golf Audit"
-  short_description: "Audit the whole repo for over-engineering"
-  default_prompt: "Use $golf-audit to scan this repository for over-engineering and rank what to cut."
-
-policy:
-  allow_implicit_invocation: true
