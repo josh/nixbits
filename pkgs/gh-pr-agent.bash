@@ -62,7 +62,7 @@ fi
 x jj edit "$branch"
 
 skills=(
-  gh-pr-ci
+  gh-pr-fix-ci
   codex-triage
   golf-review
   golf-audit
