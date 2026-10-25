@@ -10,6 +10,7 @@
   zsh-syntax-highlighting,
   nur,
   nixbits,
+  jujutsu-clone ? nixbits.jujutsu-clone,
 }:
 let
   inherit (nixbits) direnv starship;
@@ -170,7 +171,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         z "$dir" || return
         ${lib.getExe nixbits.jujutsu} git fetch
       else
-        ${lib.getExe nixbits.jujutsu-clone} "$repo" "$dir" || return
+        ${lib.getExe jujutsu-clone} "$repo" "$dir" || return
         z "$dir"
       fi
     }

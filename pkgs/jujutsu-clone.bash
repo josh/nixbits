@@ -27,6 +27,14 @@ parse_repo_source() {
   exit 1
 }
 
+gitea_source() {
+  local repo="$1" json
+
+  [[ -n ${TEA:-} ]] || return 1
+  json=$(timeout 5 "$TEA" api "repos/$repo" 2>/dev/null) || return 1
+  jq --exit-status --raw-output 'select(.mirror == false) | .clone_url // empty' <<<"$json"
+}
+
 if [[ $# -eq 0 ]]; then
   usage
   exit 1
@@ -52,7 +60,17 @@ fi
 
 source=$(parse_repo_source "$repo")
 target="${target:-$(basename "$repo" .git)}"
-is_fork=$(gh repo view "$repo" --json 'isFork' --jq '.isFork' 2>/dev/null || echo false)
+is_fork=false
+
+if [[ $source == "https://github.com/$repo.git" ]] && gitea=$(gitea_source "$repo"); then
+  source="$gitea"
+else
+  github=$(gh repo view "$repo" --json 'isFork,repositoryTopics' 2>/dev/null || echo '{}')
+  is_fork=$(jq --raw-output '.isFork // false' <<<"$github")
+  if jq --exit-status '.repositoryTopics // [] | any(.name == "mirror")' <<<"$github" >/dev/null; then
+    echo "Warning: $repo is a mirror on GitHub, primary copy not found" >&2
+  fi
+fi
 
 x jj git clone --colocate "$source" "$target" "${extra_args[@]}"
 if [ "$is_fork" = "true" ]; then
