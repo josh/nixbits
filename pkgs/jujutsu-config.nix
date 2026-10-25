@@ -20,6 +20,20 @@ let
       diff-editor = ":builtin";
     };
 
+    "--scope" = [
+      {
+        "--when".commands = [
+          "diff"
+          "show"
+        ];
+        ui = {
+          paginate = "auto";
+          diff-formatter = ":git";
+          pager = lib.getExe nixbits.delta;
+        };
+      }
+    ];
+
     git = {
       executable-path = lib.getExe nixbits.git;
     };
