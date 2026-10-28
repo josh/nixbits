@@ -1,11 +1,11 @@
 import json
 import subprocess
 import sys
+import tomllib
 from datetime import UTC, datetime
 from typing import Any
 
 import click
-import tomllib
 from github import Auth, Github
 from github.GithubException import GithubException
 from github.Repository import Repository
