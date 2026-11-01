@@ -14,7 +14,8 @@ stdenvNoCC.mkDerivation {
   binPath = lib.getExe nixbits.rex-setup;
 
   buildCommand = ''
-    mkdir -p $out/share/nix/hooks/post-install.d
+    mkdir -p $out/share/nix/hooks/pre-install.d $out/share/nix/hooks/post-install.d
+    makeWrapper $binPath $out/share/nix/hooks/pre-install.d/rex --add-flags "--dry-run"
     makeWrapper $binPath $out/share/nix/hooks/post-install.d/rex
   '';
 
