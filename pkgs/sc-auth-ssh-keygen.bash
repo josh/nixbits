@@ -2,16 +2,20 @@
 source "$XTRACE_PATH/share/bash/xtrace.bash"
 
 usage() {
-  echo "usage: sc-auth-ssh-keygen [--dry-run] [LABEL]" >&2
+  echo "usage: sc-auth-ssh-keygen [--dry-run] [--quiet] [LABEL]" >&2
 }
 
 dry_run=false
+quiet=false
 label=""
 
 for arg in "$@"; do
   case "$arg" in
   "--dry-run")
     dry_run=true
+    ;;
+  "--quiet")
+    quiet=true
     ;;
   -*)
     usage
@@ -56,6 +60,8 @@ if [ -f "$stub" ] && [ -f "$stub.pub" ]; then
   if [ -n "$stub_label" ]; then
     if [ "$(awk '{ print $3 }' "$stub.pub")" != "$stub_label" ]; then
       x-dry-run $dry_run -- ssh-keygen -c -C "$stub_label" -f "$stub" >&2
+    elif [ "$quiet" = true ]; then
+      exit 0
     fi
     cat "$stub.pub"
     exit 0
