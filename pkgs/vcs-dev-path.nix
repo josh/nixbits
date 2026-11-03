@@ -4,7 +4,9 @@
   runCommand,
   jjui,
   tea,
+  nur,
   nixbits,
+  gitea-cli ? nur.repos.josh.gitea-cli,
   extraGitCredentials ? { },
 }:
 let
@@ -20,6 +22,7 @@ let
       # keep-sorted start
       gh
       git
+      gitea-cli
       jjui
       jujutsu
       lazygit
@@ -46,6 +49,19 @@ vcs-dev-path.overrideAttrs (
         done
         touch $out
       '';
+
+      gt =
+        runCommand "test-vcs-dev-path-gt"
+          {
+            nativeBuildInputs = [ finalAttrs.finalPackage ];
+            GITEA_CLI_NO_UPDATE_NOTIFIER = "1";
+          }
+          ''
+            export GITEA_CLI_CONFIG_DIR=$TMPDIR/gt
+            gt --version
+            gt auth git-credential --help
+            touch $out
+          '';
 
       tea =
         runCommand "test-vcs-dev-path-tea"

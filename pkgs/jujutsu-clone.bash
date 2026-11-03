@@ -30,8 +30,8 @@ parse_repo_source() {
 gitea_source() {
   local repo="$1" json
 
-  [[ -n ${TEA:-} ]] || return 1
-  json=$(timeout 5 "$TEA" api "repos/$repo" 2>/dev/null) || return 1
+  [[ -n ${GT:-} ]] || return 1
+  json=$(timeout 5 "$GT" api --no-input "repos/$repo" 2>/dev/null) || return 1
   jq --exit-status --raw-output 'select(.mirror == false) | .clone_url // empty' <<<"$json"
 }
 

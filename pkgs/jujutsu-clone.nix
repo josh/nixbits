@@ -5,9 +5,10 @@
   git,
   jq,
   jujutsu,
-  tea,
+  nur,
   nixbits,
   git-config ? nixbits.git-config,
+  gitea-cli ? nur.repos.josh.gitea-cli,
   enableGitea ? false,
 }:
 let
@@ -30,7 +31,7 @@ writeShellApplication {
     XTRACE_PATH = nixbits.xtrace;
   }
   // lib.attrsets.optionalAttrs enableGitea {
-    TEA = lib.getExe tea;
+    GT = lib.getExe gitea-cli;
   };
   text = builtins.readFile ./jujutsu-clone.bash;
   meta = {
