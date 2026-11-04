@@ -2,7 +2,7 @@
   lib,
   stdenvNoCC,
   writeText,
-  testers,
+  runCommand,
   buildMachines ? [ ],
 }:
 let
@@ -11,6 +11,17 @@ let
   numberToString =
     number: if (number == null || number == 0) then "-" else (builtins.toString number);
   stringToString = str: if (str == null || str == "") then "-" else str;
+
+  testEqualContents =
+    {
+      assertion,
+      expected,
+      actual,
+    }:
+    runCommand "nix-remote-build-machines-conf-test-${assertion}" { } ''
+      diff -u ${expected} ${actual}
+      touch $out
+    '';
 
   # Extract from
   #   https://github.com/NixOS/nixpkgs/blob/ccb73a4/nixos/modules/config/nix-remote-build.nix
@@ -79,16 +90,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   '';
 
   passthru.tests = {
-    empty = testers.testEqualContents {
+    empty = testEqualContents {
       assertion = "empty";
-      checkMetadata = false;
       expected = writeText "machines" "";
       actual = finalAttrs.finalPackage.overrideAttrs { buildMachines = [ ]; };
     };
 
-    example = testers.testEqualContents {
+    example = testEqualContents {
       assertion = "example";
-      checkMetadata = false;
       expected = writeText "machines" ''
         ssh-ng://builder x86_64-linux,aarch64-linux - 1 2 nixos-test,benchmark,big-parallel,kvm - -
       '';
