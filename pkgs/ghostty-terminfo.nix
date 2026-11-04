@@ -21,8 +21,8 @@ stdenvNoCC.mkDerivation {
 
   buildCommand = ''
     mkdir -p $out/share/terminfo/g $out/share/terminfo/x
-    cp ${ghostty}/share/terminfo/g/ghostty $out/share/terminfo/g/ghostty
     cp ${ghostty}/share/terminfo/x/xterm-ghostty $out/share/terminfo/x/xterm-ghostty
+    cp $out/share/terminfo/x/xterm-ghostty $out/share/terminfo/g/ghostty
     [ -f "$out/share/terminfo/g/ghostty" ]
     [ -f "$out/share/terminfo/x/xterm-ghostty" ]
 
