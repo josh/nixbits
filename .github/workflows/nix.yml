@@ -18,6 +18,7 @@ jobs:
           - x86_64-linux
 
     runs-on: [self-hosted, "${{ matrix.system }}"]
+    timeout-minutes: 120
 
     steps:
       - name: Check flake
