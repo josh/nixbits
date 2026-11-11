@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   jq,
+  nixbits,
   extraSettings ? { },
 }:
 let
@@ -19,6 +20,17 @@ let
       DISABLE_BUG_COMMAND = "1";
       DISABLE_FEEDBACK_COMMAND = "1";
     };
+    hooks.PreToolUse = [
+      {
+        matcher = "Bash";
+        hooks = [
+          {
+            type = "command";
+            command = lib.getExe nixbits.claude-deny-nix-store-scan;
+          }
+        ];
+      }
+    ];
   } extraSettings;
 in
 stdenvNoCC.mkDerivation {
