@@ -10,7 +10,6 @@
   restic,
   nur,
   nixbits,
-  rclone-config ? nixbits.rclone-taildrive-config,
   # TODO: Deprecate this alias
   aws-config ? null,
   awsConfig ? null,
@@ -44,7 +43,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   resticAgeIdentityCommand = "";
   resticAgeIdentityCommandExe = toExePath finalAttrs.resticAgeIdentityCommand;
 
-  rcloneConfig = rclone-config;
   awsConfig = if awsConfig != null then awsConfig else aws-config;
   inherit awsCredentials;
 
@@ -83,9 +81,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     prependToVar makeWrapperArgs --set RESTIC_AGE_IDENTITY_COMMAND "$resticAgeIdentityCommandExe"
     prependToVar makeWrapperArgs --unset RESTIC_AGE_IDENTITY_FILE
 
-    if [ -n "$rcloneConfig" ]; then
-      prependToVar makeWrapperArgs --set RCLONE_CONFIG "$rcloneConfig"
-    fi
     if [ -n "$awsConfig" ]; then
       prependToVar makeWrapperArgs --set AWS_CONFIG_FILE "$awsConfig"
     fi
