@@ -17,6 +17,7 @@ declare -A state
 declare -A detail
 names=()
 repos=()
+workspaces=()
 
 for path in "$root"/*; do
   name="$(basename "$path")"
@@ -24,6 +25,8 @@ for path in "$root"/*; do
   if grep --quiet --line-regexp --fixed-strings "$name" <<<"$keep"; then
     state["$name"]=keep
     detail["$name"]="listed in .jjkeep"
+  elif [ -f "$path/.jj/repo" ]; then
+    workspaces+=("$name")
   elif [ ! -d "$path/.jj" ]; then
     if [ -d "$path/.git" ]; then
       state["$name"]=git-only
@@ -67,6 +70,28 @@ for name in "${repos[@]}"; do
   fi
 done
 
+workspace_wip='::@ ~ ::remote_bookmarks() ~ (empty() & description(exact:""))'
+
+for name in "${workspaces[@]}"; do
+  path="$root/$name"
+  if ! (cd "$path" && jj status >/dev/null 2>&1); then
+    state["$name"]=review
+    detail["$name"]="stale working copy"
+  elif ! (cd "$path" && jj git fetch --all-remotes >/dev/null 2>&1); then
+    state["$name"]=fetch-failed
+    detail["$name"]="could not reach remote"
+  else
+    wip="$(cd "$path" && jj log --no-graph --revisions "$workspace_wip" --template 'change_id.short(8) ++ "\n"')"
+    total="$(grep --count . <<<"$wip" || true)"
+    if [ "$total" -eq 0 ]; then
+      state["$name"]=workspace
+    else
+      state["$name"]=unpushed
+      detail["$name"]="$total workspace changes exist only here"
+    fi
+  fi
+done
+
 for name in "${names[@]}"; do
   [[ ${state[$name]} =~ ^(clean|active)$ ]] || continue
   entries="$(cd "$root/$name" && jj-untracked)"
@@ -87,11 +112,11 @@ done
 
 candidates=()
 preselected=""
-for want in fetch-failed no-remote git-only not-a-repo unpushed review active clean keep; do
+for want in fetch-failed no-remote git-only not-a-repo unpushed review active workspace clean keep; do
   for name in "${names[@]}"; do
     [ "${state[$name]}" = "$want" ] || continue
     printf '%-12s %-26s %s\n' "$want" "$name" "${detail[$name]:-}"
-    if [ "$want" = clean ]; then
+    if [[ $want =~ ^(clean|workspace)$ ]]; then
       candidates+=("$name")
       preselected+="${preselected:+,}$name"
     fi
@@ -101,9 +126,14 @@ done
 [ "${#candidates[@]}" -gt 0 ] || exit 0
 
 trashing="$(printf '%s\n' "${candidates[@]}" |
-  gum choose --no-limit --selected "$preselected" --header "Repositories to trash")" || exit $?
+  gum choose --no-limit --selected "$preselected" --header "Repositories to trash, workspaces to remove")" || exit $?
 [ -n "$trashing" ] || exit 0
-gum confirm --default=false "Trash $(grep --count . <<<"$trashing") repositories?" || exit 0
+gum confirm --default=false "Remove $(grep --count . <<<"$trashing") repositories and workspaces?" || exit 0
 while IFS= read -r name; do
-  [ -n "$name" ] && trash "$root/$name"
+  [ -n "$name" ] || continue
+  if [ "${state[$name]}" = workspace ]; then
+    (cd "$root/$name" && jj workspace remove "$(jj workspace list --template 'if(target.current_working_copy(), name ++ "\n")')")
+  else
+    trash "$root/$name"
+  fi
 done <<<"$trashing"
