@@ -13,6 +13,9 @@ let
   inherit (nixbits) direnv starship;
   inherit (nur.repos.josh) iterm2-shell-integration;
 
+  # neorex needs Zig 0.17, which stable nixpkgs lacks
+  rexEditor = if nixbits.neorex.meta.available then nixbits.neorex else nixbits.neovim;
+
   path = symlinkJoin {
     name = "bash-path";
     paths = [
@@ -68,7 +71,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     if stdenvNoCC.hostPlatform.isDarwin then
       ''
 
-        export EDITOR="''${EDITOR:-${nixbits.bbedit-mas}/bin/bbedit --wait --resume}"
+        if [[ "''${TERM_PROGRAM:-}" == rex ]]; then
+          export EDITOR="''${EDITOR:-${lib.getExe rexEditor}}"
+        else
+          export EDITOR="''${EDITOR:-${nixbits.bbedit-mas}/bin/bbedit --wait --resume}"
+        fi
       ''
     else
       ''

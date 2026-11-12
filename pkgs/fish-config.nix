@@ -10,6 +10,9 @@
 let
   inherit (nixbits) direnv;
 
+  # neorex needs Zig 0.17, which stable nixpkgs lacks
+  rexEditor = if nixbits.neorex.meta.available then nixbits.neorex else nixbits.neovim;
+
   availableThemes = {
     "tokyonight_day" = "${nur.repos.josh.tokyonight-extras}/share/tokyonight/fish/tokyonight_day.fish";
     "tokyonight_moon" =
@@ -74,6 +77,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       "${nixbits.bbedit-mas}/bin/bbedit --wait --resume"
     else
       "${neovim}/bin/nvim";
+  rexEditor =
+    if stdenvNoCC.hostPlatform.isDarwin then lib.getExe rexEditor else finalAttrs.defaultEditor;
 
   buildCommand = ''
     mkdir -p $out $out/conf.d
@@ -84,11 +89,16 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
     cat >$out/conf.d/editor.fish <<'EOF'
     if not set --query EDITOR
-        set --export EDITOR "@defaultEditor@"
+        if test "$TERM_PROGRAM" = rex
+            set --export EDITOR "@rexEditor@"
+        else
+            set --export EDITOR "@defaultEditor@"
+        end
     end
     EOF
     substituteInPlace $out/conf.d/editor.fish \
-      --replace-fail '@defaultEditor@' "$defaultEditor"
+      --replace-fail '@defaultEditor@' "$defaultEditor" \
+      --replace-fail '@rexEditor@' "$rexEditor"
 
     cat >$out/conf.d/go.fish <<'EOF'
     if set --query XDG_DATA_HOME
