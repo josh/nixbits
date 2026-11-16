@@ -4,10 +4,12 @@
   makeWrapper,
   runCommand,
   testers,
+  writeText,
   jujutsu,
   watchman,
   nixbits,
   git-config ? nixbits.git-config,
+  jujutsu-config ? nixbits.jujutsu-config,
 }:
 let
   jujutsu' = symlinkJoin {
@@ -29,7 +31,7 @@ let
     nativeBuildInputs = [ makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/jj \
-        --set JJ_CONFIG ${nixbits.jujutsu-config} \
+        --set JJ_CONFIG ${jujutsu-config} \
         --set GIT_CONFIG_GLOBAL ${git-config}
     '';
 
@@ -66,6 +68,25 @@ jujutsu'.overrideAttrs (
           fi
           touch $out
         '';
+
+        config-override =
+          runCommand "test-jj-config-override"
+            {
+              nativeBuildInputs = [
+                (nixbits.jujutsu.override {
+                  jujutsu-config = writeText "jj-override.toml" ''
+                    [user]
+                    name = "Override Author"
+                    email = "override@example.com"
+                  '';
+                })
+              ];
+            }
+            ''
+              test "$(jj config get user.name)" = "Override Author"
+              test "$(jj config get user.email)" = "override@example.com"
+              touch $out
+            '';
 
         ignore = runCommand "test-jj-ignore" { nativeBuildInputs = [ jujutsu ]; } ''
           jj git init
