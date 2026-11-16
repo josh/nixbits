@@ -28,6 +28,10 @@ let
             type = "command";
             command = lib.getExe nixbits.claude-deny-nix-store-scan;
           }
+          {
+            type = "command";
+            command = lib.getExe nixbits.claude-deny-gh-comment;
+          }
         ];
       }
     ];
