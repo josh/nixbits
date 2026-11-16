@@ -32,6 +32,10 @@ let
             type = "command";
             command = lib.getExe nixbits.claude-deny-gh-comment;
           }
+          {
+            type = "command";
+            command = lib.getExe nixbits.claude-ask-git-push;
+          }
         ];
       }
     ];
