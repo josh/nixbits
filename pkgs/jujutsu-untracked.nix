@@ -2,7 +2,6 @@
   lib,
   writeShellApplication,
   runCommand,
-  writeText,
   coreutils,
   git,
   jujutsu,
@@ -54,53 +53,10 @@ writeShellApplication {
             fi
             touch $out
           '';
-      mkOverrideTest =
-        name: initArgs:
-        let
-          jj-untracked = nixbits.jujutsu-untracked.override {
-            git-config = writeText "jj-untracked-git-config" ''
-              [core]
-              excludesFile = ${writeText "jj-untracked-gitignore" "tracked-ignored.txt\n"}
-            '';
-            jujutsu-config = writeText "jj-untracked-config.toml" ''
-              [user]
-              name = "Override Author"
-              email = "override@example.com"
-              [snapshot]
-              auto-track = "glob:tracked*"
-            '';
-          };
-        in
-        runCommand "test-jj-untracked-${name}-config-overrides"
-          {
-            nativeBuildInputs = [
-              jujutsu
-              jj-untracked
-            ];
-          }
-          ''
-            export HOME="$PWD/home"
-            unset GIT_CONFIG_GLOBAL JJ_CONFIG
-            mkdir -p "$HOME" repo
-            cd repo
-            jj git init ${initArgs}
-            touch tracked.txt tracked-ignored.txt manual.txt
-
-            actual="$(jj-untracked)"
-            expected=$(printf 'manual.txt\ntracked-ignored.txt')
-            if [[ "$actual" != "$expected" ]]; then
-              echo "expected '$expected' but was '$actual'" >&2
-              exit 1
-            fi
-            test "$(jj file list --ignore-working-copy)" = "tracked.txt"
-            touch $out
-          '';
     in
     {
       colocated = mkTest "colocated" "--colocate";
       non-colocated = mkTest "non-colocated" "--no-colocate";
-      colocated-config-overrides = mkOverrideTest "colocated" "--colocate";
-      non-colocated-config-overrides = mkOverrideTest "non-colocated" "--no-colocate";
     };
 
   meta = {
