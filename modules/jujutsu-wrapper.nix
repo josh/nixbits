@@ -42,6 +42,7 @@ let
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
   };
   jjClone = config.commands.clone.override {
+    jujutsu-git-set-upstream = jjGitSetUpstream;
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
