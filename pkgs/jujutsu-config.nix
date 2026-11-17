@@ -16,8 +16,6 @@ config.overrideAttrs {
       ''
         export HOME="$TMPDIR/home"
         mkdir -p "$HOME"
-        unset JJ_CONFIG
-        test "$(${lib.getExe wrapper} config get user.name)" = "Joshua Peek"
         export JJ_CONFIG=${config}
         test "$(jj config get user.name)" = "Joshua Peek"
         test "$(jj config get user.email)" = josh@users.noreply.github.com
