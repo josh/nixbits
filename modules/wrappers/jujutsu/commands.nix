@@ -12,7 +12,7 @@ in
   jj-pull = nixbits.jujutsu-pull.override { jjConfiguration = config; };
   jj-new-main = nixbits.jujutsu-new-main.override { jjConfiguration = config; };
   jj-untracked = nixbits.jujutsu-untracked.override sharedConfig;
-  jj-wip-changes = nixbits.jujutsu-wip-changes.override sharedConfig;
+  jj-wip-changes = nixbits.jujutsu-wip-changes.override { jjConfiguration = config; };
   jj-bookmark-clean = nixbits.jujutsu-bookmark-clean.override sharedConfig;
   # Inherit JJ_CONFIG from the caller, including jj-clone.
   jj-git-set-upstream = nixbits.jujutsu-git-set-upstream.override { inherit git-config; };
