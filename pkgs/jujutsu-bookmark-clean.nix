@@ -1,12 +1,18 @@
 {
   lib,
   writeShellApplication,
+  wlibEvalPackage,
+  git,
   gnugrep,
   jujutsu,
   nixbits,
-  git-config ? nixbits.git-config,
-  jujutsu-config ? nixbits.jujutsu-config,
+  jjConfiguration ? nixbits.jujutsu.configuration,
 }:
+let
+  commandEnv = import ../modules/wrappers/jujutsu/command-env.nix {
+    inherit lib git wlibEvalPackage;
+  };
+in
 writeShellApplication {
   name = "jj-bookmark-clean";
   runtimeInputs = [
@@ -14,9 +20,7 @@ writeShellApplication {
     jujutsu
   ];
   inheritPath = false;
-  runtimeEnv = {
-    GIT_CONFIG_GLOBAL = git-config;
-    JJ_CONFIG = jujutsu-config;
+  runtimeEnv = commandEnv jjConfiguration // {
     XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./jujutsu-bookmark-clean.bash;
