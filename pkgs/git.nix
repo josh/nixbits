@@ -2,52 +2,33 @@
   lib,
   stdenv,
   symlinkJoin,
-  makeWrapper,
+  wlibEvalPackage,
+  writeText,
   runCommand,
   testers,
   git,
   nixbits,
   git-config ? nixbits.git-config,
 }:
-let
-  git' = symlinkJoin {
-    pname = "git";
-    inherit (git) version;
-
-    __structuredAttrs = true;
-
-    paths = [
-      git
-      nixbits.git-branch-prune
-      nixbits.git-fetch-dir
-    ];
-    nativeBuildInputs = [ makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/git \
-        --set GIT_CONFIG_GLOBAL "$gitConfig"
-    '';
-
-    meta = {
-      inherit (git.meta)
-        description
-        homepage
-        license
-        platforms
-        ;
-      mainProgram = "git";
+wlibEvalPackage [
+  ../modules/git-wrapper.nix
+  ({ config, ... }: {
+    package = symlinkJoin {
+      pname = "git";
+      inherit (git) version meta;
+      paths = [
+        git
+        nixbits.git-branch-prune
+        nixbits.git-fetch-dir
+      ];
     };
-  };
-in
-git'.overrideAttrs (
-  finalAttrs: _previousAttrs: {
-    gitConfig = git-config;
-
+    configFile.path = git-config;
     passthru.tests =
       let
-        git = finalAttrs.finalPackage;
+        git = config.wrapper;
 
-        git-with-extra-credentials = finalAttrs.finalPackage.overrideAttrs {
-          gitConfig = git-config.override {
+        git-with-extra-credentials = nixbits.git.override {
+          git-config = git-config.override {
             extraCredentials = {
               "https://git.example.com".helper = [
                 ""
@@ -58,6 +39,55 @@ git'.overrideAttrs (
         };
       in
       {
+        config-override =
+          let
+            customConfig = writeText "custom-git-config" ''
+              [user]
+                name = Custom Git User
+                email = custom@example.com
+              [credential "https://git.example.com"]
+                helper =
+                helper = custom-helper
+            '';
+            customGit = nixbits.git.override { git-config = customConfig; };
+          in
+          runCommand "test-git-config-override" { nativeBuildInputs = [ customGit ]; } ''
+            export HOME="$TMPDIR/home"
+            mkdir -p "$HOME"
+            export GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/ignored/git-config
+            test "$(git config get user.name)" = "Custom Git User"
+            test "$(git config get user.email)" = custom@example.com
+            test "$(git config get --url=https://git.example.com credential.helper)" = custom-helper
+            test "$(git config get --show-origin user.name)" = "$(printf 'file:%s\t%s' ${customConfig} 'Custom Git User')"
+            touch "$out"
+          '';
+
+        bundled-helpers = runCommand "test-git-bundled-helpers" { nativeBuildInputs = [ git ]; } ''
+          export HOME="$TMPDIR/home"
+          mkdir -p "$HOME"
+          export GIT_CONFIG_NOSYSTEM=1
+          unset GIT_CONFIG_GLOBAL
+          test -x ${git}/bin/git-branch-prune
+          test -x ${git}/bin/git-fetch-dir
+          git init -b main repo
+          cd repo
+          git commit --allow-empty -m initial
+          git branch merged
+          git branch-prune
+          if git show-ref --verify --quiet refs/heads/merged; then
+            echo "bundled branch-prune did not delete the merged branch"
+            exit 1
+          fi
+          cd ..
+          git init --bare remote.git
+          git -C repo remote add origin "$PWD/remote.git"
+          git -C repo push origin main
+          git -C repo update-ref -d refs/remotes/origin/main
+          git fetch-dir "$PWD/repo"
+          test "$(git -C repo rev-parse origin/main)" = "$(git -C repo rev-parse main)"
+          touch "$out"
+        '';
+
         version = testers.testVersion {
           package = git;
           command = "git version";
@@ -149,5 +179,5 @@ git'.overrideAttrs (
               touch $out
             '';
       };
-  }
-)
+  })
+]
