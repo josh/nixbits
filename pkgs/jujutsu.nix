@@ -26,7 +26,9 @@ let
         inherit git-config jujutsu-config;
       })
       nixbits.jujutsu-new-main
-      nixbits.jujutsu-pull
+      (nixbits.jujutsu-pull.override {
+        inherit git-config jujutsu-config;
+      })
       nixbits.jujutsu-untracked
       nixbits.jujutsu-wip-changes
     ]
@@ -115,6 +117,45 @@ jujutsu'.overrideAttrs (
             ${bundle}/bin/jj-init
             test "$(${bundle}/bin/jj log --ignore-working-copy --no-graph --revisions @ --template 'author.name()')" = "Override Author"
             test "$(${bundle}/bin/jj log --ignore-working-copy --no-graph --revisions @ --template 'author.email()')" = "override@example.com"
+            test "$(${bundle}/bin/jj file list --ignore-working-copy)" = "visible"
+            touch $out
+          '';
+
+        pull-config-overrides =
+          let
+            bundle = nixbits.jujutsu.override {
+              git-config = writeText "jj-pull-bundle-git-config" ''
+                [core]
+                excludesFile = ${writeText "jj-pull-bundle-gitignore" "ignored-by-override\n"}
+              '';
+              jujutsu-config = writeText "jj-pull-bundle-config.toml" ''
+                [user]
+                name = "Override Author"
+                email = "override@example.com"
+                [git]
+                executable-path = "${lib.getExe git}"
+              '';
+            };
+          in
+          runCommand "test-jj-bundled-pull-config-overrides" { nativeBuildInputs = [ git ]; } ''
+            export HOME="$PWD/home"
+            unset GIT_CONFIG_GLOBAL JJ_CONFIG
+            mkdir -p "$HOME"
+            git init --initial-branch=main seed
+            git -C seed config user.name "Seed Author"
+            git -C seed config user.email "seed@example.com"
+            git -C seed commit --allow-empty --message initial
+            ${bundle}/bin/jj --config user.name='Seed Author' --config user.email=seed@example.com git clone "$PWD/seed" work
+
+            git -C seed commit --allow-empty --message upstream
+            upstream=$(git -C seed rev-parse HEAD)
+            cd work
+            touch visible ignored-by-override
+            ${bundle}/bin/jj-pull
+
+            test "$(${bundle}/bin/jj log --ignore-working-copy --no-graph --revisions '@-' --template 'commit_id')" = "$upstream"
+            test "$(${bundle}/bin/jj log --ignore-working-copy --no-graph --revisions @ --template 'committer.name()')" = "Override Author"
+            test "$(${bundle}/bin/jj log --ignore-working-copy --no-graph --revisions @ --template 'committer.email()')" = "override@example.com"
             test "$(${bundle}/bin/jj file list --ignore-working-copy)" = "visible"
             touch $out
           '';
