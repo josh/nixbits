@@ -4,17 +4,9 @@
   git,
   nixbits,
   wlibEvalPackage,
-  extraCredentials ? { },
 }:
 let
-  wrapper = wlibEvalPackage [
-    ../modules/git-wrapper.nix
-    {
-      # Preserve the old shallow merge: replace each supplied credential entry,
-      # including all of a host's fields and its ordered helper list.
-      settings.credential = lib.mapAttrs (_name: value: lib.mkForce value) extraCredentials;
-    }
-  ];
+  wrapper = wlibEvalPackage ../modules/git-wrapper.nix;
   config = runCommand "git-config" { } ''
     cp ${wrapper.configuration.constructFiles.gitconfig} "$out"
   '';
@@ -33,53 +25,6 @@ config.overrideAttrs {
       done
       touch "$out"
     '';
-
-    credential-overrides =
-      let
-        custom = nixbits.git-config.override {
-          extraCredentials = {
-            helper = [
-              ""
-              "global-helper"
-            ];
-            "https://github.com".useHttpPath = true;
-            "https://gist.github.com".helper = [
-              ""
-              "first-helper"
-              "second-helper"
-            ];
-            "https://git.example.com" = {
-              helper = [
-                ""
-                "example-helper"
-              ];
-              useHttpPath = true;
-            };
-          };
-        };
-      in
-      runCommand "test-git-config-credential-overrides" { nativeBuildInputs = [ git ]; } ''
-        # A replacement host entry must remove its old fields, not merge them.
-        if git --no-pager config get --file ${custom} --all credential.https://github.com.helper; then
-          echo "GitHub's original helper survived replacement"
-          exit 1
-        else
-          test "$?" -eq 1
-        fi
-        test "$(git --no-pager config get --file ${custom} credential.https://github.com.useHttpPath)" = true
-        printf '%s\n' "" global-helper >expected
-        git --no-pager config get --file ${custom} --all credential.helper >actual
-        cmp expected actual
-        printf '%s\n' "" first-helper second-helper >expected
-        git --no-pager config get --file ${custom} --all credential.https://gist.github.com.helper >actual
-        cmp expected actual
-        printf '%s\n' "" example-helper >expected
-        git --no-pager config get --file ${custom} --all credential.https://git.example.com.helper >actual
-        cmp expected actual
-        test "$(git --no-pager config get --file ${custom} credential.https://git.example.com.useHttpPath)" = true
-        test "$(git --no-pager config get --file ${custom} user.name)" = "Joshua Peek"
-        touch "$out"
-      '';
 
     module-settings =
       let
