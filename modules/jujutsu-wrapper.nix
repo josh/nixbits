@@ -14,6 +14,21 @@
     description = "Evaluated Git wrapper supplying the Git executable and default JJ identity.";
   };
 
+  options.configFile = lib.mkOption {
+    type = lib.types.submodule {
+      options.path = lib.mkOption {
+        type = wlib.types.stringable;
+        default = config.constructFiles.generatedConfig.path;
+        description = "JJ configuration file; defaults to the generated settings.";
+      };
+    };
+    default = { };
+    description = "Configuration file used by JJ.";
+  };
+
+  # The upstream module sets JJ_CONFIG directly to its generated file.
+  config.env.JJ_CONFIG = lib.mkForce config.configFile.path;
+
   config.settings = {
     user = {
       name = lib.mkDefault config.gitWrapper.configuration.settings.user.name;

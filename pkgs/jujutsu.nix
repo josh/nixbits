@@ -47,10 +47,8 @@ wlibEvalPackage [
       ]
       ++ (lib.lists.optional watchman.meta.available watchman);
     };
-    env = {
-      JJ_CONFIG = lib.mkForce "${jujutsu-config}";
-      GIT_CONFIG_GLOBAL = "${git-config}";
-    };
+    configFile.path = jujutsu-config;
+    env.GIT_CONFIG_GLOBAL = "${git-config}";
 
     passthru.tests =
       let
@@ -111,23 +109,27 @@ wlibEvalPackage [
         '';
 
         config-override =
-          runCommand "test-jj-config-override"
-            {
-              nativeBuildInputs = [
-                (nixbits.jujutsu.override {
-                  jujutsu-config = writeText "jj-override.toml" ''
-                    [user]
-                    name = "Override Author"
-                    email = "override@example.com"
-                  '';
-                })
-              ];
-            }
-            ''
-              test "$(jj config get user.name)" = "Override Author"
-              test "$(jj config get user.email)" = "override@example.com"
-              touch $out
+          let
+            customConfig = writeText "jj-override.toml" ''
+              [user]
+              name = "Override Author"
+              email = "override@example.com"
             '';
+            customPackage = nixbits.jujutsu.override { jujutsu-config = customConfig; };
+            customModule = wlibEvalPackage [
+              ../modules/jujutsu-wrapper.nix
+              { configFile.path = customConfig; }
+            ];
+          in
+          runCommand "test-jj-config-override" { } ''
+            export HOME="$TMPDIR/home" JJ_CONFIG=/ignored/jj-config
+            mkdir -p "$HOME"
+            for jjBin in ${customPackage}/bin/jj ${customModule}/bin/jj; do
+              test "$("$jjBin" config get user.name)" = "Override Author"
+              test "$("$jjBin" config get user.email)" = "override@example.com"
+            done
+            touch "$out"
+          '';
 
         init-config-overrides =
           let
