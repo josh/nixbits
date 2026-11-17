@@ -29,9 +29,6 @@ wlibEvalPackage [
           inherit git-config jujutsu-config;
         })
         (nixbits.jujutsu-git-set-upstream.override { inherit git-config; })
-        (nixbits.jujutsu-wip-changes.override {
-          inherit git-config jujutsu-config;
-        })
       ]
       ++ (lib.lists.optional watchman.meta.available watchman);
     };

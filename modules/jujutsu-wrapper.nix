@@ -29,6 +29,10 @@ let
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
+  jjWipChanges = pkgs.nixbits.jujutsu-wip-changes.override {
+    git-config = config.env.GIT_CONFIG_GLOBAL.data;
+    jujutsu-config = config.configFile.path;
+  };
   generatedConfig = (pkgs.formats.toml { }).generate "jj-config.toml" config.settings;
 in
 {
@@ -69,6 +73,7 @@ in
       ln -s ${jjPull}/bin/jj-pull "${placeholder config.outputName}/bin/jj-pull"
       ln -s ${jjNewMain}/bin/jj-new-main "${placeholder config.outputName}/bin/jj-new-main"
       ln -s ${jjUntracked}/bin/jj-untracked "${placeholder config.outputName}/bin/jj-untracked"
+      ln -s ${jjWipChanges}/bin/jj-wip-changes "${placeholder config.outputName}/bin/jj-wip-changes"
     '';
   };
 
