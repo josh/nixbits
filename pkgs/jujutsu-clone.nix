@@ -1,20 +1,23 @@
 {
   lib,
   writeShellApplication,
+  wlibEvalPackage,
   coreutils,
   git,
   jq,
   jujutsu,
   nur,
   nixbits,
-  git-config ? nixbits.git-config,
-  jujutsu-config ? nixbits.jujutsu-config,
-  jujutsu-git-set-upstream ? nixbits.jujutsu-git-set-upstream.override { inherit git-config; },
+  jjConfiguration ? nixbits.jujutsu.configuration,
+  jujutsu-git-set-upstream ? jjConfiguration.commands.jj-git-set-upstream,
   gitea-cli ? nur.repos.josh.gitea-cli,
   enableGitea ? false,
 }:
 let
   inherit (nixbits) gh;
+  commandEnv = import ../modules/wrappers/jujutsu/command-env.nix {
+    inherit lib git wlibEvalPackage;
+  };
 in
 writeShellApplication {
   name = "jj-clone";
@@ -27,14 +30,12 @@ writeShellApplication {
     jujutsu-git-set-upstream
   ];
   inheritPath = false;
-  runtimeEnv = {
-    GIT_CONFIG_GLOBAL = git-config;
-    JJ_CONFIG = jujutsu-config;
-    XTRACE_PATH = nixbits.xtrace;
-  }
-  // lib.attrsets.optionalAttrs enableGitea {
-    GT = lib.getExe gitea-cli;
-  };
+  runtimeEnv =
+    commandEnv jjConfiguration
+    // {
+      XTRACE_PATH = nixbits.xtrace;
+    }
+    // lib.optionalAttrs enableGitea { GT = lib.getExe gitea-cli; };
   text = builtins.readFile ./jujutsu-clone.bash;
 
   meta = {

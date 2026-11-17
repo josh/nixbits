@@ -35,6 +35,13 @@ let
   customGit = wlibEvalPackage [
     ../../git.nix
     {
+      settings.credential."https://example.test".helper = "probe";
+      runShell = [
+        ''
+          test "$(${git}/bin/git config get credential.https://example.test.helper)" = probe || exit 1
+          echo "$JJ_CONFIG" >>"$GIT_HOOK_LOG"
+        ''
+      ];
       settings.url."file:///".insteadOf = [
         "localtest:///"
         "https://github.com/upstream/"
@@ -45,8 +52,7 @@ let
     ../../jujutsu.nix
     ({ config, ... }: {
       commands.jj-clone = nixbits.jujutsu-clone.override {
-        git-config = config.env.GIT_CONFIG_GLOBAL.data;
-        jujutsu-config = config.configFile.path;
+        jjConfiguration = config;
         jujutsu-git-set-upstream = writeShellScriptBin "jj-git-set-upstream" ''
           set -eu
           test "$JJ_CONFIG" = "$EXPECTED_JJ_CONFIG"
@@ -96,9 +102,11 @@ runCommand "test-jj-fork-clone-module-propagation"
     upstreamCommit=$(git -C upstream rev-parse HEAD)
     export TEST_FORK_URL="localtest://$PWD/fork" TEST_FORK_FILE_URL="file://$PWD/fork"
     export TEST_UPSTREAM_URL="https://github.com/upstream$PWD/upstream" GH_STUB_CALLS="$PWD/gh-calls"
+    export GIT_HOOK_LOG="$PWD/git-hooks"
     export UPSTREAM_STUB_CALLED="$PWD/upstream-called"
     ${forkClone}/bin/jj-clone "$TEST_FORK_URL" work
     test -f "$UPSTREAM_STUB_CALLED"
+    test "$(sort -u "$GIT_HOOK_LOG")" = "$EXPECTED_JJ_CONFIG"
 
     test "$(cat "$GH_STUB_CALLS")" = "$(printf 'isFork,repositoryTopics\nisFork\nparent\ndefaultBranchRef')"
     cd work

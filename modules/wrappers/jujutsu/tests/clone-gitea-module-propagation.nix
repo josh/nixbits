@@ -28,9 +28,7 @@ let
     };
     jujutsuModule = { config, ... }: {
       commands.jj-clone = nixbits.jujutsu-clone.override {
-        git-config = config.env.GIT_CONFIG_GLOBAL.data;
-        jujutsu-config = config.configFile.path;
-        jujutsu-git-set-upstream = config.commands.jj-git-set-upstream;
+        jjConfiguration = config;
         nixbits = nixbits // {
           inherit gh;
         };

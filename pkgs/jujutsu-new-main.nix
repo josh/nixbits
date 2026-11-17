@@ -6,8 +6,6 @@
   jujutsu,
   nixbits,
   jjConfiguration ? nixbits.jujutsu.configuration,
-  git-config ? null,
-  jujutsu-config ? null,
 }:
 let
   commandEnv = import ../modules/wrappers/jujutsu/command-env.nix {
@@ -20,10 +18,7 @@ writeShellApplication {
     jujutsu
   ];
   inheritPath = false;
-  runtimeEnv =
-    commandEnv jjConfiguration
-    // lib.optionalAttrs (git-config != null) { GIT_CONFIG_GLOBAL = git-config; }
-    // lib.optionalAttrs (jujutsu-config != null) { JJ_CONFIG = jujutsu-config; };
+  runtimeEnv = commandEnv jjConfiguration;
   text = builtins.readFile ./jujutsu-new-main.bash;
 
   meta = {
