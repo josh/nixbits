@@ -20,11 +20,7 @@ let
   git-config = git.configuration.constructFiles.gitconfig.outPath;
   jujutsu = wlibEvalPackage [
     ../modules/jujutsu-wrapper.nix
-    ({ config, ... }: {
-      gitWrapper = git;
-      inherit (nixbits.jujutsu.configuration) jujutsuPackage watchmanPackage;
-      commands = import ../modules/jujutsu-wrapper/commands.nix { inherit config nixbits; };
-    })
+    { gitWrapper = git; }
   ];
   jujutsu-config = jujutsu.configuration.configFile.path;
   lazygit = nixbits.lazygit.override { inherit git-config; };
@@ -57,37 +53,6 @@ vcs-dev-path.overrideAttrs (
     passthru.git = git;
     passthru.jujutsu = jujutsu;
     passthru.tests = {
-      jj-package-overrides =
-        let
-          base = nixbits.jujutsu.configuration.jujutsuPackage;
-          customJj = symlinkJoin {
-            name = "custom-vcs-jj";
-            inherit (base) version meta;
-            paths = [ base ];
-            postBuild = ''touch "$out/custom-jj-marker"'';
-          };
-          watchman = (writeShellScriptBin "watchman" "echo vcs-watchman") // {
-            meta.available = true;
-          };
-          bundle = nixbits.vcs-dev-path.override {
-            nixbits = nixbits // {
-              jujutsu = wlibEvalPackage [
-                ../modules/jujutsu-wrapper.nix
-                {
-                  jujutsuPackage = customJj;
-                  watchmanPackage = watchman;
-                }
-              ];
-            };
-          };
-        in
-        runCommand "test-vcs-dev-path-jj-package-overrides" { } ''
-          test -e ${bundle}/custom-jj-marker
-          test "$(${bundle}/bin/watchman)" = vcs-watchman
-          ${bundle}/bin/jj version
-          touch "$out"
-        '';
-
       credential-propagation-module =
         let
           credentials."https://git.example.com" = {
