@@ -21,6 +21,10 @@ let
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
+  jjNewMain = pkgs.nixbits.jujutsu-new-main.override {
+    git-config = config.env.GIT_CONFIG_GLOBAL.data;
+    jujutsu-config = config.configFile.path;
+  };
   generatedConfig = (pkgs.formats.toml { }).generate "jj-config.toml" config.settings;
 in
 {
@@ -59,6 +63,7 @@ in
     data = ''
       ln -s ${jjInit}/bin/jj-init "${placeholder config.outputName}/bin/jj-init"
       ln -s ${jjPull}/bin/jj-pull "${placeholder config.outputName}/bin/jj-pull"
+      ln -s ${jjNewMain}/bin/jj-new-main "${placeholder config.outputName}/bin/jj-new-main"
     '';
   };
 
@@ -143,6 +148,52 @@ in
       test "$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r @ -T 'committer.name()')" = "Pull Author"
       test "$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r @ -T 'committer.email()')" = jj@example.com
       test "$(${customJj}/bin/jj file list --ignore-working-copy)" = visible
+      touch "$out"
+    '';
+
+  config.passthru.tests.new-main-module-propagation =
+    let
+      customGit = pkgs.wlibEvalPackage [
+        ./git-wrapper.nix
+        {
+          settings.user = {
+            name = lib.mkForce "New Main Author";
+            email = lib.mkForce "git@example.com";
+          };
+          settings.core.excludesFile = lib.mkForce (
+            pkgs.writeText "jj-new-main-module-gitignore" "ignored-by-module\n"
+          );
+        }
+      ];
+      customJj = pkgs.wlibEvalPackage [
+        ./jujutsu-wrapper.nix
+        {
+          gitWrapper = customGit;
+          settings.user.email = "jj@example.com";
+        }
+      ];
+    in
+    pkgs.runCommand "test-jj-new-main-module-propagation" { nativeBuildInputs = [ pkgs.git ]; } ''
+      export HOME="$TMPDIR/home" GIT_CONFIG_NOSYSTEM=1
+      unset GIT_CONFIG_GLOBAL JJ_CONFIG
+      mkdir -p "$HOME"
+      git init --initial-branch=main seed
+      git -C seed config user.name "Seed Author"
+      git -C seed config user.email seed@example.com
+      git -C seed commit --allow-empty --message initial
+      ${customJj}/bin/jj git clone "$PWD/seed" work
+      git -C seed commit --allow-empty --message upstream
+      upstream=$(git -C seed rev-parse HEAD)
+      cd work
+      previous=$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r @ -T change_id)
+      touch visible ignored-by-module
+      export GIT_CONFIG_GLOBAL=/ignored/git-config JJ_CONFIG=/ignored/jj-config
+      ${customJj}/bin/jj-new-main
+      test "$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r '@-' -T commit_id)" = "$upstream"
+      test "$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r @ -T 'author.name()')" = "New Main Author"
+      test "$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r @ -T 'author.email()')" = jj@example.com
+      test "$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r @ -T change_id)" != "$previous"
+      test "$(${customJj}/bin/jj file list --ignore-working-copy --revision "$previous")" = visible
       touch "$out"
     '';
 
