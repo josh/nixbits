@@ -38,6 +38,8 @@ let
     '';
 in
 {
+  upstream-module-propagation = import ./jujutsu-wrapper-upstream-test.nix { inherit lib pkgs; };
+
   bookmark-clean-module-propagation =
     let
       customGit = pkgs.wlibEvalPackage [
