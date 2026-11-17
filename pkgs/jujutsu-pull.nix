@@ -5,7 +5,6 @@
   git,
   jujutsu,
   nixbits,
-  git-config ? nixbits.git-config,
   jjConfiguration ? nixbits.jujutsu.configuration,
 }:
 let
@@ -33,7 +32,7 @@ writeShellApplication {
   ];
   inheritPath = false;
   runtimeEnv = {
-    GIT_CONFIG_GLOBAL = git-config;
+    GIT_CONFIG_GLOBAL = jjConfiguration.env.GIT_CONFIG_GLOBAL.data;
     JJ_CONFIG = pullConfiguration.configFile.path;
     XTRACE_PATH = nixbits.xtrace;
   };
