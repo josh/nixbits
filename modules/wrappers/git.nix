@@ -65,7 +65,6 @@ in
     # Better pushing
     # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#better-pushing>
     push = {
-      default = "simple"; # (default since 2.0)
       autoSetupRemote = true;
       followTags = true;
     };
