@@ -13,64 +13,44 @@ let
       gitConfiguration.constructFiles.gitconfig.outPath
     else
       gitConfiguration.configFile.path;
-  jjInit = config.commands.init.override {
-    git-config = config.env.GIT_CONFIG_GLOBAL.data;
-    jujutsu-config = config.configFile.path;
-  };
-  jjPull = config.commands.pull.override {
-    git-config = config.env.GIT_CONFIG_GLOBAL.data;
-    jujutsu-config = config.configFile.path;
-  };
-  jjNewMain = config.commands.new-main.override {
-    git-config = config.env.GIT_CONFIG_GLOBAL.data;
-    jujutsu-config = config.configFile.path;
-  };
-  jjUntracked = config.commands.untracked.override {
-    git-config = config.env.GIT_CONFIG_GLOBAL.data;
-    jujutsu-config = config.configFile.path;
-  };
-  jjWipChanges = config.commands.wip-changes.override {
-    git-config = config.env.GIT_CONFIG_GLOBAL.data;
-    jujutsu-config = config.configFile.path;
-  };
-  jjBookmarkClean = config.commands.bookmark-clean.override {
-    git-config = config.env.GIT_CONFIG_GLOBAL.data;
-    jujutsu-config = config.configFile.path;
-  };
-  # This helper intentionally inherits JJ_CONFIG from its caller (including jj-clone).
-  jjGitSetUpstream = config.commands.git-set-upstream.override {
-    git-config = config.env.GIT_CONFIG_GLOBAL.data;
-  };
-  jjClone = config.commands.clone.override {
-    jujutsu-git-set-upstream = jjGitSetUpstream;
-    git-config = config.env.GIT_CONFIG_GLOBAL.data;
-    jujutsu-config = config.configFile.path;
-  };
+  commandNames = [
+    "clone"
+    "init"
+    "pull"
+    "new-main"
+    "untracked"
+    "wip-changes"
+    "bookmark-clean"
+    "git-set-upstream"
+  ];
+  commands = lib.genAttrs commandNames (
+    name:
+    config.commands.${name}.override (
+      {
+        git-config = config.env.GIT_CONFIG_GLOBAL.data;
+      }
+      # The upstream command inherits JJ_CONFIG from its caller, including jj-clone.
+      // lib.optionalAttrs (name != "git-set-upstream") {
+        jujutsu-config = config.configFile.path;
+      }
+      // lib.optionalAttrs (name == "clone") {
+        jujutsu-git-set-upstream = commands.git-set-upstream;
+      }
+    )
+  );
   generatedConfig = (pkgs.formats.toml { }).generate "jj-config.toml" config.settings;
 in
 {
   imports = [ wlib.wrapperModules.jujutsu ];
 
-  options.commands =
-    lib.genAttrs
-      [
-        "init"
-        "pull"
-        "new-main"
-        "untracked"
-        "wip-changes"
-        "bookmark-clean"
-        "git-set-upstream"
-        "clone"
-      ]
-      (
-        name:
-        lib.mkOption {
-          type = lib.types.package;
-          default = pkgs.nixbits."jujutsu-${name}";
-          description = "Base jj-${name} command package, before applying the shared Git/JJ configuration.";
-        }
-      );
+  options.commands = lib.genAttrs commandNames (
+    name:
+    lib.mkOption {
+      type = lib.types.package;
+      default = pkgs.nixbits."jujutsu-${name}";
+      description = "Base jj-${name} command package, before applying the shared Git/JJ configuration.";
+    }
+  );
 
   options.gitWrapper = lib.mkOption {
     type = lib.types.package;
@@ -102,16 +82,9 @@ in
 
   config.buildCommand.jjHelpers = {
     after = [ "symlinkScript" ];
-    data = ''
-      ln -s ${jjClone}/bin/jj-clone "${placeholder config.outputName}/bin/jj-clone"
-      ln -s ${jjInit}/bin/jj-init "${placeholder config.outputName}/bin/jj-init"
-      ln -s ${jjPull}/bin/jj-pull "${placeholder config.outputName}/bin/jj-pull"
-      ln -s ${jjNewMain}/bin/jj-new-main "${placeholder config.outputName}/bin/jj-new-main"
-      ln -s ${jjUntracked}/bin/jj-untracked "${placeholder config.outputName}/bin/jj-untracked"
-      ln -s ${jjWipChanges}/bin/jj-wip-changes "${placeholder config.outputName}/bin/jj-wip-changes"
-      ln -s ${jjBookmarkClean}/bin/jj-bookmark-clean "${placeholder config.outputName}/bin/jj-bookmark-clean"
-      ln -s ${jjGitSetUpstream}/bin/jj-git-set-upstream "${placeholder config.outputName}/bin/jj-git-set-upstream"
-    '';
+    data = lib.concatMapStrings (name: ''
+      ln -s ${commands.${name}}/bin/jj-${name} "${placeholder config.outputName}/bin/jj-${name}"
+    '') commandNames;
   };
 
   config.passthru.tests = import ./jujutsu-wrapper/tests.nix { inherit lib pkgs; };
