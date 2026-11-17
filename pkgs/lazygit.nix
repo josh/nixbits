@@ -8,21 +8,14 @@
   lazygit,
   nixbits,
   git-config ? nixbits.git-config,
-  # TODO: Detect this via env var
-  useNerdFonts ? false,
 }:
 let
   yaml = formats.yaml { };
 
-  config = yaml.generate "lazygit-config.yml" (
-    {
-      update.method = "never";
-      disableStartupPopups = true;
-    }
-    // (lib.attrsets.optionalAttrs useNerdFonts {
-      gui.nerdFontsVersion = "3";
-    })
-  );
+  config = yaml.generate "lazygit-config.yml" {
+    update.method = "never";
+    disableStartupPopups = true;
+  };
 
   runtimePath = lib.strings.makeBinPath [
     git
