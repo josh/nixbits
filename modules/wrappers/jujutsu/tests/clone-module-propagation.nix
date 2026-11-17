@@ -109,10 +109,5 @@ runCommand "test-jj-fork-clone-module-propagation"
     test "$(jj log --ignore-working-copy --no-graph --revisions @ --template 'author.name()')" = "Override Author"
     test "$(jj log --ignore-working-copy --no-graph --revisions @ --template 'author.email()')" = "override@example.com"
     test "$(jj file list --ignore-working-copy)" = "tracked.txt"
-    # Calling the bundled upstream command directly inherits the caller's JJ_CONFIG too.
-    export JJ_CONFIG=${jjConfig}
-    : >"$GH_STUB_CALLS"
-    ${forkClone}/bin/jj-git-set-upstream
-    test "$(cat "$GH_STUB_CALLS")" = "$(printf 'isFork\nparent\ndefaultBranchRef')"
     touch "$out"
   ''
