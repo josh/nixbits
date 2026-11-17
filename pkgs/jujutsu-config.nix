@@ -1,84 +1,61 @@
 {
   lib,
-  writers,
+  wlibEvalPackage,
   runCommand,
   writeShellScriptBin,
   jujutsu,
-  meld,
-  neovim,
-  vim,
   nixbits,
   git-package ? nixbits.git,
 }:
 let
-  config = writers.writeTOML "jj-config.toml" {
-    user = {
-      name = "Joshua Peek";
-      email = "josh@users.noreply.github.com";
-    };
-
-    ui = {
-      default-command = [ "log" ];
-      editor = lib.getExe neovim;
-      paginate = "never";
-      diff-editor = ":builtin";
-    };
-
-    git = {
-      executable-path = lib.getExe git-package;
-    };
-
-    remotes.origin = {
-      auto-track-bookmarks = "glob:push-*";
-    };
-
-    merge-tools.meld = {
-      program = lib.getExe meld;
-    };
-
-    merge-tools.vimdiff = {
-      program = lib.getExe vim;
-    };
-
-    revset-aliases = {
-      "closest_pushable(to)" = "heads(::to & ~description(exact:\"\") & (~empty() | merges()))";
-    };
-
-    aliases = {
-      fetch = [
-        "git"
-        "fetch"
-        "--all-remotes"
-      ];
-      push = [
-        "git"
-        "push"
-        "--all"
-        "--deleted"
-      ];
-      tug = [
-        "bookmark"
-        "advance"
-        "--to"
-        "closest_pushable(@)"
-      ];
-      new-parent = [
-        "new"
-        "--no-edit"
-        "--insert-before"
-        "@"
-      ];
-      rebase-all = [
-        "rebase"
-        "--branch"
-        "bookmarks()"
-        "--onto"
-        "trunk()"
-      ];
-    };
-  };
+  wrapper = wlibEvalPackage [
+    ../modules/jujutsu-wrapper.nix
+    { settings.git.executable-path = lib.mkForce (lib.getExe git-package); }
+  ];
+  config = runCommand "jj-config.toml" { } ''
+    cp ${wrapper.configuration.constructFiles.generatedConfig} "$out"
+  '';
 in
 config.overrideAttrs {
+  passthru.tests.defaults =
+    runCommand "test-jj-config-defaults" { nativeBuildInputs = [ jujutsu ]; }
+      ''
+        export HOME="$TMPDIR/home" JJ_CONFIG=${config}
+        mkdir -p "$HOME"
+        cmp ${config} ${wrapper.configuration.constructFiles.generatedConfig}
+        test "$(jj config get user.name)" = "Joshua Peek"
+        test "$(jj config get user.email)" = josh@users.noreply.github.com
+        test "$(jj config get git.executable-path)" = "${lib.getExe nixbits.git}"
+        test "$(jj config get ui.paginate)" = never
+        test "$(jj config get ui.diff-editor)" = :builtin
+        test "$(jj config get remotes.origin.auto-track-bookmarks)" = 'glob:push-*'
+        jj git init repo
+        cd repo
+        test "$(jj log -r @ --no-graph -T 'author.name()')" = "Joshua Peek"
+        test "$(jj log -r @ --no-graph -T 'author.email()')" = josh@users.noreply.github.com
+        touch "$out"
+      '';
+
+  passthru.tests.module-settings =
+    let
+      customGit = writeShellScriptBin "git" "exit 1";
+      custom = wlibEvalPackage [
+        ../modules/jujutsu-wrapper.nix
+        {
+          settings.user.name = lib.mkForce "Module User";
+          settings.git.executable-path = lib.mkForce (lib.getExe customGit);
+        }
+      ];
+    in
+    runCommand "test-jj-wrapper-module-settings" { } ''
+      export HOME="$TMPDIR/home" JJ_CONFIG=/ignored/jj-config
+      mkdir -p "$HOME"
+      test "$(${lib.getExe custom} config get user.name)" = "Module User"
+      test "$(${lib.getExe custom} config get user.email)" = josh@users.noreply.github.com
+      test "$(${lib.getExe custom} config get git.executable-path)" = "${lib.getExe customGit}"
+      touch "$out"
+    '';
+
   passthru.tests.git-package-override =
     let
       customGit = writeShellScriptBin "git" "exit 1";
