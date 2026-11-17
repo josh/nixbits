@@ -25,9 +25,6 @@ wlibEvalPackage [
 
       paths = [
         jujutsu
-        (nixbits.jujutsu-clone.override {
-          inherit git-config jujutsu-config;
-        })
       ]
       ++ (lib.lists.optional watchman.meta.available watchman);
     };

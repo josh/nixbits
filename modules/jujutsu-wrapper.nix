@@ -41,6 +41,10 @@ let
   jjGitSetUpstream = pkgs.nixbits.jujutsu-git-set-upstream.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
   };
+  jjClone = pkgs.nixbits.jujutsu-clone.override {
+    git-config = config.env.GIT_CONFIG_GLOBAL.data;
+    jujutsu-config = config.configFile.path;
+  };
   generatedConfig = (pkgs.formats.toml { }).generate "jj-config.toml" config.settings;
 in
 {
@@ -77,6 +81,7 @@ in
   config.buildCommand.jjHelpers = {
     after = [ "symlinkScript" ];
     data = ''
+      ln -s ${jjClone}/bin/jj-clone "${placeholder config.outputName}/bin/jj-clone"
       ln -s ${jjInit}/bin/jj-init "${placeholder config.outputName}/bin/jj-init"
       ln -s ${jjPull}/bin/jj-pull "${placeholder config.outputName}/bin/jj-pull"
       ln -s ${jjNewMain}/bin/jj-new-main "${placeholder config.outputName}/bin/jj-new-main"

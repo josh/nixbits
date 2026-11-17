@@ -38,6 +38,8 @@ let
     '';
 in
 {
+  clone-module-propagation = import ./clone-test.nix { inherit lib pkgs; };
+  clone-gitea-module-propagation = import ./clone-gitea-test.nix { inherit lib pkgs; };
   upstream-module-propagation = import ./upstream-test.nix { inherit lib pkgs; };
 
   bookmark-clean-module-propagation =
