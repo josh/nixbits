@@ -1,4 +1,4 @@
-{ lib, pkgs }:
+{ pkgs }:
 let
   gh = pkgs.writeShellScriptBin "gh" ''
     test "$#" -eq 7 && test "$1" = repo && test "$2" = view &&
@@ -28,18 +28,11 @@ let
   customJj = pkgs.wlibEvalPackage [
     ../jujutsu-wrapper.nix
     {
-      pkgs = lib.mkForce (
-        pkgs
-        // {
-          nixbits = pkgs.nixbits // {
-            jujutsu-git-set-upstream = pkgs.nixbits.jujutsu-git-set-upstream.override {
-              nixbits = pkgs.nixbits // {
-                inherit gh;
-              };
-            };
-          };
-        }
-      );
+      helperPackages.git-set-upstream = pkgs.nixbits.jujutsu-git-set-upstream.override {
+        nixbits = pkgs.nixbits // {
+          inherit gh;
+        };
+      };
       gitWrapper = customGit;
     }
   ];

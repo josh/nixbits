@@ -1,4 +1,4 @@
-{ lib, pkgs }:
+{ pkgs }:
 let
   gh = pkgs.writeShellScriptBin "gh" ''
     test "$*" = 'repo view example/repo --json isFork,repositoryTopics' || exit 1
@@ -25,20 +25,13 @@ let
   customJj = pkgs.wlibEvalPackage [
     ../jujutsu-wrapper.nix
     {
-      pkgs = lib.mkForce (
-        pkgs
-        // {
-          nixbits = pkgs.nixbits // {
-            jujutsu-clone = pkgs.nixbits.jujutsu-clone.override {
-              nixbits = pkgs.nixbits // {
-                inherit gh;
-              };
-              enableGitea = true;
-              gitea-cli = gt;
-            };
-          };
-        }
-      );
+      helperPackages.clone = pkgs.nixbits.jujutsu-clone.override {
+        nixbits = pkgs.nixbits // {
+          inherit gh;
+        };
+        enableGitea = true;
+        gitea-cli = gt;
+      };
       gitWrapper = customGit;
       settings.user = {
         name = "Gitea Author";

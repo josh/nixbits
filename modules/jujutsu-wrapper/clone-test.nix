@@ -1,4 +1,4 @@
-{ lib, pkgs }:
+{ pkgs }:
 let
   inherit (pkgs)
     writeShellScriptBin
@@ -44,23 +44,16 @@ let
   forkClone = pkgs.wlibEvalPackage [
     ../jujutsu-wrapper.nix
     {
-      pkgs = lib.mkForce (
-        pkgs
-        // {
-          nixbits = nixbits // {
-            jujutsu-clone = nixbits.jujutsu-clone.override {
-              nixbits = nixbits // {
-                gh = ghStub;
-                jujutsu-git-set-upstream = nixbits.jujutsu-git-set-upstream.override {
-                  nixbits = nixbits // {
-                    gh = ghStub;
-                  };
-                };
-              };
+      helperPackages.clone = nixbits.jujutsu-clone.override {
+        nixbits = nixbits // {
+          gh = ghStub;
+          jujutsu-git-set-upstream = nixbits.jujutsu-git-set-upstream.override {
+            nixbits = nixbits // {
+              gh = ghStub;
             };
           };
-        }
-      );
+        };
+      };
       gitWrapper = customGit;
       settings.user = {
         name = "Override Author";

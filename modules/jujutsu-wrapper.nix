@@ -13,35 +13,35 @@ let
       gitConfiguration.constructFiles.gitconfig.outPath
     else
       gitConfiguration.configFile.path;
-  jjInit = pkgs.nixbits.jujutsu-init.override {
+  jjInit = config.helperPackages.init.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
-  jjPull = pkgs.nixbits.jujutsu-pull.override {
+  jjPull = config.helperPackages.pull.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
-  jjNewMain = pkgs.nixbits.jujutsu-new-main.override {
+  jjNewMain = config.helperPackages.new-main.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
-  jjUntracked = pkgs.nixbits.jujutsu-untracked.override {
+  jjUntracked = config.helperPackages.untracked.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
-  jjWipChanges = pkgs.nixbits.jujutsu-wip-changes.override {
+  jjWipChanges = config.helperPackages.wip-changes.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
-  jjBookmarkClean = pkgs.nixbits.jujutsu-bookmark-clean.override {
+  jjBookmarkClean = config.helperPackages.bookmark-clean.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
   # This helper intentionally inherits JJ_CONFIG from its caller (including jj-clone).
-  jjGitSetUpstream = pkgs.nixbits.jujutsu-git-set-upstream.override {
+  jjGitSetUpstream = config.helperPackages.git-set-upstream.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
   };
-  jjClone = pkgs.nixbits.jujutsu-clone.override {
+  jjClone = config.helperPackages.clone.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
@@ -49,6 +49,27 @@ let
 in
 {
   imports = [ wlib.wrapperModules.jujutsu ];
+
+  options.helperPackages =
+    lib.genAttrs
+      [
+        "init"
+        "pull"
+        "new-main"
+        "untracked"
+        "wip-changes"
+        "bookmark-clean"
+        "git-set-upstream"
+        "clone"
+      ]
+      (
+        name:
+        lib.mkOption {
+          type = lib.types.package;
+          default = pkgs.nixbits."jujutsu-${name}";
+          description = "Base jj-${name} helper package, before applying the shared Git/JJ configuration.";
+        }
+      );
 
   options.gitWrapper = lib.mkOption {
     type = lib.types.package;

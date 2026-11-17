@@ -1,6 +1,5 @@
 {
   lib,
-  pkgs,
   symlinkJoin,
   wlibEvalPackage,
   runCommand,
@@ -18,7 +17,16 @@ wlibEvalPackage [
   ../modules/jujutsu-wrapper.nix
   ({ config, ... }: {
     # Preserve helper customizations supplied through this package's nixbits argument.
-    pkgs = lib.mkForce (pkgs // { inherit nixbits; });
+    helperPackages = {
+      init = nixbits.jujutsu-init;
+      pull = nixbits.jujutsu-pull;
+      new-main = nixbits.jujutsu-new-main;
+      untracked = nixbits.jujutsu-untracked;
+      wip-changes = nixbits.jujutsu-wip-changes;
+      bookmark-clean = nixbits.jujutsu-bookmark-clean;
+      git-set-upstream = nixbits.jujutsu-git-set-upstream;
+      clone = nixbits.jujutsu-clone;
+    };
     package = symlinkJoin {
       pname = "jujutsu";
       inherit (jujutsu) version meta;
