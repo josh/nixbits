@@ -87,7 +87,7 @@ in
     '';
   };
 
-  config.passthru.tests = import ./jujutsu-wrapper-tests.nix { inherit lib pkgs; };
+  config.passthru.tests = import ./jujutsu-wrapper/tests.nix { inherit lib pkgs; };
 
   config.settings = {
     user = {

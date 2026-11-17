@@ -22,11 +22,11 @@ let
     echo "$5" >>"$GH_STUB_CALLS"
   '';
   customGit = pkgs.wlibEvalPackage [
-    ./git-wrapper.nix
+    ../git-wrapper.nix
     { settings.url."file:///".insteadOf = "https://github.com/upstream/"; }
   ];
   customJj = pkgs.wlibEvalPackage [
-    ./jujutsu-wrapper.nix
+    ../jujutsu-wrapper.nix
     {
       pkgs = lib.mkForce (
         pkgs
