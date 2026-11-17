@@ -65,10 +65,13 @@ vcs-dev-path.overrideAttrs (
           };
           bundle = nixbits.vcs-dev-path.override {
             nixbits = nixbits // {
-              jujutsu = nixbits.jujutsu.override {
-                jujutsu = customJj;
-                inherit watchman;
-              };
+              jujutsu = wlibEvalPackage [
+                ../modules/jujutsu-wrapper.nix
+                {
+                  jujutsuPackage = customJj;
+                  watchmanPackage = watchman;
+                }
+              ];
             };
           };
         in

@@ -23,23 +23,16 @@ let
         watchmanPackage = selectedWatchman;
       }
     ];
-  adapter =
-    selectedWatchman:
-    pkgs.nixbits.jujutsu.override {
-      jujutsu = customJj;
-      watchman = selectedWatchman;
-    };
+
 in
 pkgs.runCommand "test-jj-package-overrides" { } ''
-  for bundle in ${module watchman} ${adapter watchman}; do
-    test -e "$bundle/custom-jj-marker"
-    test "$("$bundle/bin/watchman")" = custom-watchman
-    "$bundle/bin/jj" version
-  done
-  for bundle in ${module unavailable} ${adapter unavailable}; do
-    test -e "$bundle/custom-jj-marker"
-    test ! -e "$bundle/bin/watchman"
-    "$bundle/bin/jj" version
-  done
+  bundle=${module watchman}
+  test -e "$bundle/custom-jj-marker"
+  test "$("$bundle/bin/watchman")" = custom-watchman
+  "$bundle/bin/jj" version
+  bundle=${module unavailable}
+  test -e "$bundle/custom-jj-marker"
+  test ! -e "$bundle/bin/watchman"
+  "$bundle/bin/jj" version
   touch "$out"
 ''

@@ -1,4 +1,4 @@
-# Shared by the module defaults and the package compatibility adapter.
+# Final command packages shared by the JJ module and VCS bundle.
 { config, nixbits }:
 let
   git-config = config.env.GIT_CONFIG_GLOBAL.data;

@@ -4,6 +4,26 @@ let
   jujutsu = pkgs.wlibEvalPackage ../jujutsu-wrapper.nix;
 in
 {
+  config-override =
+    let
+      customConfig = pkgs.writeText "jj-override.toml" ''
+        [user]
+        name = "Override Author"
+        email = "override@example.com"
+      '';
+      custom = pkgs.wlibEvalPackage [
+        ../jujutsu-wrapper.nix
+        { configFile.path = customConfig; }
+      ];
+    in
+    runCommand "test-jj-config-override" { } ''
+      export HOME="$TMPDIR/home" JJ_CONFIG=/ignored/jj-config
+      mkdir -p "$HOME"
+      test "$(${custom}/bin/jj config get user.name)" = "Override Author"
+      test "$(${custom}/bin/jj config get user.email)" = "override@example.com"
+      touch "$out"
+    '';
+
   version = testers.testVersion {
     package = jujutsu;
     command = "jj version";
