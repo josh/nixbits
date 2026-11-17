@@ -38,6 +38,7 @@ let
     '';
 in
 {
+  package-overrides = import ./package-test.nix { inherit pkgs; };
   downstream-commands = import ./commands-test.nix { inherit pkgs; };
   clone-module-propagation = import ./clone-test.nix { inherit pkgs; };
   clone-gitea-module-propagation = import ./clone-gitea-test.nix { inherit pkgs; };

@@ -18,6 +18,27 @@ in
 {
   imports = [ wlib.wrapperModules.jujutsu ];
 
+  options.watchmanPackage = lib.mkOption {
+    type = lib.types.package;
+    default = pkgs.watchman;
+    description = "Watchman package bundled with JJ when available on the target platform.";
+  };
+
+  options.jujutsuPackage = lib.mkOption {
+    type = lib.types.package;
+    default = pkgs.jujutsu;
+    description = "Underlying JJ package to bundle with Watchman and wrap.";
+  };
+
+  config.package = pkgs.symlinkJoin {
+    pname = "jujutsu";
+    inherit (config.jujutsuPackage) version meta;
+    paths = [
+      config.jujutsuPackage
+    ]
+    ++ lib.optional config.watchmanPackage.meta.available config.watchmanPackage;
+  };
+
   options.commands = lib.mkOption {
     type = lib.types.attrsOf lib.types.package;
     default = { };

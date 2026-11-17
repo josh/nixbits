@@ -1,6 +1,5 @@
 {
   lib,
-  symlinkJoin,
   wlibEvalPackage,
   runCommand,
   testers,
@@ -18,15 +17,8 @@ wlibEvalPackage [
   ({ config, ... }: {
     # Preserve helper customizations supplied through this package's nixbits argument.
     commands = import ../modules/jujutsu-wrapper/commands.nix { inherit config nixbits; };
-    package = symlinkJoin {
-      pname = "jujutsu";
-      inherit (jujutsu) version meta;
-
-      paths = [
-        jujutsu
-      ]
-      ++ (lib.lists.optional watchman.meta.available watchman);
-    };
+    jujutsuPackage = jujutsu;
+    watchmanPackage = watchman;
     configFile.path = jujutsu-config;
     env.GIT_CONFIG_GLOBAL = "${git-config}";
 
