@@ -1,10 +1,14 @@
 {
   lib,
   writers,
+  runCommand,
+  writeShellScriptBin,
+  jujutsu,
   meld,
   neovim,
   vim,
   nixbits,
+  git-package ? nixbits.git,
 }:
 let
   config = writers.writeTOML "jj-config.toml" {
@@ -21,7 +25,7 @@ let
     };
 
     git = {
-      executable-path = lib.getExe nixbits.git;
+      executable-path = lib.getExe git-package;
     };
 
     remotes.origin = {
@@ -75,6 +79,19 @@ let
   };
 in
 config.overrideAttrs {
+  passthru.tests.git-package-override =
+    let
+      customGit = writeShellScriptBin "git" "exit 1";
+      customConfig = nixbits.jujutsu-config.override { git-package = customGit; };
+    in
+    runCommand "test-jj-config-git-package-override" { nativeBuildInputs = [ jujutsu ]; } ''
+      export HOME="$PWD/home"
+      mkdir -p "$HOME"
+      test "$(JJ_CONFIG=${nixbits.jujutsu-config} jj config get git.executable-path)" = "${lib.getExe nixbits.git}"
+      test "$(JJ_CONFIG=${customConfig} jj config get git.executable-path)" = "${lib.getExe customGit}"
+      touch $out
+    '';
+
   meta = {
     description = "Configuration for the Jujutsu version control system";
     license = lib.licenses.mit;
