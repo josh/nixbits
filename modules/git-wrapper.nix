@@ -135,32 +135,93 @@ in
     interactive.diffFilter = "${lib.getExe pkgs.diff-so-fancy} --patch";
     diff-so-fancy.markEmptyLines = false;
   };
-  passthru.tests.bundled-helpers =
-    pkgs.runCommand "test-git-bundled-helpers" { nativeBuildInputs = [ config.wrapper ]; }
-      ''
-        export HOME="$TMPDIR/home"
-        mkdir -p "$HOME"
-        export GIT_CONFIG_NOSYSTEM=1
-        unset GIT_CONFIG_GLOBAL
-        test -x ${config.wrapper}/bin/git-branch-prune
-        test -x ${config.wrapper}/bin/git-fetch-dir
-        git init -b main repo
-        cd repo
-        git commit --allow-empty -m initial
-        git branch merged
-        git branch-prune
-        if git show-ref --verify --quiet refs/heads/merged; then
-          echo "bundled branch-prune did not delete the merged branch"
-          exit 1
+
+  passthru.tests =
+    let
+      git = config.wrapper;
+    in
+    {
+      version = pkgs.testers.testVersion {
+        package = git;
+        command = "git version";
+        inherit (git) version;
+      };
+
+      author = pkgs.runCommand "test-git-author" { nativeBuildInputs = [ git ]; } ''
+        expected="Joshua Peek"
+        actual="$(git config get user.name)"
+        if [[ "$actual" != "$expected" ]]; then
+          echo "expected, '$expected' but was '$actual'"
+          return 1
         fi
-        cd ..
-        git init --bare remote.git
-        git -C repo remote add origin "$PWD/remote.git"
-        git -C repo push origin main
-        git -C repo update-ref -d refs/remotes/origin/main
-        git fetch-dir "$PWD/repo"
-        test "$(git -C repo rev-parse origin/main)" = "$(git -C repo rev-parse main)"
-        touch "$out"
+        touch $out
       '';
 
+      default-branch = pkgs.runCommand "test-git-default-branch" { nativeBuildInputs = [ git ]; } ''
+        git init
+        if [[ "$(git branch --show-current)" != "main" ]]; then
+          echo "expected, 'main' but was '$(git branch --show-current)'"
+          return 1
+        fi
+        touch $out
+      '';
+
+      ignore = pkgs.runCommand "test-git-ignore" { nativeBuildInputs = [ git ]; } ''
+        git init
+        touch README.md
+        mkdir .claude
+        touch .claude/settings.local.json
+        if git check-ignore README.md; then
+          echo "expected README.md to not be ignored"
+          return 1
+        fi
+        if ! git check-ignore .claude/settings.local.json; then
+          echo "expected .claude/settings.local.json to be ignored"
+          return 1
+        fi
+        touch $out
+      '';
+
+      credential-helpers =
+        pkgs.runCommand "test-git-credential-helpers" { nativeBuildInputs = [ git ]; }
+          ''
+            expected="${lib.getExe nixbits.gh} auth git-credential"
+            for url in https://github.com https://gist.github.com; do
+              actual="$(git config get --url=$url credential.helper)"
+              if [[ "$actual" != "$expected" ]]; then
+                echo "expected, '$expected' but was '$actual' for $url"
+                return 1
+              fi
+            done
+            touch $out
+          '';
+
+      bundled-helpers =
+        pkgs.runCommand "test-git-bundled-helpers" { nativeBuildInputs = [ config.wrapper ]; }
+          ''
+            export HOME="$TMPDIR/home"
+            mkdir -p "$HOME"
+            export GIT_CONFIG_NOSYSTEM=1
+            unset GIT_CONFIG_GLOBAL
+            test -x ${config.wrapper}/bin/git-branch-prune
+            test -x ${config.wrapper}/bin/git-fetch-dir
+            git init -b main repo
+            cd repo
+            git commit --allow-empty -m initial
+            git branch merged
+            git branch-prune
+            if git show-ref --verify --quiet refs/heads/merged; then
+              echo "bundled branch-prune did not delete the merged branch"
+              exit 1
+            fi
+            cd ..
+            git init --bare remote.git
+            git -C repo remote add origin "$PWD/remote.git"
+            git -C repo push origin main
+            git -C repo update-ref -d refs/remotes/origin/main
+            git fetch-dir "$PWD/repo"
+            test "$(git -C repo rev-parse origin/main)" = "$(git -C repo rev-parse main)"
+            touch "$out"
+          '';
+    };
 }
