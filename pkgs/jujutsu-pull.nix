@@ -7,7 +7,6 @@
   nixbits,
   git-config ? nixbits.git-config,
   jjConfiguration ? nixbits.jujutsu.configuration,
-  jujutsu-config ? null,
 }:
 let
   # Only bypass a wrapper identical to the stock Git wrapper with these settings.
@@ -35,7 +34,7 @@ writeShellApplication {
   inheritPath = false;
   runtimeEnv = {
     GIT_CONFIG_GLOBAL = git-config;
-    JJ_CONFIG = if jujutsu-config == null then pullConfiguration.configFile.path else jujutsu-config;
+    JJ_CONFIG = pullConfiguration.configFile.path;
     XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./jujutsu-pull.bash;
