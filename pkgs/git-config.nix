@@ -6,7 +6,7 @@
   wlibEvalPackage,
 }:
 let
-  wrapper = wlibEvalPackage ../modules/git-wrapper.nix;
+  wrapper = nixbits.git;
   config = runCommand "git-config" { } ''
     cp ${wrapper.configuration.constructFiles.gitconfig} "$out"
   '';
