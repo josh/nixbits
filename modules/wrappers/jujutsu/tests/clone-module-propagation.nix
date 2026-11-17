@@ -33,7 +33,7 @@ let
     echo "$5" >>"$GH_STUB_CALLS"
   '';
   customGit = wlibEvalPackage [
-    ../git.nix
+    ../../git.nix
     {
       settings.url."file:///".insteadOf = [
         "localtest:///"
@@ -42,7 +42,7 @@ let
     }
   ];
   forkClone = wlibEvalPackage [
-    ../jujutsu.nix
+    ../../jujutsu.nix
     ({ config, ... }: {
       commands.jj-clone = nixbits.jujutsu-clone.override {
         git-config = config.env.GIT_CONFIG_GLOBAL.data;

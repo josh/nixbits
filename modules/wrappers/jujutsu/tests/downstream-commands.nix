@@ -11,7 +11,7 @@ let
     printf '%s\n' "$@"
   '';
   customJj = wlibEvalPackage [
-    ../jujutsu.nix
+    ../../jujutsu.nix
     { commands.review-work = review; }
     {
       commands.jj-review = writeShellScriptBin "jj-review" ''

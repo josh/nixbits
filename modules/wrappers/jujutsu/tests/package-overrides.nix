@@ -23,7 +23,7 @@ let
   module =
     selectedWatchman:
     wlibEvalPackage [
-      ../jujutsu.nix
+      ../../jujutsu.nix
       {
         jujutsuPackage = customJj;
         watchmanPackage = selectedWatchman;
