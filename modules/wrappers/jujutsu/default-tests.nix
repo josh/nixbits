@@ -1,7 +1,7 @@
 { pkgs }:
 let
   inherit (pkgs) runCommand testers;
-  jujutsu = pkgs.wlibEvalPackage ../jujutsu-wrapper.nix;
+  jujutsu = pkgs.wlibEvalPackage ../jujutsu.nix;
 in
 {
   config-override =
@@ -12,7 +12,7 @@ in
         email = "override@example.com"
       '';
       custom = pkgs.wlibEvalPackage [
-        ../jujutsu-wrapper.nix
+        ../jujutsu.nix
         { configFile.path = customConfig; }
       ];
     in

@@ -5,10 +5,10 @@
   ...
 }:
 let
-  runitor-wrapper = pkgs.callPackage ../pkgs/runitor-wrapper.nix { };
-  healthchecks-apply = pkgs.callPackage ../pkgs/healthchecks-apply.nix { };
-  healthchecks-exec-start-pre = pkgs.callPackage ../pkgs/healthchecks-exec-start-pre.nix { };
-  healthchecks-exec-stop-post = pkgs.callPackage ../pkgs/healthchecks-exec-stop-post.nix { };
+  runitor-wrapper = pkgs.callPackage ../../pkgs/runitor-wrapper.nix { };
+  healthchecks-apply = pkgs.callPackage ../../pkgs/healthchecks-apply.nix { };
+  healthchecks-exec-start-pre = pkgs.callPackage ../../pkgs/healthchecks-exec-start-pre.nix { };
+  healthchecks-exec-stop-post = pkgs.callPackage ../../pkgs/healthchecks-exec-stop-post.nix { };
 
   cfg = config.healthchecks;
 

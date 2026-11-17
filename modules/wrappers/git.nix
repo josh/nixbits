@@ -152,7 +152,7 @@ in
                 helper = custom-helper
           '';
           custom = pkgs.wlibEvalPackage [
-            ./git-wrapper.nix
+            ./git.nix
             { configFile.path = customConfig; }
           ];
         in

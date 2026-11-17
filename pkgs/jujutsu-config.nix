@@ -7,7 +7,7 @@
   nixbits,
 }:
 let
-  wrapper = wlibEvalPackage ../modules/jujutsu-wrapper.nix;
+  wrapper = wlibEvalPackage ../modules/wrappers/jujutsu.nix;
   config = wrapper.configuration.configFile.path;
 in
 config.overrideAttrs {
@@ -33,7 +33,7 @@ config.overrideAttrs {
   passthru.tests.standalone =
     let
       custom = wlibEvalPackage [
-        ../modules/jujutsu-wrapper.nix
+        ../modules/wrappers/jujutsu.nix
         {
           # Reading the generated config must not build the wrapper or its package.
           package = runCommand "unbuildable-jj" { meta.mainProgram = "jj"; } "exit 1";
@@ -55,7 +55,7 @@ config.overrideAttrs {
     let
       customGit = writeShellScriptBin "git" "exit 1";
       custom = wlibEvalPackage [
-        ../modules/jujutsu-wrapper.nix
+        ../modules/wrappers/jujutsu.nix
         {
           settings.user.name = "Module User";
           settings.git.executable-path = lib.mkForce (lib.getExe customGit);
@@ -74,7 +74,7 @@ config.overrideAttrs {
   passthru.tests.identity-propagation =
     let
       customGit = wlibEvalPackage [
-        ../modules/git-wrapper.nix
+        ../modules/wrappers/git.nix
         {
           settings.user = {
             name = lib.mkForce "Shared Git User";
@@ -84,11 +84,11 @@ config.overrideAttrs {
         }
       ];
       shared = wlibEvalPackage [
-        ../modules/jujutsu-wrapper.nix
+        ../modules/wrappers/jujutsu.nix
         { gitWrapper = customGit; }
       ];
       overridden = wlibEvalPackage [
-        ../modules/jujutsu-wrapper.nix
+        ../modules/wrappers/jujutsu.nix
         {
           gitWrapper = customGit;
           settings.user = {

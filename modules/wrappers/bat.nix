@@ -76,7 +76,7 @@ in
           echo "THEME=$theme expected '$expected' but was '$actual'"
           return 1
         fi
-        if ! THEME="$theme" bat --color=always --plain ${./bat-wrapper.nix} >/dev/null; then
+        if ! THEME="$theme" bat --color=always --plain ${./bat.nix} >/dev/null; then
           echo "THEME=$theme failed to render"
           return 1
         fi

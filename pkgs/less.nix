@@ -1,4 +1,4 @@
 {
   wlibEvalPackage,
 }:
-wlibEvalPackage ../modules/less-wrapper.nix
+wlibEvalPackage ../modules/wrappers/less.nix

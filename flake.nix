@@ -95,12 +95,12 @@
       packages = eachSystem (system: mkPackages (importNixpkgs nixpkgs system));
 
       nixosModules = {
-        default = import ./modules/default.nix;
+        default = import ./modules/nixos/default.nix;
         # keep-sorted start
-        healthchecks = import ./modules/healthchecks.nix;
-        nix-trim-generations = import ./modules/nix-trim-generations.nix;
-        vlagent = import ./modules/vlagent.nix;
-        vmagent = import ./modules/vmagent.nix;
+        healthchecks = import ./modules/nixos/healthchecks.nix;
+        nix-trim-generations = import ./modules/nixos/nix-trim-generations.nix;
+        vlagent = import ./modules/nixos/vlagent.nix;
+        vmagent = import ./modules/nixos/vmagent.nix;
         # keep-sorted end
       };
 

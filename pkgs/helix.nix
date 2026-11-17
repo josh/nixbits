@@ -4,5 +4,5 @@
 }:
 wlibEvalPackage [
   { settings = helixConfig; }
-  ../modules/helix-wrapper.nix
+  ../modules/wrappers/helix.nix
 ]

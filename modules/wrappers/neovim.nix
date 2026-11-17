@@ -11,7 +11,7 @@
   wrapperImplementation = "binary";
   binName = "nvim";
 
-  settings.config_directory = ../pkgs/neovim;
+  settings.config_directory = ../../pkgs/neovim;
   settings.block_normal_config = true;
   hosts.python3.nvim-host.enable = false;
   hosts.node.nvim-host.enable = false;
@@ -63,9 +63,9 @@
         echo 'vim.g.local_plugin_loaded = true' > "$XDG_CONFIG_HOME/nvim/plugin/sentinel.lua"
         test "$(ls ${config.wrapper}/bin)" = nvim
         unset THEME
-        "$NVIM_UNWRAPPED" --clean --headless -c 'luafile ${../pkgs/neovim-test-defaults.lua}' -c 'qa!'
+        "$NVIM_UNWRAPPED" --clean --headless -c 'luafile ${../../pkgs/neovim-test-defaults.lua}' -c 'qa!'
         nvim --headless -i NONE \
-          -c 'lua local ok, err = pcall(dofile, "${../pkgs/neovim-test.lua}"); if not ok then print(err); vim.cmd("cquit 1") end' \
+          -c 'lua local ok, err = pcall(dofile, "${../../pkgs/neovim-test.lua}"); if not ok then print(err); vim.cmd("cquit 1") end' \
           -c 'qa!'
         touch "$out"
       '';

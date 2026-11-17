@@ -1,4 +1,4 @@
 {
   wlibEvalPackage,
 }:
-wlibEvalPackage ../modules/grep-wrapper.nix
+wlibEvalPackage ../modules/wrappers/grep.nix

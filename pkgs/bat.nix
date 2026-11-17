@@ -1,4 +1,4 @@
 {
   wlibEvalPackage,
 }:
-wlibEvalPackage ../modules/bat-wrapper.nix
+wlibEvalPackage ../modules/wrappers/bat.nix

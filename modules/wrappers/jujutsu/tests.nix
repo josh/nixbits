@@ -4,7 +4,7 @@ let
     name: initArgs:
     let
       customGit = pkgs.wlibEvalPackage [
-        ../git-wrapper.nix
+        ../git.nix
         {
           settings.core.excludesFile = lib.mkForce (
             pkgs.writeText "jj-untracked-module-gitignore" "tracked-ignored.txt\n"
@@ -12,7 +12,7 @@ let
         }
       ];
       customJj = pkgs.wlibEvalPackage [
-        ../jujutsu-wrapper.nix
+        ../jujutsu.nix
         {
           gitWrapper = customGit;
           settings.snapshot.auto-track = "glob:tracked*";
@@ -47,7 +47,7 @@ in
   bookmark-clean-module-propagation =
     let
       customGit = pkgs.wlibEvalPackage [
-        ../git-wrapper.nix
+        ../git.nix
         {
           settings.core.excludesFile = lib.mkForce (
             pkgs.writeText "jj-bookmark-module-ignore" "ignored-by-module\n"
@@ -55,7 +55,7 @@ in
         }
       ];
       customJj = pkgs.wlibEvalPackage [
-        ../jujutsu-wrapper.nix
+        ../jujutsu.nix
         {
           gitWrapper = customGit;
           settings.revset-aliases."trunk()" = "@-";
@@ -90,7 +90,7 @@ in
   wip-changes-module-propagation =
     let
       customGit = pkgs.wlibEvalPackage [
-        ../git-wrapper.nix
+        ../git.nix
         {
           settings.core.excludesFile = lib.mkForce (
             pkgs.writeText "jj-wip-module-ignore" "tracked-ignored.txt\n"
@@ -98,7 +98,7 @@ in
         }
       ];
       customJj = pkgs.wlibEvalPackage [
-        ../jujutsu-wrapper.nix
+        ../jujutsu.nix
         {
           gitWrapper = customGit;
           settings.snapshot.auto-track = "glob:tracked*";
@@ -128,7 +128,7 @@ in
   init-module-propagation =
     let
       customGit = pkgs.wlibEvalPackage [
-        ../git-wrapper.nix
+        ../git.nix
         {
           settings.user = {
             name = lib.mkForce "Module Author";
@@ -140,7 +140,7 @@ in
         }
       ];
       customJj = pkgs.wlibEvalPackage [
-        ../jujutsu-wrapper.nix
+        ../jujutsu.nix
         {
           gitWrapper = customGit;
           settings.user.email = "jj@example.com";
@@ -164,7 +164,7 @@ in
   pull-module-propagation =
     let
       customGit = pkgs.wlibEvalPackage [
-        ../git-wrapper.nix
+        ../git.nix
         {
           settings.user = {
             name = lib.mkForce "Pull Author";
@@ -178,7 +178,7 @@ in
         }
       ];
       customJj = pkgs.wlibEvalPackage [
-        ../jujutsu-wrapper.nix
+        ../jujutsu.nix
         {
           gitWrapper = customGit;
           settings.user.email = "jj@example.com";
@@ -212,7 +212,7 @@ in
   new-main-module-propagation =
     let
       customGit = pkgs.wlibEvalPackage [
-        ../git-wrapper.nix
+        ../git.nix
         {
           settings.user = {
             name = lib.mkForce "New Main Author";
@@ -224,7 +224,7 @@ in
         }
       ];
       customJj = pkgs.wlibEvalPackage [
-        ../jujutsu-wrapper.nix
+        ../jujutsu.nix
         {
           gitWrapper = customGit;
           settings.user.email = "jj@example.com";

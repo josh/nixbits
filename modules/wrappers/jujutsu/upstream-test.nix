@@ -22,11 +22,11 @@ let
     echo "$5" >>"$GH_STUB_CALLS"
   '';
   customGit = pkgs.wlibEvalPackage [
-    ../git-wrapper.nix
+    ../git.nix
     { settings.url."file:///".insteadOf = "https://github.com/upstream/"; }
   ];
   customJj = pkgs.wlibEvalPackage [
-    ../jujutsu-wrapper.nix
+    ../jujutsu.nix
     ({ config, ... }: {
       commands.jj-git-set-upstream = pkgs.nixbits.jujutsu-git-set-upstream.override {
         git-config = config.env.GIT_CONFIG_GLOBAL.data;

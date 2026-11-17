@@ -1,2 +1,2 @@
 { wlibEvalPackage }:
-wlibEvalPackage ../modules/neovim-wrapper.nix
+wlibEvalPackage ../modules/wrappers/neovim.nix

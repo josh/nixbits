@@ -16,14 +16,14 @@ let
     esac
   '';
   customGit = pkgs.wlibEvalPackage [
-    ../git-wrapper.nix
+    ../git.nix
     {
       settings.url."file:///".insteadOf = "localtest:///";
       settings.url."./seed".insteadOf = "https://github.com/example/repo.git";
     }
   ];
   customJj = pkgs.wlibEvalPackage [
-    ../jujutsu-wrapper.nix
+    ../jujutsu.nix
     ({ config, ... }: {
       commands.jj-clone = pkgs.nixbits.jujutsu-clone.override {
         git-config = config.env.GIT_CONFIG_GLOBAL.data;

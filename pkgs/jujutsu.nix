@@ -1,1 +1,1 @@
-{ wlibEvalPackage }: wlibEvalPackage ../modules/jujutsu-wrapper.nix
+{ wlibEvalPackage }: wlibEvalPackage ../modules/wrappers/jujutsu.nix

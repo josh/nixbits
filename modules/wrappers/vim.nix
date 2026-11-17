@@ -11,7 +11,7 @@
   wrapperImplementation = "binary";
 
   plugins = [ ];
-  vimrc = builtins.readFile ../pkgs/vimrc;
+  vimrc = builtins.readFile ../../pkgs/vimrc;
 
   drv.name = "vim-${pkgs.vim.version}";
   drv.version = pkgs.vim.version;

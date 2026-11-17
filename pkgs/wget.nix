@@ -1,4 +1,4 @@
 {
   wlibEvalPackage,
 }:
-wlibEvalPackage ../modules/wget-wrapper.nix
+wlibEvalPackage ../modules/wrappers/wget.nix

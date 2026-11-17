@@ -4,5 +4,5 @@
 }:
 wlibEvalPackage [
   { settings = helixConfig; }
-  ../modules/helix-env-theme-wrapper.nix
+  ../modules/wrappers/helix-env-theme.nix
 ]

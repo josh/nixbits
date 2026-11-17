@@ -1,4 +1,4 @@
 {
   wlibEvalPackage,
 }:
-wlibEvalPackage ../modules/ripgrep-wrapper.nix
+wlibEvalPackage ../modules/wrappers/ripgrep.nix

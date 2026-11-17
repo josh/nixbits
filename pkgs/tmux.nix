@@ -9,5 +9,5 @@ wlibEvalPackage [
     shell = interactiveShell;
     inherit theme;
   }
-  ../modules/tmux-wrapper.nix
+  ../modules/wrappers/tmux.nix
 ]

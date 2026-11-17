@@ -1,1 +1,1 @@
-{ wlibEvalPackage }: wlibEvalPackage ../modules/git-wrapper.nix
+{ wlibEvalPackage }: wlibEvalPackage ../modules/wrappers/git.nix

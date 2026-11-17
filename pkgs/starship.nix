@@ -4,5 +4,5 @@
 }:
 wlibEvalPackage [
   { settings = starshipConfig; }
-  ../modules/starship-wrapper.nix
+  ../modules/wrappers/starship.nix
 ]

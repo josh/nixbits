@@ -1,4 +1,4 @@
 {
   wlibEvalPackage,
 }:
-wlibEvalPackage ../modules/eza-wrapper.nix
+wlibEvalPackage ../modules/wrappers/eza.nix

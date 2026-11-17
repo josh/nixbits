@@ -43,13 +43,13 @@ Packages defined under `pkgs/` are automatically exposed in the flake's package 
 
 `overlays.default` is not self-contained. It expects `nurpkgs.overlays.default` (providing `nur`) to be applied first.
 
-`overlays.default` also provides `wlibEvalPackage`, which calls [nix-wrapper-modules](https://github.com/nix-community/nix-wrapper-modules)' `lib.evalPackage` with `pkgs` pre-supplied. A package built from a wrapper module is a thin shim over `modules/<name>-wrapper.nix`, e.g. `{ wlibEvalPackage }: wlibEvalPackage ../modules/grep-wrapper.nix`, optionally prepending an attrset to thread override arguments through.
+`overlays.default` also provides `wlibEvalPackage`, which calls [nix-wrapper-modules](https://github.com/nix-community/nix-wrapper-modules)' `lib.evalPackage` with `pkgs` pre-supplied. A package built from a wrapper module is a thin shim over `modules/wrappers/<name>.nix`, e.g. `{ wlibEvalPackage }: wlibEvalPackage ../modules/wrappers/grep.nix`, optionally prepending an attrset to thread override arguments through.
 
 ## Modules
 
-`modules/` holds two unrelated kinds of module. NixOS modules are listed by hand in `modules/default.nix` and `nixosModules`; [nix-wrapper-modules](https://github.com/nix-community/nix-wrapper-modules) wrapper modules (`modules/*-wrapper.nix`) are listed in neither, and are imported directly by the package that evaluates them. The rest of this section applies only to the NixOS modules.
+`modules/` holds two unrelated kinds of module. NixOS modules are listed by hand in `modules/nixos/default.nix` and `nixosModules`; [nix-wrapper-modules](https://github.com/nix-community/nix-wrapper-modules) wrapper modules (`modules/wrappers/*.nix`) are listed in neither, and are imported directly by the package that evaluates them. The rest of this section applies only to the NixOS modules.
 
-NixOS modules under `modules/` are exported as `nixosModules.*` but are NOT evaluated by `nix flake check` — a module that fails to evaluate still passes the full check. After changing a module, evaluate it against a minimal system:
+NixOS modules under `modules/nixos/` are exported as `nixosModules.*` but are NOT evaluated by `nix flake check` — a module that fails to evaluate still passes the full check. After changing a module, evaluate it against a minimal system:
 
 ```sh
 $ nix eval --impure --expr 'let
@@ -58,7 +58,7 @@ $ nix eval --impure --expr 'let
     eval = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        ./modules/default.nix
+        ./modules/nixos/default.nix
         {
           boot.loader.grub.enable = false;
           fileSystems."/" = { device = "none"; fsType = "tmpfs"; };

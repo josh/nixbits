@@ -14,12 +14,12 @@
 let
   inherit (nixbits) gh;
   git = wlibEvalPackage [
-    ../modules/git-wrapper.nix
+    ../modules/wrappers/git.nix
     gitModule
   ];
   git-config = git.configuration.constructFiles.gitconfig.outPath;
   jujutsu = wlibEvalPackage [
-    ../modules/jujutsu-wrapper.nix
+    ../modules/wrappers/jujutsu.nix
     { gitWrapper = git; }
   ];
   jujutsu-config = jujutsu.configuration.configFile.path;

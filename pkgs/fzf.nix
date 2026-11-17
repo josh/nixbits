@@ -1,4 +1,4 @@
 {
   wlibEvalPackage,
 }:
-wlibEvalPackage ../modules/fzf-wrapper.nix
+wlibEvalPackage ../modules/wrappers/fzf.nix

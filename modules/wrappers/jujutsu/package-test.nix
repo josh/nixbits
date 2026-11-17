@@ -17,7 +17,7 @@ let
   module =
     selectedWatchman:
     pkgs.wlibEvalPackage [
-      ../jujutsu-wrapper.nix
+      ../jujutsu.nix
       {
         jujutsuPackage = customJj;
         watchmanPackage = selectedWatchman;

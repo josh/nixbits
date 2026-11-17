@@ -9,5 +9,5 @@ wlibEvalPackage [
     fishConfig =
       if theme != null then fish-config.overrideAttrs { themeName = theme; } else fish-config;
   }
-  ../modules/fish-wrapper.nix
+  ../modules/wrappers/fish.nix
 ]

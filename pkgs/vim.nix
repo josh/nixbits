@@ -1,4 +1,4 @@
 {
   wlibEvalPackage,
 }:
-wlibEvalPackage ../modules/vim-wrapper.nix
+wlibEvalPackage ../modules/wrappers/vim.nix

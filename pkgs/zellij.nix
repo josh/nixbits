@@ -4,5 +4,5 @@
 }:
 wlibEvalPackage [
   { inherit zellijTheme; }
-  ../modules/zellij-wrapper.nix
+  ../modules/wrappers/zellij.nix
 ]

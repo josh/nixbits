@@ -49,7 +49,7 @@ in
   };
 
   config.commands = lib.mapAttrs (_: lib.mkDefault) (
-    import ./jujutsu-wrapper/commands.nix {
+    import ./jujutsu/commands.nix {
       inherit config;
       inherit (pkgs) nixbits;
     }
@@ -93,7 +93,7 @@ in
     );
   };
 
-  config.passthru.tests = import ./jujutsu-wrapper/tests.nix { inherit lib pkgs; };
+  config.passthru.tests = import ./jujutsu/tests.nix { inherit lib pkgs; };
 
   config.settings = {
     user = {

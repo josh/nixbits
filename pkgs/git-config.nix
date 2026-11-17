@@ -29,7 +29,7 @@ config.overrideAttrs {
     module-settings =
       let
         custom = wlibEvalPackage [
-          ../modules/git-wrapper.nix
+          ../modules/wrappers/git.nix
           {
             settings.user.name = lib.mkForce "Module User";
             settings.credential."https://git.example.com".helper = [

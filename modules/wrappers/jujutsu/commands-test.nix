@@ -7,7 +7,7 @@ let
     printf '%s\n' "$@"
   '';
   customJj = pkgs.wlibEvalPackage [
-    ../jujutsu-wrapper.nix
+    ../jujutsu.nix
     { commands.review-work = review; }
     {
       commands.jj-review = pkgs.writeShellScriptBin "jj-review" ''
