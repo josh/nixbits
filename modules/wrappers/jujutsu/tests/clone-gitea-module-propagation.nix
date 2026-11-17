@@ -43,7 +43,7 @@ let
       };
     };
   };
-
+  githubClone = bundle.jujutsu.configuration.commands.jj-clone.override { enableGitea = false; };
 in
 runCommand "test-jj-clone-gitea-module-propagation"
   {
@@ -61,11 +61,16 @@ runCommand "test-jj-clone-gitea-module-propagation"
     seed=$(git -C seed rev-parse HEAD)
     export TEST_GITEA_URL="localtest://$PWD/seed"
     export GH_STUB_CALLED="$PWD/gh-called" GT_STUB_CALLED="$PWD/gt-called"
-    for mode in primary mirror unavailable; do
+    for mode in primary mirror unavailable disabled; do
       export GITEA_MODE="$mode"
       rm -f "$GH_STUB_CALLED" "$GT_STUB_CALLED"
-      ${bundle}/bin/jj-clone example/repo "$mode"
-      test -f "$GT_STUB_CALLED"
+      if [[ "$mode" = disabled ]]; then
+        ${githubClone}/bin/jj-clone example/repo "$mode"
+        test ! -e "$GT_STUB_CALLED"
+      else
+        ${bundle}/bin/jj-clone example/repo "$mode"
+        test -f "$GT_STUB_CALLED"
+      fi
       if [[ "$mode" = primary ]]; then
         test ! -e "$GH_STUB_CALLED"
       else
