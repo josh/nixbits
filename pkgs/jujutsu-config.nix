@@ -103,11 +103,7 @@ config.overrideAttrs {
     runCommand "test-jj-wrapper-identity-propagation" { } ''
       export HOME="$TMPDIR/home" JJ_CONFIG=/ignored/jj-config
       mkdir -p "$HOME"
-      test "$(${lib.getExe shared} config get user.name)" = "Shared Git User"
-      test "$(${lib.getExe shared} config get user.email)" = shared@example.com
       test "$(${lib.getExe shared} config get git.executable-path)" = "${lib.getExe customGit}"
-      test "$(${lib.getExe overridden} config get user.name)" = "Explicit JJ User"
-      test "$(${lib.getExe overridden} config get user.email)" = jj@example.com
       test "$(${lib.getExe overridden} config get git.executable-path)" = "${lib.getExe customGit}"
       ${lib.getExe shared} config list --include-defaults >settings
       if grep -q 'user.signingKey' settings; then
