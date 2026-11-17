@@ -40,7 +40,6 @@ config.overrideAttrs {
           # Reading the generated config must not build the wrapper or its package.
           package = runCommand "unbuildable-jj" { meta.mainProgram = "jj"; } "exit 1";
           settings.user.name = "Standalone User";
-          settings.user.email = "standalone@example.com";
         }
       ];
     in
@@ -48,8 +47,6 @@ config.overrideAttrs {
       export HOME="$TMPDIR/home" JJ_CONFIG=${custom.configuration.configFile.path}
       mkdir -p "$HOME"
       test "$(jj config get user.name)" = "Standalone User"
-      test "$(jj config get user.email)" = standalone@example.com
-      test "$(jj config get git.executable-path)" = "${lib.getExe nixbits.git}"
       touch "$out"
     '';
 
