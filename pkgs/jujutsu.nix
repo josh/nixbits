@@ -22,9 +22,6 @@ wlibEvalPackage [
 
       paths = [
         jujutsu
-        (nixbits.jujutsu-bookmark-clean.override {
-          inherit git-config jujutsu-config;
-        })
         (nixbits.jujutsu-clone.override {
           inherit git-config jujutsu-config;
         })
