@@ -10,7 +10,7 @@ in
 {
   jj-init = nixbits.jujutsu-init.override sharedConfig;
   jj-pull = nixbits.jujutsu-pull.override { jjConfiguration = config; };
-  jj-new-main = nixbits.jujutsu-new-main.override sharedConfig;
+  jj-new-main = nixbits.jujutsu-new-main.override { jjConfiguration = config; };
   jj-untracked = nixbits.jujutsu-untracked.override sharedConfig;
   jj-wip-changes = nixbits.jujutsu-wip-changes.override sharedConfig;
   jj-bookmark-clean = nixbits.jujutsu-bookmark-clean.override sharedConfig;
