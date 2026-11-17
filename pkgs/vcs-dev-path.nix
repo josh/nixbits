@@ -2,6 +2,7 @@
   lib,
   symlinkJoin,
   runCommand,
+  writeShellScriptBin,
   jjui,
   tea,
   nur,
@@ -10,12 +11,13 @@
   extraGitCredentials ? { },
 }:
 let
-  inherit (nixbits) gh lazyjj;
+  inherit (nixbits) gh;
   git-config = nixbits.git-config.override { extraCredentials = extraGitCredentials; };
   git = nixbits.git.override { inherit git-config; };
   jujutsu-config = nixbits.jujutsu-config.override { git-package = git; };
   jujutsu = nixbits.jujutsu.override { inherit git-config jujutsu-config; };
   lazygit = nixbits.lazygit.override { inherit git-config; };
+  lazyjj = nixbits.lazyjj.override { inherit git-config jujutsu-config; };
 
   vcs-dev-path = symlinkJoin {
     name = "vcs-dev-path";
@@ -41,6 +43,52 @@ in
 vcs-dev-path.overrideAttrs (
   finalAttrs: _previousAttrs: {
     passthru.tests = {
+      lazyjj-config-propagation =
+        let
+          credentials."https://git.example.com" = {
+            helper = [
+              ""
+              "test-credential-helper"
+            ];
+            useHttpPath = true;
+          };
+          expectedGitConfig = nixbits.git-config.override { extraCredentials = credentials; };
+          expectedGit = nixbits.git.override { git-config = expectedGitConfig; };
+          expectedJjConfig = nixbits.jujutsu-config.override { git-package = expectedGit; };
+          probe =
+            (writeShellScriptBin "lazyjj" ''
+              set -eu
+              test "$GIT_CONFIG_GLOBAL" = "$EXPECTED_GIT_CONFIG"
+              test "$JJ_CONFIG" = "$EXPECTED_JJ_CONFIG"
+              selectedGit="$(jj config get git.executable-path)"
+              test "$selectedGit" = "$EXPECTED_GIT"
+              test "$("$selectedGit" config get --url=https://git.example.com/repo.git credential.helper)" = test-credential-helper
+              test "$("$selectedGit" config get --url=https://git.example.com/repo.git credential.useHttpPath)" = true
+              touch "$PROBE_PASSED"
+            '').overrideAttrs
+              {
+                pname = "lazyjj";
+                inherit (nixbits.lazyjj) version;
+              };
+          bundle = nixbits.vcs-dev-path.override {
+            extraGitCredentials = credentials;
+            nixbits = nixbits // {
+              lazyjj = nixbits.lazyjj.override { lazyjj = probe; };
+            };
+          };
+        in
+        runCommand "test-vcs-dev-path-lazyjj-config-propagation" { } ''
+          export HOME="$PWD/home"
+          mkdir -p "$HOME"
+          export GIT_CONFIG_GLOBAL=/ignored/git-config JJ_CONFIG=/ignored/jj-config
+          export EXPECTED_GIT_CONFIG=${expectedGitConfig} EXPECTED_JJ_CONFIG=${expectedJjConfig}
+          export EXPECTED_GIT="$(readlink -f ${bundle}/bin/git)" PROBE_PASSED="$PWD/probe-passed"
+          test "$(${bundle}/bin/jj config get git.executable-path)" = "$EXPECTED_GIT"
+          ${bundle}/bin/lazyjj >/dev/null
+          test -f "$PROBE_PASSED"
+          touch $out
+        '';
+
       jj-git-credentials =
         let
           bundle = nixbits.vcs-dev-path.override {
