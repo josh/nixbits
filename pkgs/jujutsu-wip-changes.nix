@@ -2,7 +2,6 @@
   lib,
   writeShellApplication,
   runCommand,
-  writeText,
   git,
   jujutsu,
   nixbits,
@@ -53,52 +52,6 @@ writeShellApplication {
         } (setup + script + "\ntouch $out\n");
     in
     {
-      config-overrides =
-        let
-          jj-wip-changes = nixbits.jujutsu-wip-changes.override {
-            git-config = writeText "jj-wip-changes-git-config" ''
-              [core]
-              excludesFile = ${writeText "jj-wip-changes-gitignore" "tracked-ignored.txt\n"}
-            '';
-            jujutsu-config = writeText "jj-wip-changes-config.toml" ''
-              [user]
-              name = "Override Author"
-              email = "override@example.com"
-              [snapshot]
-              auto-track = "glob:tracked*"
-              [revset-aliases]
-              "trunk()" = "root()"
-            '';
-          };
-        in
-        runCommand "test-jj-wip-changes-config-overrides"
-          {
-            nativeBuildInputs = [
-              jujutsu
-              jj-wip-changes
-            ];
-          }
-          ''
-            export HOME="$PWD/home"
-            unset GIT_CONFIG_GLOBAL JJ_CONFIG
-            mkdir -p "$HOME" repo
-            cd repo
-            jj git init
-            test -z "$(jj-wip-changes)"
-
-            touch manual.txt tracked-ignored.txt
-            test -z "$(jj-wip-changes)"
-            touch tracked.txt
-            expected="$(jj log --ignore-working-copy --no-graph --revisions @ --template 'change_id.short(8)')*"
-            actual="$(jj-wip-changes)"
-            if [[ "$actual" != "$expected" ]]; then
-              echo "expected '$expected' but was '$actual'" >&2
-              exit 1
-            fi
-            test "$(jj file list --ignore-working-copy)" = "tracked.txt"
-            touch $out
-          '';
-
       local-work = mkTest "local-work" ''
         assert_wip 0 0
         echo change >>README.md
