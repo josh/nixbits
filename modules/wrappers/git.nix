@@ -111,10 +111,6 @@ in
       updateRefs = true;
     };
 
-    # Better merge conflicts
-    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#better-merge-conflicts>
-    # merge.conflictstyle = "zdiff3";
-
     # The empty helper resets the inherited list, see gitcredentials(7)
     credential = {
       "https://github.com".helper = [
