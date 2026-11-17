@@ -9,12 +9,18 @@
   nur,
   nixbits,
   gitea-cli ? nur.repos.josh.gitea-cli,
+  gitModule ? { },
+  # Compatibility: supplied entries replace whole credential sections, including module settings.
   extraGitCredentials ? { },
 }:
 let
   inherit (nixbits) gh;
-  git-config = nixbits.git-config.override { extraCredentials = extraGitCredentials; };
-  git = nixbits.git.override { inherit git-config; };
+  git = wlibEvalPackage [
+    ../modules/git-wrapper.nix
+    gitModule
+    { settings.credential = lib.mapAttrs (_: lib.mkForce) extraGitCredentials; }
+  ];
+  git-config = git.configuration.constructFiles.gitconfig.outPath;
   jujutsu = wlibEvalPackage [
     ../modules/jujutsu-wrapper.nix
     ({ config, ... }: {
@@ -50,6 +56,9 @@ let
 in
 vcs-dev-path.overrideAttrs (
   finalAttrs: _previousAttrs: {
+    # Let downstreams reuse the exact packages and config files selected by this bundle.
+    passthru.git = git;
+    passthru.jujutsu = jujutsu;
     passthru.tests = {
       jj-package-overrides =
         let
@@ -82,51 +91,24 @@ vcs-dev-path.overrideAttrs (
           touch "$out"
         '';
 
-      lazyjj-config-propagation =
-        let
-          credentials."https://git.example.com" = {
-            helper = [
-              ""
-              "test-credential-helper"
-            ];
-            useHttpPath = true;
-          };
-          expectedGitConfig = nixbits.git-config.override { extraCredentials = credentials; };
-          expectedGit = nixbits.git.override { git-config = expectedGitConfig; };
-          expectedJjConfig = nixbits.jujutsu-config.override { git-package = expectedGit; };
-          probe =
-            (writeShellScriptBin "lazyjj" ''
-              set -eu
-              test "$GIT_CONFIG_GLOBAL" = "$EXPECTED_GIT_CONFIG"
-              test "$JJ_CONFIG" = "$EXPECTED_JJ_CONFIG"
-              selectedGit="$(jj config get git.executable-path)"
-              test "$selectedGit" = "$EXPECTED_GIT"
-              test "$("$selectedGit" config get --url=https://git.example.com/repo.git credential.helper)" = test-credential-helper
-              test "$("$selectedGit" config get --url=https://git.example.com/repo.git credential.useHttpPath)" = true
-              touch "$PROBE_PASSED"
-            '').overrideAttrs
-              {
-                pname = "lazyjj";
-                inherit (nixbits.lazyjj) version;
-              };
-          bundle = nixbits.vcs-dev-path.override {
-            extraGitCredentials = credentials;
-            nixbits = nixbits // {
-              lazyjj = nixbits.lazyjj.override { lazyjj = probe; };
-            };
-          };
-        in
-        runCommand "test-vcs-dev-path-lazyjj-config-propagation" { } ''
-          export HOME="$PWD/home"
-          mkdir -p "$HOME"
-          export GIT_CONFIG_GLOBAL=/ignored/git-config JJ_CONFIG=/ignored/jj-config
-          export EXPECTED_GIT_CONFIG=${expectedGitConfig} EXPECTED_JJ_CONFIG=${expectedJjConfig}
-          export EXPECTED_GIT="$(readlink -f ${bundle}/bin/git)" PROBE_PASSED="$PWD/probe-passed"
-          test "$(${bundle}/bin/jj config get git.executable-path)" = "$EXPECTED_GIT"
-          ${bundle}/bin/lazyjj >/dev/null
-          test -f "$PROBE_PASSED"
-          touch $out
-        '';
+      credential-propagation-module = import ../modules/git-wrapper/vcs-dev-path-test.nix {
+        inherit
+          lib
+          nixbits
+          runCommand
+          writeShellScriptBin
+          ;
+        useModule = true;
+      };
+      credential-propagation-legacy = import ../modules/git-wrapper/vcs-dev-path-test.nix {
+        inherit
+          lib
+          nixbits
+          runCommand
+          writeShellScriptBin
+          ;
+        useModule = false;
+      };
 
       jj-git-credentials =
         let
