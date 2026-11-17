@@ -13,35 +13,35 @@ let
       gitConfiguration.constructFiles.gitconfig.outPath
     else
       gitConfiguration.configFile.path;
-  jjInit = config.helperPackages.init.override {
+  jjInit = config.commands.init.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
-  jjPull = config.helperPackages.pull.override {
+  jjPull = config.commands.pull.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
-  jjNewMain = config.helperPackages.new-main.override {
+  jjNewMain = config.commands.new-main.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
-  jjUntracked = config.helperPackages.untracked.override {
+  jjUntracked = config.commands.untracked.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
-  jjWipChanges = config.helperPackages.wip-changes.override {
+  jjWipChanges = config.commands.wip-changes.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
-  jjBookmarkClean = config.helperPackages.bookmark-clean.override {
+  jjBookmarkClean = config.commands.bookmark-clean.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
   # This helper intentionally inherits JJ_CONFIG from its caller (including jj-clone).
-  jjGitSetUpstream = config.helperPackages.git-set-upstream.override {
+  jjGitSetUpstream = config.commands.git-set-upstream.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
   };
-  jjClone = config.helperPackages.clone.override {
+  jjClone = config.commands.clone.override {
     git-config = config.env.GIT_CONFIG_GLOBAL.data;
     jujutsu-config = config.configFile.path;
   };
@@ -50,7 +50,7 @@ in
 {
   imports = [ wlib.wrapperModules.jujutsu ];
 
-  options.helperPackages =
+  options.commands =
     lib.genAttrs
       [
         "init"
@@ -67,7 +67,7 @@ in
         lib.mkOption {
           type = lib.types.package;
           default = pkgs.nixbits."jujutsu-${name}";
-          description = "Base jj-${name} helper package, before applying the shared Git/JJ configuration.";
+          description = "Base jj-${name} command package, before applying the shared Git/JJ configuration.";
         }
       );
 

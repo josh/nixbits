@@ -17,7 +17,7 @@ wlibEvalPackage [
   ../modules/jujutsu-wrapper.nix
   ({ config, ... }: {
     # Preserve helper customizations supplied through this package's nixbits argument.
-    helperPackages = {
+    commands = {
       init = nixbits.jujutsu-init;
       pull = nixbits.jujutsu-pull;
       new-main = nixbits.jujutsu-new-main;

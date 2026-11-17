@@ -28,7 +28,7 @@ let
   customJj = pkgs.wlibEvalPackage [
     ../jujutsu-wrapper.nix
     {
-      helperPackages.git-set-upstream = pkgs.nixbits.jujutsu-git-set-upstream.override {
+      commands.git-set-upstream = pkgs.nixbits.jujutsu-git-set-upstream.override {
         nixbits = pkgs.nixbits // {
           inherit gh;
         };

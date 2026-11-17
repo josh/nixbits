@@ -44,7 +44,7 @@ let
   forkClone = pkgs.wlibEvalPackage [
     ../jujutsu-wrapper.nix
     {
-      helperPackages.clone = nixbits.jujutsu-clone.override {
+      commands.clone = nixbits.jujutsu-clone.override {
         nixbits = nixbits // {
           gh = ghStub;
           jujutsu-git-set-upstream = nixbits.jujutsu-git-set-upstream.override {

@@ -25,7 +25,7 @@ let
   customJj = pkgs.wlibEvalPackage [
     ../jujutsu-wrapper.nix
     {
-      helperPackages.clone = pkgs.nixbits.jujutsu-clone.override {
+      commands.clone = pkgs.nixbits.jujutsu-clone.override {
         nixbits = pkgs.nixbits // {
           inherit gh;
         };
