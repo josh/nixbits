@@ -13,7 +13,8 @@ let
   inherit (nixbits) gh lazyjj;
   git-config = nixbits.git-config.override { extraCredentials = extraGitCredentials; };
   git = nixbits.git.override { inherit git-config; };
-  jujutsu = nixbits.jujutsu.override { inherit git-config; };
+  jujutsu-config = nixbits.jujutsu-config.override { git-package = git; };
+  jujutsu = nixbits.jujutsu.override { inherit git-config jujutsu-config; };
   lazygit = nixbits.lazygit.override { inherit git-config; };
 
   vcs-dev-path = symlinkJoin {
@@ -40,6 +41,29 @@ in
 vcs-dev-path.overrideAttrs (
   finalAttrs: _previousAttrs: {
     passthru.tests = {
+      jj-git-credentials =
+        let
+          bundle = nixbits.vcs-dev-path.override {
+            extraGitCredentials."https://git.example.com" = {
+              helper = [
+                ""
+                "test-credential-helper"
+              ];
+              useHttpPath = true;
+            };
+          };
+        in
+        runCommand "test-vcs-dev-path-jj-git-credentials" { } ''
+          export HOME="$PWD/home"
+          unset GIT_CONFIG_GLOBAL JJ_CONFIG
+          mkdir -p "$HOME"
+          selectedGit="$(${bundle}/bin/jj config get git.executable-path)"
+          test "$selectedGit" = "$(readlink -f ${bundle}/bin/git)"
+          test "$("$selectedGit" config get --url=https://git.example.com/repo.git credential.helper)" = "test-credential-helper"
+          test "$("$selectedGit" config get --url=https://git.example.com/repo.git credential.useHttpPath)" = true
+          touch $out
+        '';
+
       git-config = runCommand "test-vcs-dev-path-git-config" { } ''
         for bin in git jj lazygit; do
           if ! grep --quiet 'GIT_CONFIG_GLOBAL.*${git-config}' ${finalAttrs.finalPackage}/bin/$bin; then
