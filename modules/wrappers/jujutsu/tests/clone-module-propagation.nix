@@ -57,7 +57,7 @@ let
           set -eu
           test "$JJ_CONFIG" = "$EXPECTED_JJ_CONFIG"
           test "$GIT_CONFIG_GLOBAL" = ${gitConfig}
-          : >"$UPSTREAM_STUB_CALLED"
+          echo jj-git-set-upstream >>"$GH_STUB_CALLS"
           exec ${config.commands.jj-git-set-upstream}/bin/jj-git-set-upstream "$@"
         '';
         nixbits = nixbits // {
@@ -103,12 +103,10 @@ runCommand "test-jj-fork-clone-module-propagation"
     export TEST_FORK_URL="localtest://$PWD/fork" TEST_FORK_FILE_URL="file://$PWD/fork"
     export TEST_UPSTREAM_URL="https://github.com/upstream$PWD/upstream" GH_STUB_CALLS="$PWD/gh-calls"
     export GIT_HOOK_LOG="$PWD/git-hooks"
-    export UPSTREAM_STUB_CALLED="$PWD/upstream-called"
     ${forkClone}/bin/jj-clone "$TEST_FORK_URL" work
-    test -f "$UPSTREAM_STUB_CALLED"
     test "$(sort -u "$GIT_HOOK_LOG")" = "$EXPECTED_JJ_CONFIG"
 
-    test "$(cat "$GH_STUB_CALLS")" = "$(printf 'isFork,repositoryTopics\nisFork\nparent\ndefaultBranchRef')"
+    test "$(cat "$GH_STUB_CALLS")" = "$(printf 'isFork,repositoryTopics\njj-git-set-upstream\nisFork\nparent\ndefaultBranchRef')"
     cd work
     test "$(jj git remote list --ignore-working-copy | grep '^upstream ')" = "upstream $TEST_UPSTREAM_URL"
     test "$(jj config get 'revset-aliases."trunk()"')" = "main@upstream"
