@@ -34,7 +34,9 @@ let
       (nixbits.jujutsu-untracked.override {
         inherit git-config jujutsu-config;
       })
-      nixbits.jujutsu-wip-changes
+      (nixbits.jujutsu-wip-changes.override {
+        inherit git-config jujutsu-config;
+      })
     ]
     ++ (lib.lists.optional watchman.meta.available watchman);
     nativeBuildInputs = [ makeWrapper ];
@@ -239,6 +241,45 @@ jujutsu'.overrideAttrs (
             test "$(${bundle}/bin/jj log --ignore-working-copy --no-graph --revisions @ --template 'author.name()')" = "Override Author"
             test "$(${bundle}/bin/jj log --ignore-working-copy --no-graph --revisions @ --template 'author.email()')" = "override@example.com"
             test "$(${bundle}/bin/jj file list --ignore-working-copy --revision "$previous")" = "visible"
+            touch $out
+          '';
+
+        wip-changes-config-overrides =
+          let
+            bundle = nixbits.jujutsu.override {
+              git-config = writeText "jj-wip-changes-bundle-git-config" ''
+                [core]
+                excludesFile = ${writeText "jj-wip-changes-bundle-gitignore" "tracked-ignored.txt\n"}
+              '';
+              jujutsu-config = writeText "jj-wip-changes-bundle-config.toml" ''
+                [user]
+                name = "Override Author"
+                email = "override@example.com"
+                [snapshot]
+                auto-track = "glob:tracked*"
+                [revset-aliases]
+                "trunk()" = "root()"
+              '';
+            };
+          in
+          runCommand "test-jj-bundled-wip-changes-config-overrides" { } ''
+            export HOME="$PWD/home"
+            unset GIT_CONFIG_GLOBAL JJ_CONFIG
+            mkdir -p "$HOME" repo
+            cd repo
+            ${bundle}/bin/jj git init
+            test -z "$(${bundle}/bin/jj-wip-changes)"
+
+            touch manual.txt tracked-ignored.txt
+            test -z "$(${bundle}/bin/jj-wip-changes)"
+            touch tracked.txt
+            expected="$(${bundle}/bin/jj log --ignore-working-copy --no-graph --revisions @ --template 'change_id.short(8)')*"
+            actual="$(${bundle}/bin/jj-wip-changes)"
+            if [[ "$actual" != "$expected" ]]; then
+              echo "expected '$expected' but was '$actual'" >&2
+              exit 1
+            fi
+            test "$(${bundle}/bin/jj file list --ignore-working-copy)" = "tracked.txt"
             touch $out
           '';
 
