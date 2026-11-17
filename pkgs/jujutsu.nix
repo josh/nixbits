@@ -19,7 +19,9 @@ let
 
     paths = [
       jujutsu
-      nixbits.jujutsu-bookmark-clean
+      (nixbits.jujutsu-bookmark-clean.override {
+        inherit git-config jujutsu-config;
+      })
       nixbits.jujutsu-clone
       nixbits.jujutsu-git-set-upstream
       (nixbits.jujutsu-init.override {
@@ -280,6 +282,48 @@ jujutsu'.overrideAttrs (
               exit 1
             fi
             test "$(${bundle}/bin/jj file list --ignore-working-copy)" = "tracked.txt"
+            touch $out
+          '';
+
+        bookmark-clean-config-overrides =
+          let
+            bundle = nixbits.jujutsu.override {
+              git-config = writeText "jj-bookmark-clean-bundle-git-config" ''
+                [core]
+                excludesFile = ${writeText "jj-bookmark-clean-bundle-gitignore" "ignored-by-override\n"}
+              '';
+              jujutsu-config = writeText "jj-bookmark-clean-bundle-config.toml" ''
+                [user]
+                name = "Override Author"
+                email = "override@example.com"
+                [revset-aliases]
+                "trunk()" = "@-"
+              '';
+            };
+          in
+          runCommand "test-jj-bundled-bookmark-clean-config-overrides" { nativeBuildInputs = [ jujutsu ]; } ''
+            export HOME="$PWD/home"
+            unset GIT_CONFIG_GLOBAL JJ_CONFIG
+            mkdir -p "$HOME" repo
+            cd repo
+            jj git init
+            jj describe --message base
+            jj bookmark create main master
+            jj new
+            jj describe --message merged
+            jj bookmark create push-merged
+            jj new
+            jj bookmark create push-unmerged
+            touch visible ignored-by-override
+            ${bundle}/bin/jj-bookmark-clean
+
+            actual="$(${bundle}/bin/jj bookmark list --ignore-working-copy --template 'name ++ "\n"')"
+            expected=$(printf 'main\nmaster\npush-unmerged')
+            if [[ "$actual" != "$expected" ]]; then
+              echo "expected '$expected' but was '$actual'" >&2
+              exit 1
+            fi
+            test "$(${bundle}/bin/jj file list --ignore-working-copy)" = "visible"
             touch $out
           '';
 
