@@ -1,20 +1,23 @@
 {
   lib,
   writeShellApplication,
+  wlibEvalPackage,
   runCommand,
   git,
   jujutsu,
   nixbits,
-  git-config ? nixbits.git-config,
-  jujutsu-config ? nixbits.jujutsu-config,
+  jjConfiguration ? nixbits.jujutsu.configuration,
 }:
+let
+  commandEnv = import ../modules/wrappers/jujutsu/command-env.nix {
+    inherit lib git wlibEvalPackage;
+  };
+in
 writeShellApplication {
   name = "jj-init";
   runtimeInputs = [ jujutsu ];
   inheritPath = false;
-  runtimeEnv = {
-    GIT_CONFIG_GLOBAL = git-config;
-    JJ_CONFIG = jujutsu-config;
+  runtimeEnv = commandEnv jjConfiguration // {
     XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./jujutsu-init.bash;

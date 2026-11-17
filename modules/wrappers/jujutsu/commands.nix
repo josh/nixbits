@@ -8,7 +8,7 @@ let
   };
 in
 {
-  jj-init = nixbits.jujutsu-init.override sharedConfig;
+  jj-init = nixbits.jujutsu-init.override { jjConfiguration = config; };
   jj-pull = nixbits.jujutsu-pull.override { jjConfiguration = config; };
   jj-new-main = nixbits.jujutsu-new-main.override { jjConfiguration = config; };
   jj-untracked = nixbits.jujutsu-untracked.override sharedConfig;
