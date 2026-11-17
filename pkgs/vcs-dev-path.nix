@@ -1,6 +1,7 @@
 {
   lib,
   symlinkJoin,
+  wlibEvalPackage,
   runCommand,
   writeShellScriptBin,
   jjui,
@@ -14,8 +15,15 @@ let
   inherit (nixbits) gh;
   git-config = nixbits.git-config.override { extraCredentials = extraGitCredentials; };
   git = nixbits.git.override { inherit git-config; };
-  jujutsu-config = nixbits.jujutsu-config.override { git-package = git; };
-  jujutsu = nixbits.jujutsu.override { inherit git-config jujutsu-config; };
+  jujutsu = wlibEvalPackage [
+    ../modules/jujutsu-wrapper.nix
+    ({ config, ... }: {
+      gitWrapper = git;
+      inherit (nixbits.jujutsu.configuration) jujutsuPackage watchmanPackage;
+      commands = import ../modules/jujutsu-wrapper/commands.nix { inherit config nixbits; };
+    })
+  ];
+  jujutsu-config = jujutsu.configuration.configFile.path;
   lazygit = nixbits.lazygit.override { inherit git-config; };
   lazyjj = nixbits.lazyjj.override { inherit git-config jujutsu-config; };
 
@@ -43,6 +51,34 @@ in
 vcs-dev-path.overrideAttrs (
   finalAttrs: _previousAttrs: {
     passthru.tests = {
+      jj-package-overrides =
+        let
+          base = nixbits.jujutsu.configuration.jujutsuPackage;
+          customJj = symlinkJoin {
+            name = "custom-vcs-jj";
+            inherit (base) version meta;
+            paths = [ base ];
+            postBuild = ''touch "$out/custom-jj-marker"'';
+          };
+          watchman = (writeShellScriptBin "watchman" "echo vcs-watchman") // {
+            meta.available = true;
+          };
+          bundle = nixbits.vcs-dev-path.override {
+            nixbits = nixbits // {
+              jujutsu = nixbits.jujutsu.override {
+                jujutsu = customJj;
+                inherit watchman;
+              };
+            };
+          };
+        in
+        runCommand "test-vcs-dev-path-jj-package-overrides" { } ''
+          test -e ${bundle}/custom-jj-marker
+          test "$(${bundle}/bin/watchman)" = vcs-watchman
+          ${bundle}/bin/jj version
+          touch "$out"
+        '';
+
       lazyjj-config-propagation =
         let
           credentials."https://git.example.com" = {

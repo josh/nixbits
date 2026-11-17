@@ -30,14 +30,17 @@ in
     description = "Underlying JJ package to bundle with Watchman and wrap.";
   };
 
-  config.package = pkgs.symlinkJoin {
-    pname = "jujutsu";
-    inherit (config.jujutsuPackage) version meta;
-    paths = [
-      config.jujutsuPackage
-    ]
-    ++ lib.optional config.watchmanPackage.meta.available config.watchmanPackage;
-  };
+  # Prefer this bundle over the upstream default, while allowing ordinary package overrides.
+  config.package = lib.mkOverride 900 (
+    pkgs.symlinkJoin {
+      pname = "jujutsu";
+      inherit (config.jujutsuPackage) version meta;
+      paths = [
+        config.jujutsuPackage
+      ]
+      ++ lib.optional config.watchmanPackage.meta.available config.watchmanPackage;
+    }
+  );
 
   options.commands = lib.mkOption {
     type = lib.types.attrsOf lib.types.package;
