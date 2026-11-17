@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   wlib,
@@ -7,10 +8,16 @@
 {
   imports = [ wlib.wrapperModules.jujutsu ];
 
-  settings = {
+  options.gitWrapper = lib.mkOption {
+    type = lib.types.package;
+    default = pkgs.nixbits.git;
+    description = "Evaluated Git wrapper supplying the Git executable and default JJ identity.";
+  };
+
+  config.settings = {
     user = {
-      name = "Joshua Peek";
-      email = "josh@users.noreply.github.com";
+      name = lib.mkDefault config.gitWrapper.configuration.settings.user.name;
+      email = lib.mkDefault config.gitWrapper.configuration.settings.user.email;
     };
 
     ui = {
@@ -21,7 +28,7 @@
     };
 
     git = {
-      executable-path = lib.getExe pkgs.nixbits.git;
+      executable-path = lib.mkDefault (lib.getExe config.gitWrapper);
     };
 
     remotes.origin = {

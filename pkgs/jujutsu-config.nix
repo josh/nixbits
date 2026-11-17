@@ -42,7 +42,7 @@ config.overrideAttrs {
       custom = wlibEvalPackage [
         ../modules/jujutsu-wrapper.nix
         {
-          settings.user.name = lib.mkForce "Module User";
+          settings.user.name = "Module User";
           settings.git.executable-path = lib.mkForce (lib.getExe customGit);
         }
       ];
@@ -53,6 +53,59 @@ config.overrideAttrs {
       test "$(${lib.getExe custom} config get user.name)" = "Module User"
       test "$(${lib.getExe custom} config get user.email)" = josh@users.noreply.github.com
       test "$(${lib.getExe custom} config get git.executable-path)" = "${lib.getExe customGit}"
+      touch "$out"
+    '';
+
+  passthru.tests.identity-propagation =
+    let
+      customGit = wlibEvalPackage [
+        ../modules/git-wrapper.nix
+        {
+          settings.user = {
+            name = lib.mkForce "Shared Git User";
+            email = lib.mkForce "shared@example.com";
+            signingKey = "git-only-key";
+          };
+        }
+      ];
+      shared = wlibEvalPackage [
+        ../modules/jujutsu-wrapper.nix
+        { gitWrapper = customGit; }
+      ];
+      overridden = wlibEvalPackage [
+        ../modules/jujutsu-wrapper.nix
+        {
+          gitWrapper = customGit;
+          settings.user = {
+            name = "Explicit JJ User";
+            email = "jj@example.com";
+          };
+        }
+      ];
+    in
+    runCommand "test-jj-wrapper-identity-propagation" { } ''
+      export HOME="$TMPDIR/home" JJ_CONFIG=/ignored/jj-config
+      mkdir -p "$HOME"
+      test "$(${lib.getExe shared} config get user.name)" = "Shared Git User"
+      test "$(${lib.getExe shared} config get user.email)" = shared@example.com
+      test "$(${lib.getExe shared} config get git.executable-path)" = "${lib.getExe customGit}"
+      test "$(${lib.getExe overridden} config get user.name)" = "Explicit JJ User"
+      test "$(${lib.getExe overridden} config get user.email)" = jj@example.com
+      test "$(${lib.getExe overridden} config get git.executable-path)" = "${lib.getExe customGit}"
+      ${lib.getExe shared} config list --include-defaults >settings
+      if grep -q 'user.signingKey' settings; then
+        echo "Git-only user settings leaked into JJ"
+        exit 1
+      fi
+      ${lib.getExe shared} git init shared-repo
+      cd shared-repo
+      test "$(${lib.getExe shared} log -r @ --no-graph -T 'author.name()')" = "Shared Git User"
+      test "$(${lib.getExe shared} log -r @ --no-graph -T 'author.email()')" = shared@example.com
+      cd ..
+      ${lib.getExe overridden} git init overridden-repo
+      cd overridden-repo
+      test "$(${lib.getExe overridden} log -r @ --no-graph -T 'author.name()')" = "Explicit JJ User"
+      test "$(${lib.getExe overridden} log -r @ --no-graph -T 'author.email()')" = jj@example.com
       touch "$out"
     '';
 
