@@ -180,6 +180,7 @@ in
           echo "expected, '$expected' but was '$actual'"
           return 1
         fi
+        test "$(git config get user.email)" = "josh@users.noreply.github.com"
         touch $out
       '';
 
@@ -212,7 +213,10 @@ in
         pkgs.runCommand "test-git-credential-helpers" { nativeBuildInputs = [ git ]; }
           ''
             expected="${lib.getExe nixbits.gh} auth git-credential"
+            printf '%s\n' "" "$expected" >expected
             for url in https://github.com https://gist.github.com; do
+              git config get --all "credential.$url.helper" >actual
+              cmp expected actual
               actual="$(git config get --url=$url credential.helper)"
               if [[ "$actual" != "$expected" ]]; then
                 echo "expected, '$expected' but was '$actual' for $url"

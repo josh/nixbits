@@ -1,7 +1,6 @@
 {
   lib,
   runCommand,
-  git,
   nixbits,
   wlibEvalPackage,
 }:
@@ -13,19 +12,6 @@ let
 in
 config.overrideAttrs {
   passthru.tests = {
-    defaults = runCommand "test-git-config-defaults" { nativeBuildInputs = [ git ]; } ''
-      cmp ${config} ${wrapper.configuration.constructFiles.gitconfig}
-      test "$(git --no-pager config get --file ${config} user.name)" = "Joshua Peek"
-      test "$(git --no-pager config get --file ${config} user.email)" = "josh@users.noreply.github.com"
-      test "$(git --no-pager config get --file ${config} init.defaultBranch)" = main
-      for host in github.com gist.github.com; do
-        printf '%s\n' "" "${lib.getExe nixbits.gh} auth git-credential" >expected
-        git --no-pager config get --file ${config} --all "credential.https://$host.helper" >actual
-        cmp expected actual
-      done
-      touch "$out"
-    '';
-
     module-settings =
       let
         custom = wlibEvalPackage [
