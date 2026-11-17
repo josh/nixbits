@@ -1,131 +1,111 @@
 {
   lib,
-  stdenv,
-  formats,
-  diff-so-fancy,
-  less,
+  runCommand,
+  git,
   nixbits,
+  wlibEvalPackage,
   extraCredentials ? { },
 }:
 let
-  inherit (nixbits) gh;
-  gitIni = formats.gitIni { };
-  config = gitIni.generate "git-config" {
-    user = {
-      name = "Joshua Peek";
-      email = "josh@users.noreply.github.com";
-    };
-
-    alias = {
-      b = "branch";
-      ba = "branch --all";
-      ca = "commit --all";
-      ci = "commit";
-      co = "checkout";
-      ct = "checkout --track";
-      patch = "!git --no-pager diff --no-color";
-      st = "status --short --branch";
-      up = "pull";
-    };
-
-    # Improve listing branches
-    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#listing-branches>
-    column.ui = "auto";
-    branch.sort = "-committerdate";
-
-    # Improve listing tags
-    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#listing-tags>
-    tag.sort = "version:refname";
-
-    # Set default branch
-    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#default-branch>
-    init.defaultBranch = "main";
-
-    # Better diff
-    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#better-diff>
-    diff = {
-      algorithm = "histogram";
-      colorMoved = "plain";
-      mnemonicPrefix = true;
-      renames = true;
-    };
-
-    # Better pushing
-    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#better-pushing>
-    push = {
-      default = "simple"; # (default since 2.0)
-      autoSetupRemote = true;
-      followTags = true;
-    };
-
-    # Better pulling
-    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#better-pulling>
-    pull = {
-      rebase = true;
-    };
-
-    # Better fetching
-    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#better-fetching>
-    fetch = {
-      prune = true;
-      pruneTags = true;
-      all = true;
-    };
-
-    # Autocorrect prompting
-    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#autocorrect-prompting>
-    help.autocorrect = "prompt";
-
-    # Commit with diffs
-    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#commit-with-diffs>
-    commit.verbose = true;
-
-    # Reuse recorded resolutions
-    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#reuse-recorded-resolutions>
-    rerere = {
-      enabled = true;
-      autoupdate = true;
-    };
-
-    # Global ignore file
-    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#global-ignore-file>
-    core.excludesFile = "${nixbits.gitignore}";
-
-    # Slightly nicer rebase
-    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#slightly-nicer-rebase>
-    rebase = {
-      autoSquash = true;
-      autoStash = true;
-      updateRefs = true;
-    };
-
-    # Better merge conflicts
-    # <https://blog.gitbutler.com/how-git-core-devs-configure-git/#better-merge-conflicts>
-    # merge.conflictstyle = "zdiff3";
-
-    # The empty helper resets the inherited list, see gitcredentials(7)
-    credential = {
-      "https://github.com".helper = [
-        ""
-        "${lib.getExe gh} auth git-credential"
-      ];
-      "https://gist.github.com".helper = [
-        ""
-        "${lib.getExe gh} auth git-credential"
-      ];
+  wrapper = wlibEvalPackage [
+    ../modules/git-wrapper.nix
+    {
+      # Preserve the old shallow merge: replace each supplied credential entry,
+      # including all of a host's fields and its ordered helper list.
+      settings.credential = lib.mapAttrs (_name: value: lib.mkForce value) extraCredentials;
     }
-    // (lib.attrsets.optionalAttrs stdenv.hostPlatform.isDarwin {
-      helper = "osxkeychain";
-    })
-    // extraCredentials;
-
-    # diff-so-fancy
-    core.pager = "${lib.getExe diff-so-fancy} | ${lib.getExe less} --tabs=4 -RF";
-    interactive.diffFilter = "${lib.getExe diff-so-fancy} --patch";
-    diff-so-fancy.markEmptyLines = false;
-  };
+  ];
+  config = runCommand "git-config" { } ''
+    cp ${wrapper.configuration.constructFiles.gitconfig} "$out"
+  '';
 in
 config.overrideAttrs {
+  passthru.tests = {
+    defaults = runCommand "test-git-config-defaults" { nativeBuildInputs = [ git ]; } ''
+      cmp ${config} ${wrapper.configuration.constructFiles.gitconfig}
+      test "$(git --no-pager config get --file ${config} user.name)" = "Joshua Peek"
+      test "$(git --no-pager config get --file ${config} user.email)" = "josh@users.noreply.github.com"
+      test "$(git --no-pager config get --file ${config} init.defaultBranch)" = main
+      for host in github.com gist.github.com; do
+        printf '%s\n' "" "${lib.getExe nixbits.gh} auth git-credential" >expected
+        git --no-pager config get --file ${config} --all "credential.https://$host.helper" >actual
+        cmp expected actual
+      done
+      touch "$out"
+    '';
+
+    credential-overrides =
+      let
+        custom = nixbits.git-config.override {
+          extraCredentials = {
+            helper = [
+              ""
+              "global-helper"
+            ];
+            "https://github.com".useHttpPath = true;
+            "https://gist.github.com".helper = [
+              ""
+              "first-helper"
+              "second-helper"
+            ];
+            "https://git.example.com" = {
+              helper = [
+                ""
+                "example-helper"
+              ];
+              useHttpPath = true;
+            };
+          };
+        };
+      in
+      runCommand "test-git-config-credential-overrides" { nativeBuildInputs = [ git ]; } ''
+        # A replacement host entry must remove its old fields, not merge them.
+        if git --no-pager config get --file ${custom} --all credential.https://github.com.helper; then
+          echo "GitHub's original helper survived replacement"
+          exit 1
+        else
+          test "$?" -eq 1
+        fi
+        test "$(git --no-pager config get --file ${custom} credential.https://github.com.useHttpPath)" = true
+        printf '%s\n' "" global-helper >expected
+        git --no-pager config get --file ${custom} --all credential.helper >actual
+        cmp expected actual
+        printf '%s\n' "" first-helper second-helper >expected
+        git --no-pager config get --file ${custom} --all credential.https://gist.github.com.helper >actual
+        cmp expected actual
+        printf '%s\n' "" example-helper >expected
+        git --no-pager config get --file ${custom} --all credential.https://git.example.com.helper >actual
+        cmp expected actual
+        test "$(git --no-pager config get --file ${custom} credential.https://git.example.com.useHttpPath)" = true
+        test "$(git --no-pager config get --file ${custom} user.name)" = "Joshua Peek"
+        touch "$out"
+      '';
+
+    module-settings =
+      let
+        custom = wlibEvalPackage [
+          ../modules/git-wrapper.nix
+          {
+            settings.user.name = lib.mkForce "Module User";
+            settings.credential."https://git.example.com".helper = [
+              ""
+              "module-helper"
+            ];
+          }
+        ];
+      in
+      runCommand "test-git-wrapper-module-settings" { } ''
+        export HOME="$TMPDIR/home"
+        mkdir -p "$HOME"
+        export GIT_CONFIG_NOSYSTEM=1
+        unset GIT_CONFIG_GLOBAL
+        test "$(${lib.getExe custom} config get user.name)" = "Module User"
+        test "$(${lib.getExe custom} config get user.email)" = "josh@users.noreply.github.com"
+        test "$(${lib.getExe custom} config get --url=https://git.example.com credential.helper)" = module-helper
+        touch "$out"
+      '';
+  };
+
   meta = {
     description = "Configuration for the Git version control system";
     license = lib.licenses.mit;
