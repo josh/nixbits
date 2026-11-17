@@ -67,6 +67,28 @@ let
     })
   ];
   jjConfig = forkClone.configuration.configFile.path;
+  gitConfig = customGit.configuration.constructFiles.gitconfig.outPath;
+  packageClone = nixbits.jujutsu-clone.override {
+    git-config = gitConfig;
+    jujutsu-config = jjConfig;
+    nixbits = nixbits // {
+      gh = ghStub;
+      jujutsu-git-set-upstream = nixbits.jujutsu-git-set-upstream.override {
+        nixbits = nixbits // {
+          gh = ghStub;
+        };
+      };
+    };
+  };
+  explicitClone = packageClone.override {
+    jujutsu-git-set-upstream = writeShellScriptBin "jj-git-set-upstream" ''
+      set -eu
+      test "$JJ_CONFIG" = "$EXPECTED_JJ_CONFIG"
+      test "$GIT_CONFIG_GLOBAL" = ${gitConfig}
+      touch "$UPSTREAM_STUB_CALLED"
+      exec ${forkClone}/bin/jj-git-set-upstream "$@"
+    '';
+  };
 in
 runCommand "test-jj-fork-clone-module-propagation"
   {
@@ -76,34 +98,49 @@ runCommand "test-jj-fork-clone-module-propagation"
     ];
   }
   ''
-    export HOME="$PWD/home" EXPECTED_JJ_CONFIG=${jjConfig}
-    unset GIT_CONFIG_GLOBAL JJ_CONFIG GT
-    mkdir -p "$HOME"
-    git init --initial-branch=main upstream
-    git -C upstream config user.name "Seed Author"
-    git -C upstream config user.email "seed@example.com"
-    git -C upstream commit --allow-empty --message initial
-    git clone --bare upstream fork
-    forkCommit=$(git -C fork rev-parse HEAD)
-    git -C upstream commit --allow-empty --message upstream
-    upstreamCommit=$(git -C upstream rev-parse HEAD)
-    export TEST_FORK_URL="localtest://$PWD/fork" TEST_FORK_FILE_URL="file://$PWD/fork"
-    export TEST_UPSTREAM_URL="https://github.com/upstream$PWD/upstream" GH_STUB_CALLS="$PWD/gh-calls"
-    ${forkClone}/bin/jj-clone "$TEST_FORK_URL" work
+    for variant in module package explicit; do
+      mkdir "$variant"
+      pushd "$variant" >/dev/null
+      export HOME="$PWD/home" EXPECTED_JJ_CONFIG=${jjConfig}
+      unset GIT_CONFIG_GLOBAL JJ_CONFIG GT
+      mkdir -p "$HOME"
+      git init --initial-branch=main upstream
+      git -C upstream config user.name "Seed Author"
+      git -C upstream config user.email "seed@example.com"
+      git -C upstream commit --allow-empty --message initial
+      git clone --bare upstream fork
+      forkCommit=$(git -C fork rev-parse HEAD)
+      git -C upstream commit --allow-empty --message upstream
+      upstreamCommit=$(git -C upstream rev-parse HEAD)
+      export TEST_FORK_URL="localtest://$PWD/fork" TEST_FORK_FILE_URL="file://$PWD/fork"
+      export TEST_UPSTREAM_URL="https://github.com/upstream$PWD/upstream" GH_STUB_CALLS="$PWD/gh-calls"
+      export UPSTREAM_STUB_CALLED="$PWD/upstream-called"
+      case "$variant" in
+      module) ${forkClone}/bin/jj-clone "$TEST_FORK_URL" work ;;
+      package) ${packageClone}/bin/jj-clone "$TEST_FORK_URL" work ;;
+      explicit) ${explicitClone}/bin/jj-clone "$TEST_FORK_URL" work ;;
+      esac
+      if [[ "$variant" = explicit ]]; then
+        test -f "$UPSTREAM_STUB_CALLED"
+      else
+        test ! -e "$UPSTREAM_STUB_CALLED"
+      fi
 
-    test "$(cat "$GH_STUB_CALLS")" = "$(printf 'isFork,repositoryTopics\nisFork\nparent\ndefaultBranchRef')"
-    cd work
-    test "$(jj git remote list --ignore-working-copy | grep '^upstream ')" = "upstream $TEST_UPSTREAM_URL"
-    test "$(jj config get 'revset-aliases."trunk()"')" = "main@upstream"
-    test "$(jj log --ignore-working-copy --no-graph --revisions main@upstream --template 'commit_id')" = "$upstreamCommit"
-    test "$(jj log --ignore-working-copy --no-graph --revisions '@-' --template 'commit_id')" = "$forkCommit"
-    test "$(jj log --ignore-working-copy --no-graph --revisions @ --template 'author.name()')" = "Override Author"
-    test "$(jj log --ignore-working-copy --no-graph --revisions @ --template 'author.email()')" = "override@example.com"
-    test "$(jj file list --ignore-working-copy)" = "tracked.txt"
-    # Calling the bundled upstream command directly inherits the caller's JJ_CONFIG too.
-    export JJ_CONFIG=${jjConfig}
-    : >"$GH_STUB_CALLS"
-    ${forkClone}/bin/jj-git-set-upstream
-    test "$(cat "$GH_STUB_CALLS")" = "$(printf 'isFork\nparent\ndefaultBranchRef')"
+      test "$(cat "$GH_STUB_CALLS")" = "$(printf 'isFork,repositoryTopics\nisFork\nparent\ndefaultBranchRef')"
+      cd work
+      test "$(jj git remote list --ignore-working-copy | grep '^upstream ')" = "upstream $TEST_UPSTREAM_URL"
+      test "$(jj config get 'revset-aliases."trunk()"')" = "main@upstream"
+      test "$(jj log --ignore-working-copy --no-graph --revisions main@upstream --template 'commit_id')" = "$upstreamCommit"
+      test "$(jj log --ignore-working-copy --no-graph --revisions '@-' --template 'commit_id')" = "$forkCommit"
+      test "$(jj log --ignore-working-copy --no-graph --revisions @ --template 'author.name()')" = "Override Author"
+      test "$(jj log --ignore-working-copy --no-graph --revisions @ --template 'author.email()')" = "override@example.com"
+      test "$(jj file list --ignore-working-copy)" = "tracked.txt"
+      # Calling the bundled upstream command directly inherits the caller's JJ_CONFIG too.
+      export JJ_CONFIG=${jjConfig}
+      : >"$GH_STUB_CALLS"
+      ${forkClone}/bin/jj-git-set-upstream
+      test "$(cat "$GH_STUB_CALLS")" = "$(printf 'isFork\nparent\ndefaultBranchRef')"
+      popd >/dev/null
+    done
     touch "$out"
   ''
