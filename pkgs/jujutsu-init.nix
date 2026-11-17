@@ -2,17 +2,20 @@
   lib,
   writeShellApplication,
   runCommand,
+  writeText,
   git,
   jujutsu,
   nixbits,
+  git-config ? nixbits.git-config,
+  jujutsu-config ? nixbits.jujutsu-config,
 }:
 writeShellApplication {
   name = "jj-init";
   runtimeInputs = [ jujutsu ];
   inheritPath = false;
   runtimeEnv = {
-    GIT_CONFIG_GLOBAL = nixbits.git-config;
-    JJ_CONFIG = nixbits.jujutsu-config;
+    GIT_CONFIG_GLOBAL = git-config;
+    JJ_CONFIG = jujutsu-config;
     XTRACE_PATH = nixbits.xtrace;
   };
   text = builtins.readFile ./jujutsu-init.bash;
@@ -52,6 +55,41 @@ writeShellApplication {
       '';
     in
     {
+      config-overrides =
+        let
+          jj-init = nixbits.jujutsu-init.override {
+            git-config = writeText "jj-init-git-config" ''
+              [core]
+              excludesFile = ${writeText "jj-init-gitignore" "ignored-by-override\n"}
+            '';
+            jujutsu-config = writeText "jj-init-config.toml" ''
+              [user]
+              name = "Override Author"
+              email = "override@example.com"
+            '';
+          };
+        in
+        runCommand "test-jj-init-config-overrides"
+          {
+            nativeBuildInputs = [
+              git
+              jujutsu
+              jj-init
+            ];
+          }
+          ''
+            export HOME="$PWD/home"
+            mkdir -p "$HOME" repo
+            cd repo
+            git init
+            touch visible ignored-by-override
+            jj-init
+            test "$(jj log --ignore-working-copy --no-graph --revisions @ --template 'author.name()')" = "Override Author"
+            test "$(jj log --ignore-working-copy --no-graph --revisions @ --template 'author.email()')" = "override@example.com"
+            test "$(jj file list --ignore-working-copy)" = "visible"
+            touch $out
+          '';
+
       main = mkTest "main" (
         mkClone "main"
         + ''
