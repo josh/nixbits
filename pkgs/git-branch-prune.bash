@@ -1,4 +1,3 @@
-default_branch=""
 if git show-ref --verify --quiet refs/heads/main; then
   default_branch="main"
 elif git show-ref --verify --quiet refs/heads/master; then
