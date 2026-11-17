@@ -12,9 +12,7 @@ let
     ../modules/jujutsu-wrapper.nix
     { settings.git.executable-path = lib.mkForce (lib.getExe git-package); }
   ];
-  config = runCommand "jj-config.toml" { } ''
-    cp ${wrapper.configuration.constructFiles.generatedConfig} "$out"
-  '';
+  config = wrapper.configuration.configFile.path;
 in
 config.overrideAttrs {
   passthru.tests.defaults =
@@ -35,6 +33,27 @@ config.overrideAttrs {
         test "$(jj log -r @ --no-graph -T 'author.email()')" = josh@users.noreply.github.com
         touch "$out"
       '';
+
+  passthru.tests.standalone =
+    let
+      custom = wlibEvalPackage [
+        ../modules/jujutsu-wrapper.nix
+        {
+          # Reading the generated config must not build the wrapper or its package.
+          package = runCommand "unbuildable-jj" { meta.mainProgram = "jj"; } "exit 1";
+          settings.user.name = "Standalone User";
+          settings.user.email = "standalone@example.com";
+        }
+      ];
+    in
+    runCommand "test-jj-config-standalone" { nativeBuildInputs = [ jujutsu ]; } ''
+      export HOME="$TMPDIR/home" JJ_CONFIG=${custom.configuration.configFile.path}
+      mkdir -p "$HOME"
+      test "$(jj config get user.name)" = "Standalone User"
+      test "$(jj config get user.email)" = standalone@example.com
+      test "$(jj config get git.executable-path)" = "${lib.getExe nixbits.git}"
+      touch "$out"
+    '';
 
   passthru.tests.module-settings =
     let

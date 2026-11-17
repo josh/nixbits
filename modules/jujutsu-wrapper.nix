@@ -5,6 +5,9 @@
   wlib,
   ...
 }:
+let
+  generatedConfig = (pkgs.formats.toml { }).generate "jj-config.toml" config.settings;
+in
 {
   imports = [ wlib.wrapperModules.jujutsu ];
 
@@ -18,13 +21,18 @@
     type = lib.types.submodule {
       options.path = lib.mkOption {
         type = wlib.types.stringable;
-        default = config.constructFiles.generatedConfig.path;
+        default = generatedConfig;
         description = "JJ configuration file; defaults to the generated settings.";
       };
     };
     default = { };
     description = "Configuration file used by JJ.";
   };
+
+  # Keep the upstream wrapper-local file available, using the same standalone config.
+  config.constructFiles.generatedConfig.builder = lib.mkForce ''
+    cp ${generatedConfig} "$2"
+  '';
 
   # The upstream module sets JJ_CONFIG directly to its generated file.
   config.env.JJ_CONFIG = lib.mkForce config.configFile.path;
