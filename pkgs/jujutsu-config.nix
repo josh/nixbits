@@ -5,13 +5,9 @@
   writeShellScriptBin,
   jujutsu,
   nixbits,
-  git-package ? nixbits.git,
 }:
 let
-  wrapper = wlibEvalPackage [
-    ../modules/jujutsu-wrapper.nix
-    { settings.git.executable-path = lib.mkForce (lib.getExe git-package); }
-  ];
+  wrapper = wlibEvalPackage ../modules/jujutsu-wrapper.nix;
   config = wrapper.configuration.configFile.path;
 in
 config.overrideAttrs {
@@ -126,19 +122,6 @@ config.overrideAttrs {
       test "$(${lib.getExe overridden} log -r @ --no-graph -T 'author.name()')" = "Explicit JJ User"
       test "$(${lib.getExe overridden} log -r @ --no-graph -T 'author.email()')" = jj@example.com
       touch "$out"
-    '';
-
-  passthru.tests.git-package-override =
-    let
-      customGit = writeShellScriptBin "git" "exit 1";
-      customConfig = nixbits.jujutsu-config.override { git-package = customGit; };
-    in
-    runCommand "test-jj-config-git-package-override" { nativeBuildInputs = [ jujutsu ]; } ''
-      export HOME="$PWD/home"
-      mkdir -p "$HOME"
-      test "$(JJ_CONFIG=${nixbits.jujutsu-config} jj config get git.executable-path)" = "${lib.getExe nixbits.git}"
-      test "$(JJ_CONFIG=${customConfig} jj config get git.executable-path)" = "${lib.getExe customGit}"
-      touch $out
     '';
 
   meta = {
