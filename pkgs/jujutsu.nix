@@ -5,6 +5,7 @@
   runCommand,
   testers,
   writeText,
+  git,
   jujutsu,
   watchman,
   nixbits,
@@ -21,7 +22,9 @@ let
       nixbits.jujutsu-bookmark-clean
       nixbits.jujutsu-clone
       nixbits.jujutsu-git-set-upstream
-      nixbits.jujutsu-init
+      (nixbits.jujutsu-init.override {
+        inherit git-config jujutsu-config;
+      })
       nixbits.jujutsu-new-main
       nixbits.jujutsu-pull
       nixbits.jujutsu-untracked
@@ -87,6 +90,34 @@ jujutsu'.overrideAttrs (
               test "$(jj config get user.email)" = "override@example.com"
               touch $out
             '';
+
+        init-config-overrides =
+          let
+            bundle = nixbits.jujutsu.override {
+              git-config = writeText "jj-bundle-git-config" ''
+                [core]
+                excludesFile = ${writeText "jj-bundle-gitignore" "ignored-by-override\n"}
+              '';
+              jujutsu-config = writeText "jj-bundle-config.toml" ''
+                [user]
+                name = "Override Author"
+                email = "override@example.com"
+              '';
+            };
+          in
+          runCommand "test-jj-bundled-init-config-overrides" { nativeBuildInputs = [ git ]; } ''
+            export HOME="$PWD/home"
+            unset GIT_CONFIG_GLOBAL JJ_CONFIG
+            mkdir -p "$HOME" repo
+            cd repo
+            git init
+            touch visible ignored-by-override
+            ${bundle}/bin/jj-init
+            test "$(${bundle}/bin/jj log --ignore-working-copy --no-graph --revisions @ --template 'author.name()')" = "Override Author"
+            test "$(${bundle}/bin/jj log --ignore-working-copy --no-graph --revisions @ --template 'author.email()')" = "override@example.com"
+            test "$(${bundle}/bin/jj file list --ignore-working-copy)" = "visible"
+            touch $out
+          '';
 
         ignore = runCommand "test-jj-ignore" { nativeBuildInputs = [ jujutsu ]; } ''
           jj git init
