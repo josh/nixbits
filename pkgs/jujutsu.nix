@@ -31,7 +31,9 @@ let
       (nixbits.jujutsu-pull.override {
         inherit git-config jujutsu-config;
       })
-      nixbits.jujutsu-untracked
+      (nixbits.jujutsu-untracked.override {
+        inherit git-config jujutsu-config;
+      })
       nixbits.jujutsu-wip-changes
     ]
     ++ (lib.lists.optional watchman.meta.available watchman);
@@ -58,8 +60,45 @@ jujutsu'.overrideAttrs (
     passthru.tests =
       let
         jujutsu = finalAttrs.finalPackage;
+        mkUntrackedOverrideTest =
+          name: initArgs:
+          let
+            bundle = nixbits.jujutsu.override {
+              git-config = writeText "jj-untracked-bundle-git-config" ''
+                [core]
+                excludesFile = ${writeText "jj-untracked-bundle-gitignore" "tracked-ignored.txt\n"}
+              '';
+              jujutsu-config = writeText "jj-untracked-bundle-config.toml" ''
+                [user]
+                name = "Override Author"
+                email = "override@example.com"
+                [snapshot]
+                auto-track = "glob:tracked*"
+              '';
+            };
+          in
+          runCommand "test-jj-bundled-untracked-${name}-config-overrides" { } ''
+            export HOME="$PWD/home"
+            unset GIT_CONFIG_GLOBAL JJ_CONFIG
+            mkdir -p "$HOME" repo
+            cd repo
+            ${bundle}/bin/jj git init ${initArgs}
+            touch tracked.txt tracked-ignored.txt manual.txt
+
+            actual="$(${bundle}/bin/jj-untracked)"
+            expected=$(printf 'manual.txt\ntracked-ignored.txt')
+            if [[ "$actual" != "$expected" ]]; then
+              echo "expected '$expected' but was '$actual'" >&2
+              exit 1
+            fi
+            test "$(${bundle}/bin/jj file list --ignore-working-copy)" = "tracked.txt"
+            touch $out
+          '';
       in
       {
+        untracked-colocated-config-overrides = mkUntrackedOverrideTest "colocated" "--colocate";
+        untracked-non-colocated-config-overrides = mkUntrackedOverrideTest "non-colocated" "--no-colocate";
+
         version = testers.testVersion {
           package = jujutsu;
           command = "jj version";
