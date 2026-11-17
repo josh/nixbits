@@ -1,7 +1,7 @@
 {
   lib,
   symlinkJoin,
-  makeWrapper,
+  wlibEvalPackage,
   runCommand,
   testers,
   writeText,
@@ -13,60 +13,48 @@
   git-config ? nixbits.git-config,
   jujutsu-config ? nixbits.jujutsu-config,
 }:
-let
-  jujutsu' = symlinkJoin {
-    pname = "jujutsu";
-    inherit (jujutsu) version;
+wlibEvalPackage [
+  ../modules/jujutsu-wrapper.nix
+  ({ config, ... }: {
+    package = symlinkJoin {
+      pname = "jujutsu";
+      inherit (jujutsu) version meta;
 
-    paths = [
-      jujutsu
-      (nixbits.jujutsu-bookmark-clean.override {
-        inherit git-config jujutsu-config;
-      })
-      (nixbits.jujutsu-clone.override {
-        inherit git-config jujutsu-config;
-      })
-      (nixbits.jujutsu-git-set-upstream.override { inherit git-config; })
-      (nixbits.jujutsu-init.override {
-        inherit git-config jujutsu-config;
-      })
-      (nixbits.jujutsu-new-main.override {
-        inherit git-config jujutsu-config;
-      })
-      (nixbits.jujutsu-pull.override {
-        inherit git-config jujutsu-config;
-      })
-      (nixbits.jujutsu-untracked.override {
-        inherit git-config jujutsu-config;
-      })
-      (nixbits.jujutsu-wip-changes.override {
-        inherit git-config jujutsu-config;
-      })
-    ]
-    ++ (lib.lists.optional watchman.meta.available watchman);
-    nativeBuildInputs = [ makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/jj \
-        --set JJ_CONFIG ${jujutsu-config} \
-        --set GIT_CONFIG_GLOBAL ${git-config}
-    '';
-
-    meta = {
-      inherit (jujutsu.meta)
-        description
-        homepage
-        license
-        platforms
-        ;
-      mainProgram = "jj";
+      paths = [
+        jujutsu
+        (nixbits.jujutsu-bookmark-clean.override {
+          inherit git-config jujutsu-config;
+        })
+        (nixbits.jujutsu-clone.override {
+          inherit git-config jujutsu-config;
+        })
+        (nixbits.jujutsu-git-set-upstream.override { inherit git-config; })
+        (nixbits.jujutsu-init.override {
+          inherit git-config jujutsu-config;
+        })
+        (nixbits.jujutsu-new-main.override {
+          inherit git-config jujutsu-config;
+        })
+        (nixbits.jujutsu-pull.override {
+          inherit git-config jujutsu-config;
+        })
+        (nixbits.jujutsu-untracked.override {
+          inherit git-config jujutsu-config;
+        })
+        (nixbits.jujutsu-wip-changes.override {
+          inherit git-config jujutsu-config;
+        })
+      ]
+      ++ (lib.lists.optional watchman.meta.available watchman);
     };
-  };
-in
-jujutsu'.overrideAttrs (
-  finalAttrs: _previousAttrs: {
+    env = {
+      JJ_CONFIG = lib.mkForce "${jujutsu-config}";
+      GIT_CONFIG_GLOBAL = "${git-config}";
+    };
+
     passthru.tests =
       let
-        jujutsu = finalAttrs.finalPackage;
+        jujutsu = config.wrapper;
         mkUntrackedOverrideTest =
           name: initArgs:
           let
@@ -471,5 +459,5 @@ jujutsu'.overrideAttrs (
           touch $out
         '';
       };
-  }
-)
+  })
+]
