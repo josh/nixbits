@@ -32,9 +32,6 @@ wlibEvalPackage [
         (nixbits.jujutsu-new-main.override {
           inherit git-config jujutsu-config;
         })
-        (nixbits.jujutsu-pull.override {
-          inherit git-config jujutsu-config;
-        })
         (nixbits.jujutsu-untracked.override {
           inherit git-config jujutsu-config;
         })
