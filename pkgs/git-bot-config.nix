@@ -1,27 +1,18 @@
 {
   lib,
-  formats,
+  nixbits,
+  runCommand,
 }:
-let
-  gitIni = formats.gitIni { };
-  config = gitIni.generate "git-bot-config" {
-    user = {
-      name = "github-actions[bot]";
-      email = "41898282+github-actions[bot]@users.noreply.github.com";
+runCommand "git-bot-config"
+  {
+    allowedReferences = [ ];
+    allowedRequisites = [ ];
+    meta = {
+      description = "Git configuration for a GitHub Actions bot identity";
+      license = lib.licenses.mit;
+      platforms = lib.platforms.all;
     };
-  };
-in
-config.overrideAttrs {
-  allowedReferences = [ ];
-  allowedRequisites = [ ];
-
-  outputHash = "sha256-aAKnHbMxoZimJsgp977f0o0Q5ago3EABf7+MTM2g52E=";
-  outputHashAlgo = "sha256";
-  outputHashMode = "nar";
-
-  meta = {
-    description = "Git configuration for a GitHub Actions bot identity";
-    license = lib.licenses.mit;
-    platforms = lib.platforms.all;
-  };
-}
+  }
+  ''
+    cp ${nixbits.git-bot.configuration.constructFiles.gitconfig} "$out"
+  ''

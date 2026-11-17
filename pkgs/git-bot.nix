@@ -1,71 +1,38 @@
 {
-  symlinkJoin,
-  makeWrapper,
+  git,
   runCommand,
   testers,
-  git,
-  gnugrep,
-  nixbits,
+  wlibEvalPackage,
 }:
-let
-  git' = symlinkJoin {
-    pname = "git-bot";
-    inherit (git) version;
-    paths = [ git ];
-    nativeBuildInputs = [ makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/git \
-        --set GIT_CONFIG_GLOBAL ${nixbits.git-bot-config}
-    '';
+wlibEvalPackage (
+  { config, wlib, ... }:
+  {
+    imports = [ wlib.wrapperModules.git ];
+    package = git;
+    drv.pname = "git-bot";
+    drv.name = "git-bot-${git.version}";
 
-    meta = {
-      inherit (git.meta)
-        description
-        homepage
-        license
-        platforms
-        ;
-      mainProgram = "git";
+    settings.user = {
+      name = "github-actions[bot]";
+      email = "41898282+github-actions[bot]@users.noreply.github.com";
     };
-  };
-in
-git'.overrideAttrs (
-  finalAttrs: _previousAttrs: {
-    passthru.tests =
-      let
-        git = finalAttrs.finalPackage;
-      in
-      {
-        version = testers.testVersion {
-          package = git;
-          command = "git version";
-          inherit (git) version;
-        };
 
-        user = runCommand "test-git-user" { nativeBuildInputs = [ git ]; } ''
-          expected="github-actions[bot]"
-          actual="$(git config get user.name)"
-          if [[ "$actual" != "$expected" ]]; then
-            echo "expected, '$expected' but was '$actual'"
-            return 1
-          fi
-          touch $out
-        '';
-
-        commit-author =
-          runCommand "test-git-commit-author"
-            {
-              nativeBuildInputs = [
-                git
-                gnugrep
-              ];
-            }
-            ''
-              git init --initial-branch main
-              git commit --allow-empty --message "initial commit"
-              git show HEAD | grep 'Author: github-actions\[bot\]'
-              touch $out
-            '';
+    passthru.tests = {
+      version = testers.testVersion {
+        package = config.wrapper;
+        command = "git version";
+        inherit (git) version;
       };
+      user = runCommand "test-git-user" { nativeBuildInputs = [ config.wrapper ]; } ''
+        test "$(git config get user.name)" = 'github-actions[bot]'
+        touch "$out"
+      '';
+      commit-author = runCommand "test-git-commit-author" { nativeBuildInputs = [ config.wrapper ]; } ''
+        git init --initial-branch main
+        git commit --allow-empty --message initial
+        test "$(git log -1 --format='%an <%ae>')" = 'github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
+        touch "$out"
+      '';
+    };
   }
 )
