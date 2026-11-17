@@ -2,7 +2,6 @@
   lib,
   wlibEvalPackage,
   runCommand,
-  testers,
   writeText,
   writeShellScriptBin,
   git,
@@ -63,22 +62,6 @@ wlibEvalPackage [
       {
         untracked-colocated-config-overrides = mkUntrackedOverrideTest "colocated" "--colocate";
         untracked-non-colocated-config-overrides = mkUntrackedOverrideTest "non-colocated" "--no-colocate";
-
-        version = testers.testVersion {
-          package = jujutsu;
-          command = "jj version";
-          inherit (jujutsu) version;
-        };
-
-        author = runCommand "test-jj-author" { nativeBuildInputs = [ jujutsu ]; } ''
-          expected="Joshua Peek"
-          actual="$(jj config get user.name)"
-          if [[ "$actual" != "$expected" ]]; then
-            echo "expected, '$expected' but was '$actual'"
-            return 1
-          fi
-          touch $out
-        '';
 
         config-override =
           let
@@ -417,21 +400,6 @@ wlibEvalPackage [
               touch $out
             '';
 
-        ignore = runCommand "test-jj-ignore" { nativeBuildInputs = [ jujutsu ]; } ''
-          jj git init
-          touch README.md
-          mkdir .claude
-          touch .claude/settings.local.json
-          if ! jj file list | grep --quiet README.md; then
-            echo "expected README.md to be tracked"
-            return 1
-          fi
-          if jj file list | grep --quiet .claude/settings.local.json; then
-            echo "expected .claude/settings.local.json to be ignored"
-            return 1
-          fi
-          touch $out
-        '';
       };
   })
 ]

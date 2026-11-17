@@ -255,3 +255,4 @@ in
       touch "$out"
     '';
 }
+// import ./default-tests.nix { inherit pkgs; }
