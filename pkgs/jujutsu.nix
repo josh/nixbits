@@ -5,6 +5,7 @@
   runCommand,
   testers,
   writeText,
+  writeShellScriptBin,
   git,
   jujutsu,
   watchman,
@@ -22,7 +23,9 @@ let
       (nixbits.jujutsu-bookmark-clean.override {
         inherit git-config jujutsu-config;
       })
-      nixbits.jujutsu-clone
+      (nixbits.jujutsu-clone.override {
+        inherit git-config jujutsu-config;
+      })
       nixbits.jujutsu-git-set-upstream
       (nixbits.jujutsu-init.override {
         inherit git-config jujutsu-config;
@@ -324,6 +327,55 @@ jujutsu'.overrideAttrs (
               exit 1
             fi
             test "$(${bundle}/bin/jj file list --ignore-working-copy)" = "visible"
+            touch $out
+          '';
+
+        clone-config-overrides =
+          let
+            bundle = nixbits.jujutsu.override {
+              nixbits = nixbits // {
+                jujutsu-clone = nixbits.jujutsu-clone.override {
+                  nixbits = nixbits // {
+                    gh = writeShellScriptBin "gh" ''
+                      test "$#" -eq 5 && test "$1" = repo && test "$2" = view &&
+                        test "$3" = "$TEST_REPO_URL" && test "$4" = --json &&
+                        test "$5" = isFork,repositoryTopics || exit 1
+                      touch "$GH_STUB_CALLED"
+                      printf '%s\n' '{"isFork":false,"repositoryTopics":[]}'
+                    '';
+                  };
+                };
+              };
+              git-config = writeText "jj-clone-bundle-git-config" ''
+                [url "file:///"]
+                insteadOf = localtest:///
+              '';
+              jujutsu-config = writeText "jj-clone-bundle-config.toml" ''
+                [user]
+                name = "Override Author"
+                email = "override@example.com"
+                [git]
+                executable-path = "${lib.getExe git}"
+              '';
+            };
+          in
+          runCommand "test-jj-bundled-clone-config-overrides" { nativeBuildInputs = [ git ]; } ''
+            export HOME="$PWD/home"
+            unset GIT_CONFIG_GLOBAL JJ_CONFIG GT
+            mkdir -p "$HOME"
+            git init --initial-branch=main seed
+            git -C seed config user.name "Seed Author"
+            git -C seed config user.email "seed@example.com"
+            git -C seed commit --allow-empty --message initial
+            upstream=$(git -C seed rev-parse HEAD)
+            export TEST_REPO_URL="localtest://$PWD/seed" GH_STUB_CALLED="$PWD/gh-called"
+            ${bundle}/bin/jj-clone "$TEST_REPO_URL" work
+
+            test -f "$GH_STUB_CALLED"
+            cd work
+            test "$(${bundle}/bin/jj log --ignore-working-copy --no-graph --revisions '@-' --template 'commit_id')" = "$upstream"
+            test "$(${bundle}/bin/jj log --ignore-working-copy --no-graph --revisions @ --template 'author.name()')" = "Override Author"
+            test "$(${bundle}/bin/jj log --ignore-working-copy --no-graph --revisions @ --template 'author.email()')" = "override@example.com"
             touch $out
           '';
 
