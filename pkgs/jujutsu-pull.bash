@@ -1,7 +1,3 @@
-usage() {
-  echo "Usage: jj-pull" >&2
-}
-
 # shellcheck source=/dev/null
 source "$XTRACE_PATH/share/bash/xtrace.bash"
 
