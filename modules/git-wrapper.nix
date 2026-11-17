@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   wlib,
@@ -10,6 +11,16 @@ let
 in
 {
   imports = [ wlib.wrapperModules.git ];
+
+  package = pkgs.symlinkJoin {
+    pname = "git";
+    inherit (pkgs.git) version meta;
+    paths = [
+      pkgs.git
+      nixbits.git-branch-prune
+      nixbits.git-fetch-dir
+    ];
+  };
 
   settings = {
     user = {
@@ -124,4 +135,32 @@ in
     interactive.diffFilter = "${lib.getExe pkgs.diff-so-fancy} --patch";
     diff-so-fancy.markEmptyLines = false;
   };
+  passthru.tests.bundled-helpers =
+    pkgs.runCommand "test-git-bundled-helpers" { nativeBuildInputs = [ config.wrapper ]; }
+      ''
+        export HOME="$TMPDIR/home"
+        mkdir -p "$HOME"
+        export GIT_CONFIG_NOSYSTEM=1
+        unset GIT_CONFIG_GLOBAL
+        test -x ${config.wrapper}/bin/git-branch-prune
+        test -x ${config.wrapper}/bin/git-fetch-dir
+        git init -b main repo
+        cd repo
+        git commit --allow-empty -m initial
+        git branch merged
+        git branch-prune
+        if git show-ref --verify --quiet refs/heads/merged; then
+          echo "bundled branch-prune did not delete the merged branch"
+          exit 1
+        fi
+        cd ..
+        git init --bare remote.git
+        git -C repo remote add origin "$PWD/remote.git"
+        git -C repo push origin main
+        git -C repo update-ref -d refs/remotes/origin/main
+        git fetch-dir "$PWD/repo"
+        test "$(git -C repo rev-parse origin/main)" = "$(git -C repo rev-parse main)"
+        touch "$out"
+      '';
+
 }

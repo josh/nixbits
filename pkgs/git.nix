@@ -1,27 +1,16 @@
 {
   lib,
   stdenv,
-  symlinkJoin,
   wlibEvalPackage,
   writeText,
   runCommand,
   testers,
-  git,
   nixbits,
   git-config ? nixbits.git-config,
 }:
 wlibEvalPackage [
   ../modules/git-wrapper.nix
   ({ config, ... }: {
-    package = symlinkJoin {
-      pname = "git";
-      inherit (git) version meta;
-      paths = [
-        git
-        nixbits.git-branch-prune
-        nixbits.git-fetch-dir
-      ];
-    };
     configFile.path = git-config;
     passthru.tests =
       let
@@ -50,43 +39,25 @@ wlibEvalPackage [
                 helper = custom-helper
             '';
             customGit = nixbits.git.override { git-config = customConfig; };
+            customModule = wlibEvalPackage [
+              ../modules/git-wrapper.nix
+              { configFile.path = customConfig; }
+            ];
           in
           runCommand "test-git-config-override" { nativeBuildInputs = [ customGit ]; } ''
             export HOME="$TMPDIR/home"
             mkdir -p "$HOME"
             export GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/ignored/git-config
-            test "$(git config get user.name)" = "Custom Git User"
-            test "$(git config get user.email)" = custom@example.com
-            test "$(git config get --url=https://git.example.com credential.helper)" = custom-helper
-            test "$(git config get --show-origin user.name)" = "$(printf 'file:%s\t%s' ${customConfig} 'Custom Git User')"
+            for gitBin in ${customGit}/bin/git ${customModule}/bin/git; do
+              test "$("$gitBin" config get user.name)" = "Custom Git User"
+              test "$("$gitBin" config get user.email)" = custom@example.com
+              test "$("$gitBin" config get --url=https://git.example.com credential.helper)" = custom-helper
+              test "$("$gitBin" config get --show-origin user.name)" = "$(printf 'file:%s\t%s' ${customConfig} 'Custom Git User')"
+            done
             touch "$out"
           '';
 
-        bundled-helpers = runCommand "test-git-bundled-helpers" { nativeBuildInputs = [ git ]; } ''
-          export HOME="$TMPDIR/home"
-          mkdir -p "$HOME"
-          export GIT_CONFIG_NOSYSTEM=1
-          unset GIT_CONFIG_GLOBAL
-          test -x ${git}/bin/git-branch-prune
-          test -x ${git}/bin/git-fetch-dir
-          git init -b main repo
-          cd repo
-          git commit --allow-empty -m initial
-          git branch merged
-          git branch-prune
-          if git show-ref --verify --quiet refs/heads/merged; then
-            echo "bundled branch-prune did not delete the merged branch"
-            exit 1
-          fi
-          cd ..
-          git init --bare remote.git
-          git -C repo remote add origin "$PWD/remote.git"
-          git -C repo push origin main
-          git -C repo update-ref -d refs/remotes/origin/main
-          git fetch-dir "$PWD/repo"
-          test "$(git -C repo rev-parse origin/main)" = "$(git -C repo rev-parse main)"
-          touch "$out"
-        '';
+        direct-module-helpers = (wlibEvalPackage ../modules/git-wrapper.nix).tests.bundled-helpers;
 
         version = testers.testVersion {
           package = git;
