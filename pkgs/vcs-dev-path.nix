@@ -10,6 +10,7 @@
   nixbits,
   gitea-cli ? nur.repos.josh.gitea-cli,
   gitModule ? { },
+  jujutsuModule ? { },
 }:
 let
   inherit (nixbits) gh;
@@ -21,6 +22,7 @@ let
   jujutsu = wlibEvalPackage [
     ../modules/wrappers/jujutsu.nix
     { gitWrapper = git; }
+    jujutsuModule
   ];
   jujutsu-config = jujutsu.configuration.configFile.path;
   lazygit = nixbits.lazygit.override { inherit git-config; };

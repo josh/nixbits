@@ -3,7 +3,6 @@
   jujutsu,
   nixbits,
   runCommand,
-  wlibEvalPackage,
   writeShellScriptBin,
 }:
 let
@@ -22,16 +21,12 @@ let
     *) exit 1 ;;
     esac
   '';
-  customGit = wlibEvalPackage [
-    ../git.nix
-    {
+  bundle = nixbits.vcs-dev-path.override {
+    gitModule = {
       settings.url."file:///".insteadOf = "localtest:///";
       settings.url."./seed".insteadOf = "https://github.com/example/repo.git";
-    }
-  ];
-  customJj = wlibEvalPackage [
-    ../jujutsu.nix
-    ({ config, ... }: {
+    };
+    jujutsuModule = { config, ... }: {
       commands.jj-clone = nixbits.jujutsu-clone.override {
         git-config = config.env.GIT_CONFIG_GLOBAL.data;
         jujutsu-config = config.configFile.path;
@@ -42,13 +37,12 @@ let
         enableGitea = true;
         gitea-cli = gt;
       };
-      gitWrapper = customGit;
       settings.user = {
         name = "Gitea Author";
         email = "gitea@example.com";
       };
-    })
-  ];
+    };
+  };
 
 in
 runCommand "test-jj-clone-gitea-module-propagation"
@@ -70,7 +64,7 @@ runCommand "test-jj-clone-gitea-module-propagation"
     for mode in primary mirror unavailable; do
       export GITEA_MODE="$mode"
       rm -f "$GH_STUB_CALLED" "$GT_STUB_CALLED"
-      ${customJj}/bin/jj-clone example/repo "$mode"
+      ${bundle}/bin/jj-clone example/repo "$mode"
       test -f "$GT_STUB_CALLED"
       if [[ "$mode" = primary ]]; then
         test ! -e "$GH_STUB_CALLED"
