@@ -1,25 +1,29 @@
-{ pkgs }:
+{
+  runCommand,
+  wlibEvalPackage,
+  writeShellScriptBin,
+}:
 let
-  review = pkgs.writeShellScriptBin "review-work" ''
+  review = writeShellScriptBin "review-work" ''
     set -eu
     test "$JJ_CONFIG" = caller-jj-config
     test "$GIT_CONFIG_GLOBAL" = caller-git-config
     printf '%s\n' "$@"
   '';
-  customJj = pkgs.wlibEvalPackage [
+  customJj = wlibEvalPackage [
     ../jujutsu.nix
     { commands.review-work = review; }
     {
-      commands.jj-review = pkgs.writeShellScriptBin "jj-review" ''
+      commands.jj-review = writeShellScriptBin "jj-review" ''
         echo custom-review
       '';
-      commands.jj-init = pkgs.writeShellScriptBin "jj-init" ''
+      commands.jj-init = writeShellScriptBin "jj-init" ''
         echo custom-init
       '';
     }
   ];
 in
-pkgs.runCommand "test-jj-module-downstream-commands" { } ''
+runCommand "test-jj-module-downstream-commands" { } ''
   export HOME="$PWD/home"
   mkdir -p "$HOME"
   export JJ_CONFIG=caller-jj-config GIT_CONFIG_GLOBAL=caller-git-config

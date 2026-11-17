@@ -1,17 +1,25 @@
-{ lib, pkgs }:
+{
+  callPackage,
+  git,
+  jujutsu,
+  lib,
+  runCommand,
+  wlibEvalPackage,
+  writeText,
+}:
 let
   mkUntrackedTest =
     name: initArgs:
     let
-      customGit = pkgs.wlibEvalPackage [
+      customGit = wlibEvalPackage [
         ../git.nix
         {
           settings.core.excludesFile = lib.mkForce (
-            pkgs.writeText "jj-untracked-module-gitignore" "tracked-ignored.txt\n"
+            writeText "jj-untracked-module-gitignore" "tracked-ignored.txt\n"
           );
         }
       ];
-      customJj = pkgs.wlibEvalPackage [
+      customJj = wlibEvalPackage [
         ../jujutsu.nix
         {
           gitWrapper = customGit;
@@ -19,7 +27,7 @@ let
         }
       ];
     in
-    pkgs.runCommand "test-jj-untracked-${name}-module-propagation" { } ''
+    runCommand "test-jj-untracked-${name}-module-propagation" { } ''
       export HOME="$TMPDIR/home" GIT_CONFIG_NOSYSTEM=1
       unset GIT_CONFIG_GLOBAL JJ_CONFIG
       mkdir -p "$HOME" repo
@@ -38,23 +46,23 @@ let
     '';
 in
 {
-  package-overrides = import ./package-test.nix { inherit pkgs; };
-  downstream-commands = import ./commands-test.nix { inherit pkgs; };
-  clone-module-propagation = import ./clone-test.nix { inherit pkgs; };
-  clone-gitea-module-propagation = import ./clone-gitea-test.nix { inherit pkgs; };
-  upstream-module-propagation = import ./upstream-test.nix { inherit pkgs; };
+  package-overrides = callPackage ./package-test.nix { };
+  downstream-commands = callPackage ./commands-test.nix { };
+  clone-module-propagation = callPackage ./clone-test.nix { };
+  clone-gitea-module-propagation = callPackage ./clone-gitea-test.nix { };
+  upstream-module-propagation = callPackage ./upstream-test.nix { };
 
   bookmark-clean-module-propagation =
     let
-      customGit = pkgs.wlibEvalPackage [
+      customGit = wlibEvalPackage [
         ../git.nix
         {
           settings.core.excludesFile = lib.mkForce (
-            pkgs.writeText "jj-bookmark-module-ignore" "ignored-by-module\n"
+            writeText "jj-bookmark-module-ignore" "ignored-by-module\n"
           );
         }
       ];
-      customJj = pkgs.wlibEvalPackage [
+      customJj = wlibEvalPackage [
         ../jujutsu.nix
         {
           gitWrapper = customGit;
@@ -62,42 +70,38 @@ in
         }
       ];
     in
-    pkgs.runCommand "test-jj-bookmark-clean-module-propagation"
-      { nativeBuildInputs = [ pkgs.jujutsu ]; }
-      ''
-        export HOME="$TMPDIR/home" GIT_CONFIG_NOSYSTEM=1
-        export JJ_CONFIG=${customJj.configuration.configFile.path}
-        unset GIT_CONFIG_GLOBAL
-        mkdir -p "$HOME" repo
-        cd repo
-        jj --config 'revset-aliases."trunk()"="root()"' git init
-        jj describe -m base
-        jj bookmark create main master
-        jj new
-        jj describe -m merged
-        jj bookmark create push-merged
-        jj new
-        jj bookmark create push-unmerged
-        touch visible ignored-by-module
-        export GIT_CONFIG_GLOBAL=/ignored/git-config JJ_CONFIG=/ignored/jj-config
-        ${customJj}/bin/jj-bookmark-clean
-        expected=$(printf 'main\nmaster\npush-unmerged')
-        test "$(${customJj}/bin/jj bookmark list --ignore-working-copy -T 'name ++ "\n"')" = "$expected"
-        test "$(${customJj}/bin/jj file list --ignore-working-copy)" = visible
-        touch "$out"
-      '';
+    runCommand "test-jj-bookmark-clean-module-propagation" { nativeBuildInputs = [ jujutsu ]; } ''
+      export HOME="$TMPDIR/home" GIT_CONFIG_NOSYSTEM=1
+      export JJ_CONFIG=${customJj.configuration.configFile.path}
+      unset GIT_CONFIG_GLOBAL
+      mkdir -p "$HOME" repo
+      cd repo
+      jj --config 'revset-aliases."trunk()"="root()"' git init
+      jj describe -m base
+      jj bookmark create main master
+      jj new
+      jj describe -m merged
+      jj bookmark create push-merged
+      jj new
+      jj bookmark create push-unmerged
+      touch visible ignored-by-module
+      export GIT_CONFIG_GLOBAL=/ignored/git-config JJ_CONFIG=/ignored/jj-config
+      ${customJj}/bin/jj-bookmark-clean
+      expected=$(printf 'main\nmaster\npush-unmerged')
+      test "$(${customJj}/bin/jj bookmark list --ignore-working-copy -T 'name ++ "\n"')" = "$expected"
+      test "$(${customJj}/bin/jj file list --ignore-working-copy)" = visible
+      touch "$out"
+    '';
 
   wip-changes-module-propagation =
     let
-      customGit = pkgs.wlibEvalPackage [
+      customGit = wlibEvalPackage [
         ../git.nix
         {
-          settings.core.excludesFile = lib.mkForce (
-            pkgs.writeText "jj-wip-module-ignore" "tracked-ignored.txt\n"
-          );
+          settings.core.excludesFile = lib.mkForce (writeText "jj-wip-module-ignore" "tracked-ignored.txt\n");
         }
       ];
-      customJj = pkgs.wlibEvalPackage [
+      customJj = wlibEvalPackage [
         ../jujutsu.nix
         {
           gitWrapper = customGit;
@@ -106,7 +110,7 @@ in
         }
       ];
     in
-    pkgs.runCommand "test-jj-wip-changes-module-propagation" { } ''
+    runCommand "test-jj-wip-changes-module-propagation" { } ''
       export HOME="$TMPDIR/home" GIT_CONFIG_NOSYSTEM=1
       mkdir -p "$HOME" repo
       cd repo
@@ -127,19 +131,17 @@ in
 
   init-module-propagation =
     let
-      customGit = pkgs.wlibEvalPackage [
+      customGit = wlibEvalPackage [
         ../git.nix
         {
           settings.user = {
             name = lib.mkForce "Module Author";
             email = lib.mkForce "git@example.com";
           };
-          settings.core.excludesFile = lib.mkForce (
-            pkgs.writeText "jj-module-gitignore" "ignored-by-module\n"
-          );
+          settings.core.excludesFile = lib.mkForce (writeText "jj-module-gitignore" "ignored-by-module\n");
         }
       ];
-      customJj = pkgs.wlibEvalPackage [
+      customJj = wlibEvalPackage [
         ../jujutsu.nix
         {
           gitWrapper = customGit;
@@ -147,7 +149,7 @@ in
         }
       ];
     in
-    pkgs.runCommand "test-jj-init-module-propagation" { nativeBuildInputs = [ pkgs.git ]; } ''
+    runCommand "test-jj-init-module-propagation" { nativeBuildInputs = [ git ]; } ''
       export HOME="$TMPDIR/home" GIT_CONFIG_NOSYSTEM=1
       mkdir -p "$HOME" repo
       cd repo
@@ -163,7 +165,7 @@ in
 
   pull-module-propagation =
     let
-      customGit = pkgs.wlibEvalPackage [
+      customGit = wlibEvalPackage [
         ../git.nix
         {
           settings.user = {
@@ -171,13 +173,13 @@ in
             email = lib.mkForce "git@example.com";
           };
           settings.core.excludesFile = lib.mkForce (
-            pkgs.writeText "jj-pull-module-gitignore" "ignored-by-module\n"
+            writeText "jj-pull-module-gitignore" "ignored-by-module\n"
           );
           # The selected Git wrapper may have behavior beyond setting its config.
           runShell = [ ''echo git >>"$GIT_EXECUTION_LOG"'' ];
         }
       ];
-      customJj = pkgs.wlibEvalPackage [
+      customJj = wlibEvalPackage [
         ../jujutsu.nix
         {
           gitWrapper = customGit;
@@ -185,7 +187,7 @@ in
         }
       ];
     in
-    pkgs.runCommand "test-jj-pull-module-propagation" { nativeBuildInputs = [ pkgs.git ]; } ''
+    runCommand "test-jj-pull-module-propagation" { nativeBuildInputs = [ git ]; } ''
       export HOME="$TMPDIR/home" GIT_CONFIG_NOSYSTEM=1 GIT_EXECUTION_LOG="$TMPDIR/git-executions"
       unset GIT_CONFIG_GLOBAL JJ_CONFIG
       mkdir -p "$HOME"
@@ -211,7 +213,7 @@ in
 
   new-main-module-propagation =
     let
-      customGit = pkgs.wlibEvalPackage [
+      customGit = wlibEvalPackage [
         ../git.nix
         {
           settings.user = {
@@ -219,11 +221,11 @@ in
             email = lib.mkForce "git@example.com";
           };
           settings.core.excludesFile = lib.mkForce (
-            pkgs.writeText "jj-new-main-module-gitignore" "ignored-by-module\n"
+            writeText "jj-new-main-module-gitignore" "ignored-by-module\n"
           );
         }
       ];
-      customJj = pkgs.wlibEvalPackage [
+      customJj = wlibEvalPackage [
         ../jujutsu.nix
         {
           gitWrapper = customGit;
@@ -231,7 +233,7 @@ in
         }
       ];
     in
-    pkgs.runCommand "test-jj-new-main-module-propagation" { nativeBuildInputs = [ pkgs.git ]; } ''
+    runCommand "test-jj-new-main-module-propagation" { nativeBuildInputs = [ git ]; } ''
       export HOME="$TMPDIR/home" GIT_CONFIG_NOSYSTEM=1
       unset GIT_CONFIG_GLOBAL JJ_CONFIG
       mkdir -p "$HOME"
@@ -255,4 +257,4 @@ in
       touch "$out"
     '';
 }
-// import ./default-tests.nix { inherit pkgs; }
+// callPackage ./default-tests.nix { }

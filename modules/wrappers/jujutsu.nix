@@ -93,7 +93,10 @@ in
     );
   };
 
-  config.passthru.tests = import ./jujutsu/tests.nix { inherit lib pkgs; };
+  # callPackage adds override functions to attrsets; only export test derivations.
+  config.passthru.tests = lib.filterAttrs (_: lib.isDerivation) (
+    pkgs.callPackage ./jujutsu/tests.nix { }
+  );
 
   config.settings = {
     user = {

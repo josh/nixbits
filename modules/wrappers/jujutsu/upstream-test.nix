@@ -1,6 +1,14 @@
-{ pkgs }:
+{
+  git,
+  jujutsu,
+  nixbits,
+  runCommand,
+  wlibEvalPackage,
+  writeShellScriptBin,
+  writeText,
+}:
 let
-  gh = pkgs.writeShellScriptBin "gh" ''
+  gh = writeShellScriptBin "gh" ''
     test "$#" -eq 7 && test "$1" = repo && test "$2" = view &&
       test "$4" = --json && test "$6" = --jq || exit 1
     test "$JJ_CONFIG" = "$EXPECTED_JJ_CONFIG" || exit 1
@@ -21,23 +29,23 @@ let
     esac
     echo "$5" >>"$GH_STUB_CALLS"
   '';
-  customGit = pkgs.wlibEvalPackage [
+  customGit = wlibEvalPackage [
     ../git.nix
     { settings.url."file:///".insteadOf = "https://github.com/upstream/"; }
   ];
-  customJj = pkgs.wlibEvalPackage [
+  customJj = wlibEvalPackage [
     ../jujutsu.nix
     ({ config, ... }: {
-      commands.jj-git-set-upstream = pkgs.nixbits.jujutsu-git-set-upstream.override {
+      commands.jj-git-set-upstream = nixbits.jujutsu-git-set-upstream.override {
         git-config = config.env.GIT_CONFIG_GLOBAL.data;
-        nixbits = pkgs.nixbits // {
+        nixbits = nixbits // {
           inherit gh;
         };
       };
       gitWrapper = customGit;
     })
   ];
-  inheritedConfig = pkgs.writeText "jj-upstream-module-inherited.toml" ''
+  inheritedConfig = writeText "jj-upstream-module-inherited.toml" ''
     [user]
     name = "Inherited Author"
     email = "inherited@example.com"
@@ -45,11 +53,11 @@ let
     auto-track = "glob:tracked*"
   '';
 in
-pkgs.runCommand "test-jj-upstream-module-propagation"
+runCommand "test-jj-upstream-module-propagation"
   {
     nativeBuildInputs = [
-      pkgs.git
-      pkgs.jujutsu
+      git
+      jujutsu
     ];
   }
   ''

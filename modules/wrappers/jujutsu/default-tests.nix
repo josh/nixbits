@@ -1,17 +1,21 @@
-{ pkgs }:
+{
+  runCommand,
+  testers,
+  wlibEvalPackage,
+  writeText,
+}:
 let
-  inherit (pkgs) runCommand testers;
-  jujutsu = pkgs.wlibEvalPackage ../jujutsu.nix;
+  jujutsu = wlibEvalPackage ../jujutsu.nix;
 in
 {
   config-override =
     let
-      customConfig = pkgs.writeText "jj-override.toml" ''
+      customConfig = writeText "jj-override.toml" ''
         [user]
         name = "Override Author"
         email = "override@example.com"
       '';
-      custom = pkgs.wlibEvalPackage [
+      custom = wlibEvalPackage [
         ../jujutsu.nix
         { configFile.path = customConfig; }
       ];

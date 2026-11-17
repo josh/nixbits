@@ -1,11 +1,18 @@
-{ pkgs }:
+{
+  git,
+  jujutsu,
+  nixbits,
+  runCommand,
+  wlibEvalPackage,
+  writeShellScriptBin,
+}:
 let
-  gh = pkgs.writeShellScriptBin "gh" ''
+  gh = writeShellScriptBin "gh" ''
     test "$*" = 'repo view example/repo --json isFork,repositoryTopics' || exit 1
     touch "$GH_STUB_CALLED"
     echo '{"isFork":false,"repositoryTopics":[]}'
   '';
-  gt = pkgs.writeShellScriptBin "gt" ''
+  gt = writeShellScriptBin "gt" ''
     test "$*" = 'api --no-input repos/example/repo' || exit 1
     touch "$GT_STUB_CALLED"
     case "$GITEA_MODE" in
@@ -15,21 +22,21 @@ let
     *) exit 1 ;;
     esac
   '';
-  customGit = pkgs.wlibEvalPackage [
+  customGit = wlibEvalPackage [
     ../git.nix
     {
       settings.url."file:///".insteadOf = "localtest:///";
       settings.url."./seed".insteadOf = "https://github.com/example/repo.git";
     }
   ];
-  customJj = pkgs.wlibEvalPackage [
+  customJj = wlibEvalPackage [
     ../jujutsu.nix
     ({ config, ... }: {
-      commands.jj-clone = pkgs.nixbits.jujutsu-clone.override {
+      commands.jj-clone = nixbits.jujutsu-clone.override {
         git-config = config.env.GIT_CONFIG_GLOBAL.data;
         jujutsu-config = config.configFile.path;
         jujutsu-git-set-upstream = config.commands.jj-git-set-upstream;
-        nixbits = pkgs.nixbits // {
+        nixbits = nixbits // {
           inherit gh;
         };
         enableGitea = true;
@@ -44,11 +51,11 @@ let
   ];
 
 in
-pkgs.runCommand "test-jj-clone-gitea-module-propagation"
+runCommand "test-jj-clone-gitea-module-propagation"
   {
     nativeBuildInputs = [
-      pkgs.git
-      pkgs.jujutsu
+      git
+      jujutsu
     ];
   }
   ''

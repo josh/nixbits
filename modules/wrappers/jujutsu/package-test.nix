@@ -1,12 +1,18 @@
-{ pkgs }:
+{
+  jujutsu,
+  runCommand,
+  symlinkJoin,
+  wlibEvalPackage,
+  writeShellScriptBin,
+}:
 let
-  customJj = pkgs.symlinkJoin {
+  customJj = symlinkJoin {
     name = "custom-jj";
-    inherit (pkgs.jujutsu) version meta;
-    paths = [ pkgs.jujutsu ];
+    inherit (jujutsu) version meta;
+    paths = [ jujutsu ];
     postBuild = ''touch "$out/custom-jj-marker"'';
   };
-  watchman = (pkgs.writeShellScriptBin "watchman" "echo custom-watchman").overrideAttrs {
+  watchman = (writeShellScriptBin "watchman" "echo custom-watchman").overrideAttrs {
     meta.available = true;
   };
   unavailable = watchman // {
@@ -16,7 +22,7 @@ let
   };
   module =
     selectedWatchman:
-    pkgs.wlibEvalPackage [
+    wlibEvalPackage [
       ../jujutsu.nix
       {
         jujutsuPackage = customJj;
@@ -25,7 +31,7 @@ let
     ];
 
 in
-pkgs.runCommand "test-jj-package-overrides" { } ''
+runCommand "test-jj-package-overrides" { } ''
   bundle=${module watchman}
   test -e "$bundle/custom-jj-marker"
   test "$("$bundle/bin/watchman")" = custom-watchman

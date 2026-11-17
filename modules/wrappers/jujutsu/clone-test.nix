@@ -1,12 +1,12 @@
-{ pkgs }:
+{
+  git,
+  jujutsu,
+  nixbits,
+  runCommand,
+  wlibEvalPackage,
+  writeShellScriptBin,
+}:
 let
-  inherit (pkgs)
-    writeShellScriptBin
-    runCommand
-    git
-    jujutsu
-    nixbits
-    ;
   ghStub = writeShellScriptBin "gh" ''
     test "$1" = repo && test "$2" = view && test "$4" = --json || exit 1
     test "$JJ_CONFIG" = "$EXPECTED_JJ_CONFIG" || exit 1
@@ -32,7 +32,7 @@ let
     esac
     echo "$5" >>"$GH_STUB_CALLS"
   '';
-  customGit = pkgs.wlibEvalPackage [
+  customGit = wlibEvalPackage [
     ../git.nix
     {
       settings.url."file:///".insteadOf = [
@@ -41,7 +41,7 @@ let
       ];
     }
   ];
-  forkClone = pkgs.wlibEvalPackage [
+  forkClone = wlibEvalPackage [
     ../jujutsu.nix
     ({ config, ... }: {
       commands.jj-clone = nixbits.jujutsu-clone.override {
