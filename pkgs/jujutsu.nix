@@ -17,16 +17,7 @@ wlibEvalPackage [
   ../modules/jujutsu-wrapper.nix
   ({ config, ... }: {
     # Preserve helper customizations supplied through this package's nixbits argument.
-    commands = {
-      init = nixbits.jujutsu-init;
-      pull = nixbits.jujutsu-pull;
-      new-main = nixbits.jujutsu-new-main;
-      untracked = nixbits.jujutsu-untracked;
-      wip-changes = nixbits.jujutsu-wip-changes;
-      bookmark-clean = nixbits.jujutsu-bookmark-clean;
-      git-set-upstream = nixbits.jujutsu-git-set-upstream;
-      clone = nixbits.jujutsu-clone;
-    };
+    commands = import ../modules/jujutsu-wrapper/commands.nix { inherit config nixbits; };
     package = symlinkJoin {
       pname = "jujutsu";
       inherit (jujutsu) version meta;

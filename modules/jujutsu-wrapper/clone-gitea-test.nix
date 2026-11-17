@@ -24,8 +24,11 @@ let
   ];
   customJj = pkgs.wlibEvalPackage [
     ../jujutsu-wrapper.nix
-    {
-      commands.clone = pkgs.nixbits.jujutsu-clone.override {
+    ({ config, ... }: {
+      commands.jj-clone = pkgs.nixbits.jujutsu-clone.override {
+        git-config = config.env.GIT_CONFIG_GLOBAL.data;
+        jujutsu-config = config.configFile.path;
+        jujutsu-git-set-upstream = config.commands.jj-git-set-upstream;
         nixbits = pkgs.nixbits // {
           inherit gh;
         };
@@ -37,7 +40,7 @@ let
         name = "Gitea Author";
         email = "gitea@example.com";
       };
-    }
+    })
   ];
 
 in

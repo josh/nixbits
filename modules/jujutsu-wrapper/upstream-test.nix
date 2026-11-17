@@ -27,14 +27,15 @@ let
   ];
   customJj = pkgs.wlibEvalPackage [
     ../jujutsu-wrapper.nix
-    {
-      commands.git-set-upstream = pkgs.nixbits.jujutsu-git-set-upstream.override {
+    ({ config, ... }: {
+      commands.jj-git-set-upstream = pkgs.nixbits.jujutsu-git-set-upstream.override {
+        git-config = config.env.GIT_CONFIG_GLOBAL.data;
         nixbits = pkgs.nixbits // {
           inherit gh;
         };
       };
       gitWrapper = customGit;
-    }
+    })
   ];
   inheritedConfig = pkgs.writeText "jj-upstream-module-inherited.toml" ''
     [user]

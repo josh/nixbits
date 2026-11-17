@@ -43,13 +43,17 @@ let
   ];
   forkClone = pkgs.wlibEvalPackage [
     ../jujutsu-wrapper.nix
-    {
-      commands.clone = nixbits.jujutsu-clone.override {
+    ({ config, ... }: {
+      commands.jj-clone = nixbits.jujutsu-clone.override {
+        git-config = config.env.GIT_CONFIG_GLOBAL.data;
+        jujutsu-config = config.configFile.path;
+        jujutsu-git-set-upstream = config.commands.jj-git-set-upstream;
         nixbits = nixbits // {
           gh = ghStub;
         };
       };
-      commands.git-set-upstream = nixbits.jujutsu-git-set-upstream.override {
+      commands.jj-git-set-upstream = nixbits.jujutsu-git-set-upstream.override {
+        git-config = config.env.GIT_CONFIG_GLOBAL.data;
         nixbits = nixbits // {
           gh = ghStub;
         };
@@ -60,7 +64,7 @@ let
         email = "override@example.com";
       };
       settings.snapshot.auto-track = "glob:tracked*";
-    }
+    })
   ];
   jjConfig = forkClone.configuration.configFile.path;
 in

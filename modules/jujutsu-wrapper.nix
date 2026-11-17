@@ -13,42 +13,21 @@ let
       gitConfiguration.constructFiles.gitconfig.outPath
     else
       gitConfiguration.configFile.path;
-  commandNames = [
-    "clone"
-    "init"
-    "pull"
-    "new-main"
-    "untracked"
-    "wip-changes"
-    "bookmark-clean"
-    "git-set-upstream"
-  ];
-  commands = lib.genAttrs commandNames (
-    name:
-    config.commands.${name}.override (
-      {
-        git-config = config.env.GIT_CONFIG_GLOBAL.data;
-      }
-      # The upstream command inherits JJ_CONFIG from its caller, including jj-clone.
-      // lib.optionalAttrs (name != "git-set-upstream") {
-        jujutsu-config = config.configFile.path;
-      }
-      // lib.optionalAttrs (name == "clone") {
-        jujutsu-git-set-upstream = commands.git-set-upstream;
-      }
-    )
-  );
   generatedConfig = (pkgs.formats.toml { }).generate "jj-config.toml" config.settings;
 in
 {
   imports = [ wlib.wrapperModules.jujutsu ];
 
-  options.commands = lib.genAttrs commandNames (
-    name:
-    lib.mkOption {
-      type = lib.types.package;
-      default = pkgs.nixbits."jujutsu-${name}";
-      description = "Base jj-${name} command package, before applying the shared Git/JJ configuration.";
+  options.commands = lib.mkOption {
+    type = lib.types.attrsOf lib.types.package;
+    default = { };
+    description = "Final command packages, keyed by the executable name to install from each package's bin directory.";
+  };
+
+  config.commands = lib.mapAttrs (_: lib.mkDefault) (
+    import ./jujutsu-wrapper/commands.nix {
+      inherit config;
+      inherit (pkgs) nixbits;
     }
   );
 
@@ -82,9 +61,12 @@ in
 
   config.buildCommand.jjHelpers = {
     after = [ "symlinkScript" ];
-    data = lib.concatMapStrings (name: ''
-      ln -s ${commands.${name}}/bin/jj-${name} "${placeholder config.outputName}/bin/jj-${name}"
-    '') commandNames;
+    data = lib.concatStrings (
+      lib.mapAttrsToList (name: package: ''
+        test -x ${lib.escapeShellArg "${package}/bin/${name}"}
+        ln -s ${lib.escapeShellArg "${package}/bin/${name}"} ${lib.escapeShellArg "${placeholder config.outputName}/bin/${name}"}
+      '') config.commands
+    );
   };
 
   config.passthru.tests = import ./jujutsu-wrapper/tests.nix { inherit lib pkgs; };
