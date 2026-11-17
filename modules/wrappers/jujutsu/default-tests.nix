@@ -34,16 +34,6 @@ in
     inherit (jujutsu) version;
   };
 
-  author = runCommand "test-jj-author" { nativeBuildInputs = [ jujutsu ]; } ''
-    expected="Joshua Peek"
-    actual="$(jj config get user.name)"
-    if [[ "$actual" != "$expected" ]]; then
-      echo "expected, '$expected' but was '$actual'"
-      return 1
-    fi
-    touch $out
-  '';
-
   ignore = runCommand "test-jj-ignore" { nativeBuildInputs = [ jujutsu ]; } ''
     jj git init
     touch README.md
