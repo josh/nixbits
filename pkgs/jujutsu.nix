@@ -29,9 +29,6 @@ wlibEvalPackage [
           inherit git-config jujutsu-config;
         })
         (nixbits.jujutsu-git-set-upstream.override { inherit git-config; })
-        (nixbits.jujutsu-init.override {
-          inherit git-config jujutsu-config;
-        })
         (nixbits.jujutsu-new-main.override {
           inherit git-config jujutsu-config;
         })

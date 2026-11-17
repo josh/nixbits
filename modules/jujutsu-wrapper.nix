@@ -6,6 +6,17 @@
   ...
 }:
 let
+  gitConfiguration = config.gitWrapper.configuration;
+  # Resolve the Git wrapper's output placeholder before passing its config to a helper.
+  gitConfig =
+    if toString gitConfiguration.configFile.path == gitConfiguration.constructFiles.gitconfig.path then
+      gitConfiguration.constructFiles.gitconfig.outPath
+    else
+      gitConfiguration.configFile.path;
+  jjInit = pkgs.nixbits.jujutsu-init.override {
+    git-config = config.env.GIT_CONFIG_GLOBAL.data;
+    jujutsu-config = config.configFile.path;
+  };
   generatedConfig = (pkgs.formats.toml { }).generate "jj-config.toml" config.settings;
 in
 {
@@ -36,6 +47,51 @@ in
 
   # The upstream module sets JJ_CONFIG directly to its generated file.
   config.env.JJ_CONFIG = lib.mkForce config.configFile.path;
+
+  config.env.GIT_CONFIG_GLOBAL = lib.mkDefault gitConfig;
+
+  config.buildCommand.jjInit = {
+    after = [ "symlinkScript" ];
+    data = ''
+      ln -s ${jjInit}/bin/jj-init "${placeholder config.outputName}/bin/jj-init"
+    '';
+  };
+
+  config.passthru.tests.init-module-propagation =
+    let
+      customGit = pkgs.wlibEvalPackage [
+        ./git-wrapper.nix
+        {
+          settings.user = {
+            name = lib.mkForce "Module Author";
+            email = lib.mkForce "git@example.com";
+          };
+          settings.core.excludesFile = lib.mkForce (
+            pkgs.writeText "jj-module-gitignore" "ignored-by-module\n"
+          );
+        }
+      ];
+      customJj = pkgs.wlibEvalPackage [
+        ./jujutsu-wrapper.nix
+        {
+          gitWrapper = customGit;
+          settings.user.email = "jj@example.com";
+        }
+      ];
+    in
+    pkgs.runCommand "test-jj-init-module-propagation" { nativeBuildInputs = [ pkgs.git ]; } ''
+      export HOME="$TMPDIR/home" GIT_CONFIG_NOSYSTEM=1
+      mkdir -p "$HOME" repo
+      cd repo
+      git init
+      touch visible ignored-by-module
+      export GIT_CONFIG_GLOBAL=/ignored/git-config JJ_CONFIG=/ignored/jj-config
+      ${customJj}/bin/jj-init
+      test "$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r @ -T 'author.name()')" = "Module Author"
+      test "$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r @ -T 'author.email()')" = jj@example.com
+      test "$(${customJj}/bin/jj file list --ignore-working-copy)" = visible
+      touch "$out"
+    '';
 
   config.settings = {
     user = {
