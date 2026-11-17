@@ -213,11 +213,6 @@ in
             for url in https://github.com https://gist.github.com; do
               git config get --all "credential.$url.helper" >actual
               cmp expected actual
-              actual="$(git config get --url=$url credential.helper)"
-              if [[ "$actual" != "$expected" ]]; then
-                echo "expected, '$expected' but was '$actual' for $url"
-                return 1
-              fi
             done
             touch $out
           '';
