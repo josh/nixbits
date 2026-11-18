@@ -104,6 +104,15 @@
         # keep-sorted end
       };
 
+      wrapperModules = {
+        # keep-sorted start
+        eza = ./modules/wrappers/eza.nix;
+        git = ./modules/wrappers/git.nix;
+        jujutsu = ./modules/wrappers/jujutsu.nix;
+        ripgrep = ./modules/wrappers/ripgrep.nix;
+        # keep-sorted end
+      };
+
       formatter = eachSystem (system: treefmt-nix.${system}.wrapper);
 
       checks = eachSystem (
