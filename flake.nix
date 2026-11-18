@@ -106,6 +106,8 @@
 
       wrapperModules = {
         # keep-sorted start
+        bat = nix-wrapper-modules.wrapperModules.bat;
+        direnv = nix-wrapper-modules.wrapperModules.direnv;
         eza = ./modules/wrappers/eza.nix;
         git = ./modules/wrappers/git.nix;
         jujutsu = ./modules/wrappers/jujutsu.nix;
