@@ -4,6 +4,7 @@
   runCommand,
   symlinkJoin,
   neovim,
+  starship,
   zoxide,
   zsh,
   zsh-autosuggestions,
@@ -13,7 +14,8 @@
   jujutsu-clone ? nixbits.jujutsu-clone,
 }:
 let
-  inherit (nixbits) direnv starship;
+  inherit (nixbits) direnv;
+  starshipPackage = if nixbits.starship.meta.available then nixbits.starship else starship;
   inherit (nur.repos.josh) iterm2-shell-integration;
 
   # neorex needs Zig 0.17, which stable nixpkgs lacks
@@ -31,9 +33,14 @@ let
     ! grep --quiet --fixed-strings '.direnv-wrapped' $out
     grep --quiet --extended-regexp "/bin/direnv['\"]" $out
   '';
-  starship-init = runCommand "starship-init.zsh" { nativeBuildInputs = [ starship ]; } ''
-    starship init zsh >$out
-  '';
+  starship-init =
+    runCommand "starship-init.zsh"
+      {
+        nativeBuildInputs = [ starshipPackage ];
+      }
+      ''
+        starship init zsh >$out
+      '';
   fzf-init = runCommand "fzf-init.zsh" { nativeBuildInputs = [ nixbits.fzf ]; } ''
     fzf --zsh >out
     substitute out $out \

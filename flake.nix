@@ -112,6 +112,7 @@
         git = ./modules/wrappers/git.nix;
         jujutsu = ./modules/wrappers/jujutsu.nix;
         ripgrep = ./modules/wrappers/ripgrep.nix;
+        starship = ./modules/wrappers/starship.nix;
         # keep-sorted end
       };
 

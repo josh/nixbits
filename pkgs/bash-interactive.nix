@@ -6,11 +6,13 @@
   bash,
   neovim,
   shellcheck-minimal,
+  starship,
   nur,
   nixbits,
 }:
 let
-  inherit (nixbits) direnv starship;
+  inherit (nixbits) direnv;
+  starshipPackage = if nixbits.starship.meta.available then nixbits.starship else starship;
   inherit (nur.repos.josh) iterm2-shell-integration;
 
   # neorex needs Zig 0.17, which stable nixpkgs lacks
@@ -31,9 +33,14 @@ let
   fzf-init = runCommand "fzf-init.bash" { nativeBuildInputs = [ nixbits.fzf ]; } ''
     fzf --bash >$out
   '';
-  starship-init = runCommand "starship-init.bash" { nativeBuildInputs = [ starship ]; } ''
-    starship init bash --print-full-init >$out
-  '';
+  starship-init =
+    runCommand "starship-init.bash"
+      {
+        nativeBuildInputs = [ starshipPackage ];
+      }
+      ''
+        starship init bash --print-full-init >$out
+      '';
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   name = "bash-interactive";
