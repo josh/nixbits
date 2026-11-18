@@ -113,6 +113,7 @@
         jujutsu = ./modules/wrappers/jujutsu.nix;
         ripgrep = ./modules/wrappers/ripgrep.nix;
         starship = ./modules/wrappers/starship.nix;
+        zsh = ./modules/wrappers/zsh.nix;
         # keep-sorted end
       };
 

@@ -47,10 +47,7 @@ let
       --replace-fail 'echo "fzf"' 'echo "${nixbits.fzf}/bin/fzf"' \
       --replace-fail 'echo "fzf-tmux ' 'echo "${nixbits.fzf}/bin/fzf-tmux '
   '';
-  zoxide-init = runCommand "zoxide-init.zsh" { nativeBuildInputs = [ zoxide ]; } ''
-    zoxide init zsh >out
-    substitute out $out --replace-fail '\command zoxide' '${lib.getExe zoxide}'
-  '';
+  zoxide-init = nixbits.zoxide-init-zsh.override { inherit zoxide; };
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   name = "zsh-interactive";
