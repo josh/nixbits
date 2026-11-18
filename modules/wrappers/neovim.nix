@@ -8,7 +8,9 @@
   imports = [ wlib.wrapperModules.neovim ];
 
   package = pkgs.neovim-unwrapped;
-  wrapperImplementation = "binary";
+  # makeBinaryWrapper rejects the ";;" LUA_PATH suffix this module adds
+  # (GHSA-p7v3-pr2c-8584); return to "binary" once nix-wrapper-modules is fixed.
+  wrapperImplementation = "shell";
   binName = "nvim";
 
   settings.config_directory = ../../pkgs/neovim;
@@ -33,7 +35,7 @@
   };
   runtimePkgs = [ pkgs.jujutsu ];
 
-  # The binary wrapper passes the ordered mappings to Lua for startup selection.
+  # The wrapper passes the ordered mappings to Lua for startup selection.
   env.NIXBITS_NVIM_THEMES = builtins.toJSON (
     map (t: { inherit (t) pattern; } // t.neovim) pkgs.nixbits.themes
   );
