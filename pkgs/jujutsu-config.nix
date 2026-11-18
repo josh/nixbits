@@ -2,7 +2,7 @@
   lib,
   wlibEvalPackage,
   runCommand,
-  writeShellScriptBin,
+  git,
   jujutsu,
   nixbits,
 }:
@@ -50,12 +50,11 @@ config.overrideAttrs {
 
   passthru.tests.module-settings =
     let
-      customGit = writeShellScriptBin "git" "exit 1";
       custom = wlibEvalPackage [
         ../modules/wrappers/jujutsu.nix
         {
           settings.user.name = "Module User";
-          settings.git.executable-path = lib.mkForce (lib.getExe customGit);
+          settings.git.executable-path = lib.mkForce (lib.getExe git);
         }
       ];
     in
@@ -64,7 +63,7 @@ config.overrideAttrs {
       mkdir -p "$HOME"
       test "$(${lib.getExe custom} config get user.name)" = "Module User"
       test "$(${lib.getExe custom} config get user.email)" = josh@users.noreply.github.com
-      test "$(${lib.getExe custom} config get git.executable-path)" = "${lib.getExe customGit}"
+      test "$(${lib.getExe custom} config get git.executable-path)" = "${lib.getExe git}"
       touch "$out"
     '';
 
