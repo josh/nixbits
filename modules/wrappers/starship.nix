@@ -12,7 +12,11 @@ in
 {
   imports = [ wlib.wrapperModules.starship ];
 
-  options.showJujutsuDescription = lib.mkEnableOption "the first line of the working-copy change description in the prompt";
+  options.showJujutsuDescription = lib.mkOption {
+    type = lib.types.bool;
+    default = true;
+    description = "Whether to show the first line of the working-copy change description in the prompt.";
+  };
 
   options.jujutsuWrapper = lib.mkOption {
     type = lib.types.package;

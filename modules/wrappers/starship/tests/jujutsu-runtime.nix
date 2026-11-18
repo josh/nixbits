@@ -25,7 +25,6 @@ let
   starship = wlibEvalPackage [
     ../../starship.nix
     {
-      showJujutsuDescription = true;
       jujutsuWrapper = wlibEvalPackage [
         ../../jujutsu.nix
         {
