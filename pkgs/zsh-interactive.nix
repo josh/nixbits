@@ -168,27 +168,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=1 source ${iterm2-shell-integration}/share/iterm2-shell-integration/iterm2_shell_integration.zsh
     fi
 
-    zp() {
-      if [[ $# -ne 1 ]]; then
-        echo "Usage: zp <[owner/]repo>" >&2
-        return 1
-      fi
-      local repo="$1"
-      [[ $repo == */* ]] || repo="josh/$repo"
-      local root="''${PROJECTS_DIR:-$HOME/Developer}"
-      if [[ ! -d $root ]]; then
-        echo "zp: $root does not exist" >&2
-        return 1
-      fi
-      local dir="$root/''${repo:t}"
-      if [[ -d $dir ]]; then
-        z "$dir" || return
-        ${lib.getExe nixbits.jujutsu} git fetch
-      else
-        ${lib.getExe jujutsu-clone} "$repo" "$dir" || return
-        z "$dir"
-      fi
-    }
+    source ${nixbits.zp-zsh.override { inherit jujutsu-clone; }}
   '');
 
   buildCommand = ''
