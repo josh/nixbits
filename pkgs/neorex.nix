@@ -6,6 +6,7 @@
   makeWrapper,
   nur,
   nixbits,
+  neovimPackage ? nixbits.neovim,
 }:
 let
   inherit (nur.repos.josh) neorex;
@@ -26,7 +27,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     "--prefix"
     "PATH"
     ":"
-    (lib.strings.makeBinPath [ nixbits.neovim ])
+    (lib.strings.makeBinPath [ neovimPackage ])
   ];
 
   buildCommand = ''
@@ -38,7 +39,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   '';
 
   passthru.tests.help = runCommand "test-neorex-help" { } ''
-    grep --quiet --fixed-strings '${nixbits.neovim}/bin' ${lib.getExe finalAttrs.finalPackage}
+    grep --quiet --fixed-strings '${neovimPackage}/bin' ${lib.getExe finalAttrs.finalPackage}
     ${lib.getExe finalAttrs.finalPackage} help
     touch $out
   '';
