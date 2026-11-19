@@ -34,6 +34,7 @@ in
       default = if pkgs.nixbits.starship.meta.available then pkgs.nixbits.starship else pkgs.starship;
       description = "Starship package used to initialize and render the prompt.";
     };
+    terminfoKeyBindings.enable = lib.mkEnableOption "zsh key bindings from terminal capabilities";
     zoxide.enable = lib.mkEnableOption "zoxide shell integration";
     zp.enable = lib.mkEnableOption "the zp project navigation function";
     zp.package = lib.mkOption {
@@ -47,6 +48,9 @@ in
     # zp uses z to enter a checkout. Consumers can also supply their own z.
     zoxide.enable = lib.mkIf config.zp.enable (lib.mkDefault true);
     zshrc.content = lib.mkMerge [
+      (lib.mkIf config.terminfoKeyBindings.enable (
+        lib.mkAfter "source ${./zsh/terminfo-key-bindings.zsh}"
+      ))
       (lib.mkIf config.completion.enable (
         lib.mkAfter ''
           autoload -Uz compinit
