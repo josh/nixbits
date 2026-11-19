@@ -25,6 +25,7 @@ in
   imports = [ wlib.wrapperModules.zsh ];
 
   options = {
+    completion.enable = lib.mkEnableOption "zsh completion initialization";
     direnv.enable = lib.mkEnableOption "direnv shell integration";
     direnv.package = lib.mkPackageOption pkgs.nixbits "direnv" { };
     starship.enable = lib.mkEnableOption "the Starship prompt";
@@ -46,6 +47,12 @@ in
     # zp uses z to enter a checkout. Consumers can also supply their own z.
     zoxide.enable = lib.mkIf config.zp.enable (lib.mkDefault true);
     zshrc.content = lib.mkMerge [
+      (lib.mkIf config.completion.enable (
+        lib.mkAfter ''
+          autoload -Uz compinit
+          compinit -d "$HOME/.zcompdump"
+        ''
+      ))
       (lib.mkIf config.starship.enable (lib.mkAfter "source ${starshipInit}"))
       (lib.mkIf config.direnv.enable (lib.mkAfter "source ${direnvHook}"))
       (lib.mkIf config.zoxide.enable (lib.mkAfter "source ${pkgs.nixbits.zoxide-init-zsh}"))
