@@ -27,6 +27,7 @@ in
   options = {
     appleTerminal.enable = lib.mkEnableOption "working-directory reporting in Apple Terminal";
     appleTerminal.sessionRestore.enable = lib.mkEnableOption "Apple Terminal per-session history and execution of saved .session files";
+    combiningChars.enable = lib.mkEnableOption "Apple’s locale-aware zsh combining character handling on macOS";
     completion.enable = lib.mkEnableOption "zsh completion initialization";
     direnv.enable = lib.mkEnableOption "direnv shell integration";
     direnv.package = lib.mkPackageOption pkgs.nixbits "direnv" { };
@@ -50,6 +51,13 @@ in
     # zp uses z to enter a checkout. Consumers can also supply their own z.
     zoxide.enable = lib.mkIf config.zp.enable (lib.mkDefault true);
     zshrc.content = lib.mkMerge [
+      (lib.mkIf (pkgs.stdenv.hostPlatform.isDarwin && config.combiningChars.enable) (
+        lib.mkAfter ''
+          if [[ ! -x /usr/bin/locale || "$(/usr/bin/locale LC_CTYPE)" == UTF-8 ]]; then
+            setopt COMBINING_CHARS
+          fi
+        ''
+      ))
       (lib.mkIf (pkgs.stdenv.hostPlatform.isDarwin && config.appleTerminal.enable) (
         lib.mkAfter ''
           if [[ ''${TERM_PROGRAM:-} == Apple_Terminal ]]; then
