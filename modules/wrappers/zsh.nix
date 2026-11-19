@@ -14,6 +14,12 @@ let
     substitute hook.zsh "$out" --replace-fail "$selfPath" "${direnv}"
     ${pkgs.zsh}/bin/zsh -n "$out"
   '';
+  starshipInit =
+    pkgs.runCommand "starship-init.zsh" { nativeBuildInputs = [ config.starship.package ]; }
+      ''
+        TERM=xterm-256color starship init zsh --print-full-init >"$out"
+        ${pkgs.zsh}/bin/zsh -n "$out"
+      '';
 in
 {
   imports = [ wlib.wrapperModules.zsh ];
@@ -21,6 +27,12 @@ in
   options = {
     direnv.enable = lib.mkEnableOption "direnv shell integration";
     direnv.package = lib.mkPackageOption pkgs.nixbits "direnv" { };
+    starship.enable = lib.mkEnableOption "the Starship prompt";
+    starship.package = lib.mkOption {
+      type = lib.types.package;
+      default = if pkgs.nixbits.starship.meta.available then pkgs.nixbits.starship else pkgs.starship;
+      description = "Starship package used to initialize and render the prompt.";
+    };
     zoxide.enable = lib.mkEnableOption "zoxide shell integration";
     zp.enable = lib.mkEnableOption "the zp project navigation function";
     zp.package = lib.mkOption {
@@ -34,6 +46,7 @@ in
     # zp uses z to enter a checkout. Consumers can also supply their own z.
     zoxide.enable = lib.mkIf config.zp.enable (lib.mkDefault true);
     zshrc.content = lib.mkMerge [
+      (lib.mkIf config.starship.enable (lib.mkAfter "source ${starshipInit}"))
       (lib.mkIf config.direnv.enable (lib.mkAfter "source ${direnvHook}"))
       (lib.mkIf config.zoxide.enable (lib.mkAfter "source ${pkgs.nixbits.zoxide-init-zsh}"))
       (lib.mkIf config.zp.enable (lib.mkAfter "source ${config.zp.package}"))
