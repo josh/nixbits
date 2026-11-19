@@ -4,6 +4,8 @@ let
     ../../zsh.nix
     {
       appleTerminal.enable = true;
+      # Stock macOS /etc/zshrc would initialize its own copy of the hook first.
+      zshenv.content = "unsetopt GLOBAL_RCS";
       zshrc.content = ''
         HISTFILE="$HOME/.zsh_history"
         HISTSIZE=100
