@@ -12,6 +12,9 @@ zsh.overrideAttrs (previousAttrs: {
       callPackage ../modules/wrappers/zsh/tests/combining-chars.nix
         { };
     tests.completion = callPackage ../modules/wrappers/zsh/tests/completion.nix { };
+    tests.${if stdenv.hostPlatform.isDarwin then "prefer-system-log" else null} =
+      callPackage ../modules/wrappers/zsh/tests/prefer-system-log.nix
+        { };
     tests.starship = callPackage ../modules/wrappers/zsh/tests/starship.nix { };
     tests.direnv = callPackage ../modules/wrappers/zsh/tests/direnv.nix { };
   };

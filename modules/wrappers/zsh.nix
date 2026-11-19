@@ -31,6 +31,7 @@ in
     completion.enable = lib.mkEnableOption "zsh completion initialization";
     direnv.enable = lib.mkEnableOption "direnv shell integration";
     direnv.package = lib.mkPackageOption pkgs.nixbits "direnv" { };
+    preferSystemLog.enable = lib.mkEnableOption "disabling the zsh log builtin so macOS log is found on PATH";
     starship.enable = lib.mkEnableOption "the Starship prompt";
     starship.package = lib.mkOption {
       type = lib.types.package;
@@ -76,6 +77,9 @@ in
             }
           fi
         ''
+      ))
+      (lib.mkIf (pkgs.stdenv.hostPlatform.isDarwin && config.preferSystemLog.enable) (
+        lib.mkAfter "disable log"
       ))
       (lib.mkIf config.terminfoKeyBindings.enable (
         lib.mkAfter "source ${./zsh/terminfo-key-bindings.zsh}"
