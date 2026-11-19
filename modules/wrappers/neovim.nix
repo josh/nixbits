@@ -8,6 +8,7 @@
 {
   imports = [ wlib.wrapperModules.neovim ];
 
+  options.neorex.enable = lib.mkEnableOption "neorex in interactive Rex sessions";
   options.nixLsp.enable = lib.mkEnableOption "Nix language support with nil and nixfmt";
 
   config = {
@@ -16,6 +17,18 @@
     # (GHSA-p7v3-pr2c-8584); return to "binary" once nix-wrapper-modules is fixed.
     wrapperImplementation = "shell";
     binName = "nvim";
+
+    builderFunction = lib.mkIf config.neorex.enable (
+      let
+        # Both launcher paths use the same configured editor as their backend.
+        neovimPackage = config.wrap { neorex.enable = lib.mkForce false; };
+        launcher = pkgs.nixbits.neovim-launcher.override { inherit neovimPackage; };
+      in
+      _: ''
+        mkdir -p "$out/bin"
+        ln -s ${launcher}/bin/nvim "$out/bin/nvim"
+      ''
+    );
 
     settings.config_directory = ../../pkgs/neovim;
     settings.block_normal_config = true;
