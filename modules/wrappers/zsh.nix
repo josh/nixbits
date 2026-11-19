@@ -25,6 +25,8 @@ in
   imports = [ wlib.wrapperModules.zsh ];
 
   options = {
+    appleTerminal.enable = lib.mkEnableOption "working-directory reporting in Apple Terminal";
+    appleTerminal.sessionRestore.enable = lib.mkEnableOption "Apple Terminal per-session history and execution of saved .session files";
     completion.enable = lib.mkEnableOption "zsh completion initialization";
     direnv.enable = lib.mkEnableOption "direnv shell integration";
     direnv.package = lib.mkPackageOption pkgs.nixbits "direnv" { };
@@ -48,6 +50,25 @@ in
     # zp uses z to enter a checkout. Consumers can also supply their own z.
     zoxide.enable = lib.mkIf config.zp.enable (lib.mkDefault true);
     zshrc.content = lib.mkMerge [
+      (lib.mkIf (pkgs.stdenv.hostPlatform.isDarwin && config.appleTerminal.enable) (
+        lib.mkAfter ''
+          if [[ ''${TERM_PROGRAM:-} == Apple_Terminal ]]; then
+            () {
+              local ZDOTDIR="$HOME"
+              # Apple uses the session ID as a filename under ~/.zsh_sessions.
+              local TERM_SESSION_ID="''${TERM_SESSION_ID:-}"
+              [[ $TERM_SESSION_ID == */* ]] && TERM_SESSION_ID=
+              ${
+                if config.appleTerminal.sessionRestore.enable then
+                  ": \${SHELL_SESSION_HISTORY:=1}"
+                else
+                  "local SHELL_SESSIONS_DISABLE=1"
+              }
+              source ${../../pkgs/apple-zshrc/zshrc_Apple_Terminal}
+            }
+          fi
+        ''
+      ))
       (lib.mkIf config.terminfoKeyBindings.enable (
         lib.mkAfter "source ${./zsh/terminfo-key-bindings.zsh}"
       ))
