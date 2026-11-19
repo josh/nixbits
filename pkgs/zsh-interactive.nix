@@ -2,58 +2,16 @@
   lib,
   stdenvNoCC,
   runCommand,
-  symlinkJoin,
-  neovim,
-  starship,
-  zoxide,
-  zsh,
-  zsh-autosuggestions,
-  zsh-syntax-highlighting,
-  nur,
+  wlibEvalPackage,
   nixbits,
+  zsh,
+  zoxide,
   jujutsu-clone ? nixbits.jujutsu-clone,
+  zshModule ? { },
 }:
-let
-  inherit (nixbits) direnv;
-  starshipPackage = if nixbits.starship.meta.available then nixbits.starship else starship;
-  inherit (nur.repos.josh) iterm2-shell-integration;
-
-  # neorex needs Zig 0.17, which stable nixpkgs lacks
-  rexEditor = if nixbits.neorex.meta.available then nixbits.neorex else nixbits.neovim;
-
-  path = symlinkJoin {
-    name = "zsh-path";
-    paths = [
-      direnv
-    ];
-  };
-
-  direnv-init = runCommand "direnv-init.zsh" { nativeBuildInputs = [ direnv ]; } ''
-    direnv hook zsh | sed 's|/bin/\.direnv-wrapped|/bin/direnv|g' >$out
-    ! grep --quiet --fixed-strings '.direnv-wrapped' $out
-    grep --quiet --extended-regexp "/bin/direnv['\"]" $out
-  '';
-  starship-init =
-    runCommand "starship-init.zsh"
-      {
-        nativeBuildInputs = [ starshipPackage ];
-      }
-      ''
-        starship init zsh >$out
-      '';
-  fzf-init = runCommand "fzf-init.zsh" { nativeBuildInputs = [ nixbits.fzf ]; } ''
-    fzf --zsh >out
-    substitute out $out \
-      --replace-fail 'echo "fzf"' 'echo "${nixbits.fzf}/bin/fzf"' \
-      --replace-fail 'echo "fzf-tmux ' 'echo "${nixbits.fzf}/bin/fzf-tmux '
-  '';
-  zoxide-init = nixbits.zoxide-init-zsh.override { inherit zoxide; };
-in
 stdenvNoCC.mkDerivation (finalAttrs: {
   name = "zsh-interactive";
-
   __structuredAttrs = true;
-
   shellInit = "";
 
   text = ''
@@ -61,112 +19,18 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       echo "Error: This script must be run in an interactive shell"
       return 1 2>/dev/null || exit 1
     fi
-
-    typeset -U path fpath
-
-    if [[ "''${TERM_PROGRAM:-}" == rex && -z "''${THEME:-}" ]]; then
-      if [[ "$(${lib.getExe nixbits.term-scheme})" == light ]]; then
-        export THEME=ansi_light COLORFGBG='0;15'
-      else
-        export THEME=ansi_dark COLORFGBG='15;0'
-      fi
-    fi
-
-    export MANPAGER="sh -c 'col -bx | ${lib.getExe nixbits.bat} --language=man --plain'"
-
-    path=("${path}/bin" $path)
-
-    # TODO: statically link this path
-    if [ -d "$HOME/.local/state/nix/profiles/profile/share/zsh/site-functions" ]; then
-      FPATH="$HOME/.local/state/nix/profiles/profile/share/zsh/site-functions:$FPATH"
-    elif [ -d "$HOME/.local/state/nix/profile/share/zsh/site-functions" ]; then
-      FPATH="$HOME/.local/state/nix/profile/share/zsh/site-functions:$FPATH"
-    elif [ -d "$HOME/.nix-profile/share/zsh/site-functions" ]; then
-      FPATH="$HOME/.nix-profile/share/zsh/site-functions:$FPATH"
-    else
-      echo "WARN: $HOME/.local/state/nix/profiles/profile/share/zsh/site-functions not found" >&2
-    fi
-
-    zcompdump_dir="''${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
-    zcompdump="$zcompdump_dir/zcompdump-$ZSH_VERSION-''${''${fpath[1]:A}:h:h:h:t}"
-    mkdir -p "$zcompdump_dir"
-    if [[ ! -f "$zcompdump" ]]; then
-      rm -f "$zcompdump_dir"/zcompdump-*(N)
-    fi
-    autoload -Uz compinit
-    compinit -d "$zcompdump"
-
-    HISTSIZE=50000
-    SAVEHIST=50000
-
-    setopt EXTENDED_HISTORY
-    setopt APPEND_HISTORY
-    setopt HIST_FIND_NO_DUPS
-    setopt HIST_IGNORE_DUPS
-    setopt HIST_IGNORE_SPACE
-
-    # force emacs bindings
-    bindkey -e
-
-    # bash navigation
-    autoload -U select-word-style
-    select-word-style bash
-
-    source ${zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-    bindkey '\t\t' autosuggest-accept
-
-    source ${direnv-init}
-    source ${fzf-init}
-    source ${starship-init}
-    source ${zoxide-init}
-
-    # Must come after all zle -N widget registrations
-    source ${zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-    alias ls='${lib.getExe nixbits.eza}'
-    alias ll='${lib.getExe nixbits.eza} --long'
-    alias la='${lib.getExe nixbits.eza} --all'
-    alias lt='${lib.getExe nixbits.eza} --tree'
-    alias lla='${lib.getExe nixbits.eza} --long --all'
-
-    ${finalAttrs.shellInit}
   ''
-  + (
-    if stdenvNoCC.hostPlatform.isDarwin then
-      ''
-
-        if [[ "''${TERM_PROGRAM:-}" == rex ]]; then
-          export EDITOR="''${EDITOR:-${lib.getExe rexEditor}}"
-        else
-          export EDITOR="''${EDITOR:-${nixbits.bbedit-mas}/bin/bbedit --wait --resume}"
-        fi
-      ''
-    else
-      # TODO: Use customized neovim
-      ''
-
-        export EDITOR="''${EDITOR:-${neovim}/bin/nvim}"
-      ''
-  )
-  + (lib.strings.optionalString stdenvNoCC.hostPlatform.isDarwin ''
-
-    if [ -d "$HOME/Library/Mobile Documents/com~apple~CloudDocs/Terminal/history" ]; then
-      __sync_history() {
-        echo "...syncing history"
-        ${lib.getExe nixbits.zsh-session-prune}
-        ${lib.getExe nixbits.zsh-history-sync}
-      }
-      autoload -Uz add-zsh-hook
-      add-zsh-hook zshexit __sync_history
-    fi
-
-    if [ -n "$ITERM_SESSION_ID" ]; then
-      path=(${iterm2-shell-integration}/bin $path)
-      ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=1 source ${iterm2-shell-integration}/share/iterm2-shell-integration/iterm2_shell_integration.zsh
-    fi
-
-    source ${nixbits.zp-zsh.override { inherit jujutsu-clone; }}
-  '');
+  + (wlibEvalPackage [
+    ../modules/wrappers/zsh.nix
+    {
+      interactiveProfile.enable = lib.mkDefault true;
+      zoxide.package = lib.mkDefault zoxide;
+      zp.package = lib.mkDefault (nixbits.zp-zsh.override { inherit jujutsu-clone; });
+      # Preserve the shellInit extension point before the editor and terminal hooks.
+      zshrc.content = lib.mkOrder 1550 finalAttrs.shellInit;
+    }
+    zshModule
+  ]).configuration.zshrc.content;
 
   buildCommand = ''
     echo -n "$text" >"$out"

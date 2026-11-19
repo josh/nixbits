@@ -15,6 +15,7 @@ zsh.overrideAttrs (previousAttrs: {
     tests.${if stdenv.hostPlatform.isDarwin then "prefer-system-log" else null} =
       callPackage ../modules/wrappers/zsh/tests/prefer-system-log.nix
         { };
+    tests.interactive-profile = callPackage ../modules/wrappers/zsh/tests/interactive-profile.nix { };
     tests.starship = callPackage ../modules/wrappers/zsh/tests/starship.nix { };
     tests.direnv = callPackage ../modules/wrappers/zsh/tests/direnv.nix { };
   };
