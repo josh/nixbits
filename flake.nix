@@ -111,6 +111,7 @@
         eza = ./modules/wrappers/eza.nix;
         git = ./modules/wrappers/git.nix;
         jujutsu = ./modules/wrappers/jujutsu.nix;
+        neovim = ./modules/wrappers/neovim.nix;
         ripgrep = ./modules/wrappers/ripgrep.nix;
         starship = ./modules/wrappers/starship.nix;
         zsh = ./modules/wrappers/zsh.nix;
