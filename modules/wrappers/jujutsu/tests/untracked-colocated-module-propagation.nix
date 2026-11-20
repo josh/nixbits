@@ -34,7 +34,7 @@ runCommand "test-jj-untracked-${name}-module-propagation" { } ''
   export GIT_CONFIG_GLOBAL=/ignored/git-config JJ_CONFIG=/ignored/jj-config
   actual="$(${customJj}/bin/jj-untracked)"
   expected=$(printf 'manual.txt\ntracked-ignored.txt')
-  if [[ "$actual" != "$expected" ]]; then
+  if [[ $actual != "$expected" ]]; then
     echo "expected '$expected' but was '$actual'" >&2
     exit 1
   fi

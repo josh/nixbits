@@ -30,7 +30,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   + (lib.strings.optionalString stdenvNoCC.hostPlatform.isDarwin ''
 
     if [ -n "$ZED_TERM" ]; then
-    	export EDITOR="${nixbits.zed-cli}/bin/zed --wait"
+      export EDITOR="${nixbits.zed-cli}/bin/zed --wait"
     fi
   '');
 

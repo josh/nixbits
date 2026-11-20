@@ -55,7 +55,7 @@ stdenvNoCC.mkDerivation {
     without-rex = runCommand "test-rex-completions-without-rex" { } ''
       completion="${nixbits.rex-completions}/share/bash-completion/completions/rex"
       output="$(PATH=/var/empty ${lib.getExe bash} -c "source $completion; echo ok")"
-      if [[ "$output" != "ok" ]]; then
+      if [[ $output != "ok" ]]; then
         echo "expected 'ok' but was '$output'"
         return 1
       fi

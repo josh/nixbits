@@ -27,7 +27,7 @@
         export XDG_STATE_HOME="$PWD/state"
         for exe in vim vi view rvim ex; do
           actual="$("$exe" -es -c 'redir >> /dev/stdout | echo "tw=".&textwidth." cp=".&compatible' -c 'qa!' </dev/null)"
-          if [[ "$actual" != *"tw=79 cp=0"* ]]; then
+          if [[ $actual != *"tw=79 cp=0"* ]]; then
             echo "$exe: expected textwidth=79 and nocompatible from the vimrc, but was '$actual'"
             return 1
           fi

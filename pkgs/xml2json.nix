@@ -44,7 +44,7 @@ xml2json.overrideAttrs (
             ''
               expected="$(<${jsonFile})"
               actual="$(xml2json <${xmlFile} | jq --compact-output)"
-              if [[ "$actual" != "$expected" ]]; then
+              if [[ $actual != "$expected" ]]; then
                 echo "expected, '$expected' but was '$actual'"
                 exit 1
               fi

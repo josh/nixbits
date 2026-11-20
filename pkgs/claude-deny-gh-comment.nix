@@ -103,11 +103,11 @@ claude-deny-gh-comment.overrideAttrs (
               assert_allow 'echo gh pr comment'
               assert_allow 'rg "gh pr comment" docs/'
 
-              assert_ignored "malformed json"  'not json at all{{{'
-              assert_ignored "empty stdin"     ""
+              assert_ignored "malformed json" 'not json at all{{{'
+              assert_ignored "empty stdin" ""
               assert_ignored "null tool_input" '{"tool_input":null}'
               assert_ignored "numeric command" '{"tool_input":{"command":42}}'
-              assert_ignored "read payload"    '{"tool_name":"Read","tool_input":{"file_path":"gh pr comment"}}'
+              assert_ignored "read payload" '{"tool_name":"Read","tool_input":{"file_path":"gh pr comment"}}'
 
               reason=$(jq --null-input --arg c "gh pr comment 1 -b x" '{tool_input:{command:$c}}' |
                 claude-deny-gh-comment |

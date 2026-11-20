@@ -42,7 +42,7 @@ json2plist.overrideAttrs (
         convert-file = runCommand "test-json2plist-convert-file" { nativeBuildInputs = [ json2plist' ]; } ''
           expected="$(<${plistFile})"
           actual="$(json2plist <${jsonFile})"
-          if [[ "$actual" != "$expected" ]]; then
+          if [[ $actual != "$expected" ]]; then
             echo "expected, '$expected' but was '$actual'"
             exit 1
           fi
@@ -52,7 +52,7 @@ json2plist.overrideAttrs (
         convert-pipe = runCommand "test-json2plist-convert-pipe" { nativeBuildInputs = [ json2plist' ]; } ''
           expected="$(<${plistFile})"
           actual="$(cat ${jsonFile} | json2plist)"
-          if [[ "$actual" != "$expected" ]]; then
+          if [[ $actual != "$expected" ]]; then
             echo "expected, '$expected' but was '$actual'"
             exit 1
           fi

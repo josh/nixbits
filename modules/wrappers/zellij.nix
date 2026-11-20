@@ -35,7 +35,7 @@ in
       config-dir = pkgs.runCommand "test-zellij-config-dir" { nativeBuildInputs = [ config.wrapper ]; } ''
         export HOME="$PWD"
         actual="$(zellij setup --check 2>&1 || true)"
-        if [[ "$actual" != *'${configDir}/config.kdl'* ]]; then
+        if [[ $actual != *'${configDir}/config.kdl'* ]]; then
           echo "expected ${configDir}/config.kdl in setup --check, but was:"
           echo "$actual"
           return 1

@@ -45,23 +45,23 @@ runCommand "test-starship-jujutsu-runtime" { } ''
   export EXPECTED_GIT_CONFIG=${starship.configuration.env.GIT_CONFIG_GLOBAL.data}
   export PROBE_LOG="$PWD/jj.log" DECOY_CALLED="$PWD/decoy-called"
   export PATH="${decoy}/bin:$PATH" JJ_CONFIG=/ignored/config
-  ${starship}/bin/starship module jj_change > change
+  ${starship}/bin/starship module jj_change >change
   test -s change
   test -s "$PROBE_LOG"
-  : > "$PROBE_LOG"
-  ${starship}/bin/starship module custom.jj_description > description
+  : >"$PROBE_LOG"
+  ${starship}/bin/starship module custom.jj_description >description
   grep -Fq "Review the prompt" description
   test -s "$PROBE_LOG"
   test ! -e "$DECOY_CALLED"
-  ${starship}/bin/starship prompt > prompt
+  ${starship}/bin/starship prompt >prompt
   test "$(grep -o "Review the prompt" prompt | wc -l)" -eq 1
   mkdir ../outside
   cd ../outside
-  : > "$PROBE_LOG"
-  ${starship}/bin/starship prompt > prompt
+  : >"$PROBE_LOG"
+  ${starship}/bin/starship prompt >prompt
   test ! -s "$PROBE_LOG"
   cd ../repo
-  ${starship}/bin/starship init zsh --print-full-init > init.zsh
+  ${starship}/bin/starship init zsh --print-full-init >init.zsh
   ${zsh}/bin/zsh -f ${./prompt-environment.zsh}
   touch "$out"
 ''

@@ -28,7 +28,7 @@ in
     (lib.mkIf config.uniquePaths.enable (lib.mkOrder 1200 "typeset -U path fpath"))
     (lib.mkIf config.rexTheme.enable (
       lib.mkOrder 1200 ''
-        if [[ "''${TERM_PROGRAM:-}" == rex && -z "''${THEME:-}" ]]; then
+        if [[ ''${TERM_PROGRAM:-} == rex && -z ''${THEME:-} ]]; then
           if [[ "$(${lib.getExe nixbits.term-scheme})" == light ]]; then
             export THEME=ansi_light COLORFGBG='0;15'
           else
@@ -67,7 +67,7 @@ in
       lib.mkOrder 1600 (
         if isDarwin then
           ''
-            if [[ "''${TERM_PROGRAM:-}" == rex ]]; then
+            if [[ ''${TERM_PROGRAM:-} == rex ]]; then
               export EDITOR="''${EDITOR:-${lib.getExe rexEditor}}"
             else
               export EDITOR="''${EDITOR:-${nixbits.bbedit-mas}/bin/bbedit --wait --resume}"
@@ -94,7 +94,7 @@ in
     ))
     (lib.mkIf (isDarwin && config.iterm2.enable) (
       lib.mkOrder 1600 ''
-        if [[ -n "$ITERM_SESSION_ID" ]]; then
+        if [[ -n $ITERM_SESSION_ID ]]; then
           path=(${iterm}/bin $path)
           ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=1 source ${iterm}/share/iterm2-shell-integration/iterm2_shell_integration.zsh
         fi

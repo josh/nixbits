@@ -51,12 +51,12 @@ in
         ''
           export HOME="$PWD"
           for case in tokyonight_moon:tokyonight_moon tokyonight_bogus:tokyonight \
-                      catppuccin_bogus:catppuccin_mocha rosepine_moon:rose_pine_moon \
-                      ansi_light:term16_light ansi_dark:term16_dark; do
+            catppuccin_bogus:catppuccin_mocha rosepine_moon:rose_pine_moon \
+            ansi_light:term16_light ansi_dark:term16_dark; do
             theme="''${case%%:*}"
             expected="''${case##*:}"
             actual="$(THEME="$theme" hx --health | sed -n '1s|.*/hx-config-\(.*\)/helix/config.toml|\1|p')"
-            if [[ "$actual" != "$expected" ]]; then
+            if [[ $actual != "$expected" ]]; then
               echo "THEME=$theme expected '$expected' but was '$actual'"
               return 1
             fi

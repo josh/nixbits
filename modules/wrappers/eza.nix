@@ -27,7 +27,7 @@
           mkdir listing listing/b
           touch listing/a
           actual="$(eza --oneline --color=never listing | tr '\n' ' ')"
-          if [[ "$actual" != "b a " ]]; then
+          if [[ $actual != "b a " ]]; then
             echo "expected 'b a ' but was '$actual'"
             return 1
           fi

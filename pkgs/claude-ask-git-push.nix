@@ -97,11 +97,11 @@ claude-ask-git-push.overrideAttrs (
               assert_allow 'echo git push'
               assert_allow 'rg "git push" docs/'
 
-              assert_ignored "malformed json"  'not json at all{{{'
-              assert_ignored "empty stdin"     ""
+              assert_ignored "malformed json" 'not json at all{{{'
+              assert_ignored "empty stdin" ""
               assert_ignored "null tool_input" '{"tool_input":null}'
               assert_ignored "numeric command" '{"tool_input":{"command":42}}'
-              assert_ignored "read payload"    '{"tool_name":"Read","tool_input":{"file_path":"git push"}}'
+              assert_ignored "read payload" '{"tool_name":"Read","tool_input":{"file_path":"git push"}}'
 
               reason=$(jq --null-input --arg c "git push" '{tool_input:{command:$c}}' |
                 claude-ask-git-push |

@@ -43,13 +43,13 @@ writeShellApplication {
 
             jj git init ${initArgs}
             touch tracked.txt
-            echo "ignored/" > .gitignore
+            echo "ignored/" >.gitignore
             mkdir ignored
             touch ignored/junk.txt
-            jj status > /dev/null
+            jj status >/dev/null
 
             actual="$(jj-untracked)"
-            if [[ "$actual" != "ignored/" ]]; then
+            if [[ $actual != "ignored/" ]]; then
               echo "expected 'ignored/' but was '$actual'" >&2
               exit 1
             fi

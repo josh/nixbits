@@ -42,7 +42,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   buildCommand = ''
     if [ -n "$ageIdentity" ]; then
-      if [[ "$ageIdentity" =~ ^$NIX_STORE/ ]]; then
+      if [[ $ageIdentity =~ ^$NIX_STORE/ ]]; then
         echo "error: identity cannot be a store path" >&2
         exit 1
       fi
@@ -52,7 +52,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     fi
 
     if [ -n "$ageInput" ]; then
-      if [[ "$ageInput" =~ ^$NIX_STORE/ ]] && [ ! -f "$ageInput" ]; then
+      if [[ $ageInput =~ ^$NIX_STORE/ ]] && [ ! -f "$ageInput" ]; then
         echo "error: store path '$ageInput' must be a file" >&2
         exit 1
       fi

@@ -45,7 +45,7 @@ csv2json.overrideAttrs (
             ''
               expected="$(<${jsonFile})"
               actual="$(csv2json <${csvFile} | jq --compact-output)"
-              if [[ "$actual" != "$expected" ]]; then
+              if [[ $actual != "$expected" ]]; then
                 echo "expected, '$expected' but was '$actual'"
                 exit 1
               fi

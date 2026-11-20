@@ -61,7 +61,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
             if [ "$actual" != "$expected" ]; then
               echo "expected: '$expected' but was '$actual'"
               exit 1
-            fi 
+            fi
             touch $out
           '';
 

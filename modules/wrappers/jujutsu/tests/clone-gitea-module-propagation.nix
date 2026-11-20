@@ -62,14 +62,14 @@ runCommand "test-jj-clone-gitea-module-propagation"
     for mode in primary mirror unavailable disabled; do
       export GITEA_MODE="$mode"
       rm -f "$GH_STUB_CALLED" "$GT_STUB_CALLED"
-      if [[ "$mode" = disabled ]]; then
+      if [[ $mode == disabled ]]; then
         ${githubClone}/bin/jj-clone example/repo "$mode"
         test ! -e "$GT_STUB_CALLED"
       else
         ${bundle}/bin/jj-clone example/repo "$mode"
         test -f "$GT_STUB_CALLED"
       fi
-      if [[ "$mode" = primary ]]; then
+      if [[ $mode == primary ]]; then
         test ! -e "$GH_STUB_CALLED"
       else
         test -f "$GH_STUB_CALLED"

@@ -78,7 +78,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     if stdenvNoCC.hostPlatform.isDarwin then
       ''
 
-        if [[ "''${TERM_PROGRAM:-}" == rex ]]; then
+        if [[ ''${TERM_PROGRAM:-} == rex ]]; then
           export EDITOR="''${EDITOR:-${lib.getExe rexEditor}}"
         else
           export EDITOR="''${EDITOR:-${nixbits.bbedit-mas}/bin/bbedit --wait --resume}"

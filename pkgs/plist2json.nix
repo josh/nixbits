@@ -50,7 +50,7 @@ plist2json.overrideAttrs (
             ''
               expected="$(jq --compact-output --sort-keys <<<"$expected")"
               actual="$(plist2json <"$plistFile" | jq --compact-output --sort-keys)"
-              if [[ "$actual" != "$expected" ]]; then
+              if [[ $actual != "$expected" ]]; then
                 echo "expected '$expected' but was '$actual'"
                 exit 1
               fi
@@ -104,7 +104,7 @@ plist2json.overrideAttrs (
             ''
               plutil -convert binary1 -o binary.plist -- "$plistFile"
               actual="$(plist2json <binary.plist | jq --compact-output --sort-keys)"
-              if [[ "$actual" != '{"foo":"bar"}' ]]; then
+              if [[ $actual != '{"foo":"bar"}' ]]; then
                 echo "expected '{\"foo\":\"bar\"}' but was '$actual'"
                 exit 1
               fi

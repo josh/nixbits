@@ -16,7 +16,10 @@ stdenvNoCC.mkDerivation {
   slug = "";
 
   buildCommand = ''
-    ( echo "#!${bash}/bin/bash" ; cat "${./healthchecks-exec-start-pre.bash}" ) >$out
+    (
+      echo "#!${bash}/bin/bash"
+      cat "${./healthchecks-exec-start-pre.bash}"
+    ) >$out
     substituteInPlace "$out" \
       --replace-fail '@curl@' "$curl" \
       --replace-fail '@pingURL@' "$pingURL" \

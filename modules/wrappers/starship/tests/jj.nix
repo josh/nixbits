@@ -21,8 +21,8 @@ runCommand "test-starship-jj"
     jj describe --message nixbits-starship-test
     change=$(jj log -r @ --no-graph -T 'change_id.short(7)')
     actual=$(starship prompt | sed -E 's/\x1b\[[0-9;]*m//g')
-    [[ "$actual" == *"$change"* ]]
-    [[ "$actual" ${
+    [[ $actual == *"$change"* ]]
+    [[ $actual ${
       if starship.configuration.showJujutsuDescription then "==" else "!="
     } *nixbits-starship-test* ]]
     touch "$out"

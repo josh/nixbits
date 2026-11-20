@@ -16,7 +16,10 @@ stdenvNoCC.mkDerivation {
   slug = "";
 
   buildCommand = ''
-    ( echo "#!${bash}/bin/bash" ; cat "${./healthchecks-exec-stop-post.bash}" ) >$out
+    (
+      echo "#!${bash}/bin/bash"
+      cat "${./healthchecks-exec-stop-post.bash}"
+    ) >$out
     substituteInPlace "$out" \
       --replace-fail '@curl@' "$curl" \
       --replace-fail '@systemd@' "$systemd" \

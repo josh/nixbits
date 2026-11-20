@@ -50,7 +50,7 @@ go'.overrideAttrs (
             export XDG_DATA_HOME=$HOME/.local/share
             expected="${value}"
             actual="$(go env ${name})"
-            if [[ "$actual" != "$expected" ]]; then
+            if [[ $actual != "$expected" ]]; then
               echo "expected, '$expected' but was '$actual'"
               return 1
             fi

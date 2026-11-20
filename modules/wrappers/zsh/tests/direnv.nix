@@ -22,7 +22,7 @@ in
 runCommand "test-zsh-direnv" { } ''
   export HOME="$PWD/home" DIRENV_CALLS="$PWD/calls"
   mkdir -p "$HOME" project
-  echo 'export NIXBITS_DIRENV_TEST=loaded' > project/.envrc
+  echo 'export NIXBITS_DIRENV_TEST=loaded' >project/.envrc
   ${direnv}/bin/direnv allow project
   ${shell}/bin/zsh -eic '
     cd project

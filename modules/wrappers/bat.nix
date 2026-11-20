@@ -68,11 +68,11 @@ in
 
     themes = pkgs.runCommand "test-bat-themes" { nativeBuildInputs = [ config.wrapper ]; } ''
       for case in "tokyonight_bogus:Tokyo Night Night" "rosepine_moon:Rose Pine Moon" \
-                  "ansi_light:ansi" "ansi_dark:ansi"; do
+        "ansi_light:ansi" "ansi_dark:ansi"; do
         theme="''${case%%:*}"
         expected="''${case#*:}"
         actual="$(THEME="$theme" bat --diagnostic | sed -n 's/^BAT_THEME=//p' | tr -d "'")"
-        if [[ "$actual" != "$expected" ]]; then
+        if [[ $actual != "$expected" ]]; then
           echo "THEME=$theme expected '$expected' but was '$actual'"
           return 1
         fi
