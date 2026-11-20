@@ -4,7 +4,6 @@
   runCommand,
   wlibEvalPackage,
   zsh,
-  zoxide,
   zshModule ? { },
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
@@ -21,7 +20,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     ../modules/wrappers/zsh.nix
     {
       interactiveProfile.enable = lib.mkDefault true;
-      zoxide.package = lib.mkDefault zoxide;
     }
     zshModule
   ]).configuration.zshrc.content;
