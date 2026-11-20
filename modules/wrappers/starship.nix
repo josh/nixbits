@@ -8,6 +8,9 @@
 let
   jjConfiguration = config.jujutsuWrapper.configuration;
   jj = lib.getExe' jjConfiguration.jujutsuPackage "jj";
+  otherCustomModules = lib.concatMapStrings (name: "\${custom.${name}}") (
+    lib.attrNames (removeAttrs (config.settings.custom or { }) [ "jj_description" ])
+  );
 in
 {
   imports = [ wlib.wrapperModules.starship ];
@@ -46,6 +49,10 @@ in
         "jj"
         "git"
       ];
+      # Rendering the description inside vcs runs it only after JJ repo detection.
+      vcs.jj_modules = lib.mkIf config.showJujutsuDescription (
+        lib.mkDefault "$jj_bookmark$jj_change$jj_metrics$jj_status\${custom.jj_description}"
+      );
       custom.jj_description = lib.mkIf config.showJujutsuDescription {
         when = true;
         shell = [ pkgs.runtimeShell ];
@@ -64,7 +71,12 @@ in
         gitModules='$git_branch$git_commit$git_state$git_metrics$git_status'
         substituteInPlace "$out/starship.toml" \
           --replace-fail 'format = "$all"' "format = \"$format\"" \
-          --replace-fail "$gitModules" '$vcs${lib.optionalString config.showJujutsuDescription "\${custom.jj_description}"}'
+          --replace-fail "$gitModules" '$vcs'
+      ''
+      # $custom would render the description a second time, outside vcs.
+      + lib.optionalString config.showJujutsuDescription ''
+        substituteInPlace "$out/starship.toml" \
+          --replace-fail '$custom' ${lib.escapeShellArg otherCustomModules}
       '';
     };
 

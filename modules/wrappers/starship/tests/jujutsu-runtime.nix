@@ -53,6 +53,14 @@ runCommand "test-starship-jujutsu-runtime" { } ''
   grep -Fq "Review the prompt" description
   test -s "$PROBE_LOG"
   test ! -e "$DECOY_CALLED"
+  ${starship}/bin/starship prompt > prompt
+  test "$(grep -o "Review the prompt" prompt | wc -l)" -eq 1
+  mkdir ../outside
+  cd ../outside
+  : > "$PROBE_LOG"
+  ${starship}/bin/starship prompt > prompt
+  test ! -s "$PROBE_LOG"
+  cd ../repo
   ${starship}/bin/starship init zsh --print-full-init > init.zsh
   ${zsh}/bin/zsh -f ${./prompt-environment.zsh}
   touch "$out"
