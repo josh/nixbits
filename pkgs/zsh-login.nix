@@ -2,8 +2,9 @@
   lib,
   stdenvNoCC,
   runCommand,
+  wlibEvalPackage,
   zsh,
-  nixbits,
+  zshModule ? { },
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   name = "zsh-login";
@@ -17,22 +18,16 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       echo "Error: This script must be run as a login shell" >&2
       return 1 2>/dev/null || exit 1
     fi
-
-    if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-      # shellcheck disable=SC1091
-      . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-    fi
-
-    export GOPATH="''${XDG_DATA_HOME:-$HOME/.local/share}/go"
-
-    ${finalAttrs.shellInit}
   ''
-  + (lib.strings.optionalString stdenvNoCC.hostPlatform.isDarwin ''
-
-    if [ -n "$ZED_TERM" ]; then
-      export EDITOR="${nixbits.zed-cli}/bin/zed --wait"
-    fi
-  '');
+  + (wlibEvalPackage [
+    ../modules/wrappers/zsh.nix
+    {
+      loginProfile.enable = lib.mkDefault true;
+      # Preserve the shellInit extension point before the Zed editor hook.
+      zprofile.content = lib.mkOrder 1550 finalAttrs.shellInit;
+    }
+    zshModule
+  ]).configuration.zprofile.content;
 
   buildCommand = ''
     echo -n "$text" >"$out"

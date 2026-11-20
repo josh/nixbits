@@ -31,6 +31,7 @@ in
   imports = [
     wlib.wrapperModules.zsh
     ./zsh/interactive-profile.nix
+    ./zsh/login-profile.nix
     ./zsh/history.nix
     ./zsh/terminal.nix
   ];
