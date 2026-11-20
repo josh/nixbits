@@ -10,6 +10,9 @@ let
   eza = lib.getExe nixbits.eza;
   rexEditor = if nixbits.neorex.meta.available then nixbits.neorex else nixbits.neovim;
   iterm = pkgs.nur.repos.josh.iterm2-shell-integration;
+  sshKeychainProvider = ''
+    export SSH_SK_PROVIDER="''${SSH_SK_PROVIDER:-/usr/lib/ssh-keychain.dylib}"
+  '';
 in
 {
   options = {
@@ -24,6 +27,11 @@ in
     iterm2.enable = lib.mkEnableOption "iTerm2 integration on macOS";
     sshKeychainProvider.enable = lib.mkEnableOption "the macOS keychain as the default OpenSSH security key provider";
   };
+
+  # ssh-add and ssh-keygen read this; ssh itself uses SecurityKeyProvider.
+  config.zprofile.content = lib.mkIf (
+    isDarwin && config.sshKeychainProvider.enable
+  ) sshKeychainProvider;
 
   config.zshrc.content = lib.mkMerge [
     (lib.mkIf config.uniquePaths.enable (lib.mkOrder 1200 "typeset -U path fpath"))
@@ -48,12 +56,7 @@ in
         path=(${config.direnv.package}/bin $path)
       ''
     ))
-    # ssh-add and ssh-keygen read this; ssh itself uses SecurityKeyProvider.
-    (lib.mkIf (isDarwin && config.sshKeychainProvider.enable) (
-      lib.mkOrder 1200 ''
-        export SSH_SK_PROVIDER="''${SSH_SK_PROVIDER:-/usr/lib/ssh-keychain.dylib}"
-      ''
-    ))
+    (lib.mkIf (isDarwin && config.sshKeychainProvider.enable) (lib.mkOrder 1200 sshKeychainProvider))
     (lib.mkIf config.emacsBindings.enable (lib.mkOrder 1200 "bindkey -e"))
     (lib.mkIf config.bashWordStyle.enable (
       lib.mkOrder 1200 ''

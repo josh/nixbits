@@ -29,6 +29,7 @@ in
       nixDaemon.enable = mkDefault true;
       goPath.enable = mkDefault true;
       zedEditor.enable = mkDefault isDarwin;
+      sshKeychainProvider.enable = mkDefault isDarwin;
     })
     {
       zprofile.content = lib.mkMerge [
