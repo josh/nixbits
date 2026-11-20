@@ -11,8 +11,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   __structuredAttrs = true;
 
-  shellInit = "";
-
   text = ''
     if [[ ! -o login ]]; then
       echo "Error: This script must be run as a login shell" >&2
@@ -23,8 +21,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     ../modules/wrappers/zsh.nix
     {
       loginProfile.enable = lib.mkDefault true;
-      # Preserve the shellInit extension point before the Zed editor hook.
-      zprofile.content = lib.mkOrder 1550 finalAttrs.shellInit;
     }
     zshModule
   ]).configuration.zprofile.content;

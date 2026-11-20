@@ -3,16 +3,13 @@
   stdenvNoCC,
   runCommand,
   wlibEvalPackage,
-  nixbits,
   zsh,
   zoxide,
-  jujutsu-clone ? nixbits.jujutsu-clone,
   zshModule ? { },
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   name = "zsh-interactive";
   __structuredAttrs = true;
-  shellInit = "";
 
   text = ''
     if [[ ! -o interactive ]]; then
@@ -25,9 +22,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     {
       interactiveProfile.enable = lib.mkDefault true;
       zoxide.package = lib.mkDefault zoxide;
-      zp.package = lib.mkDefault (nixbits.zp-zsh.override { inherit jujutsu-clone; });
-      # Preserve the shellInit extension point before the editor and terminal hooks.
-      zshrc.content = lib.mkOrder 1550 finalAttrs.shellInit;
     }
     zshModule
   ]).configuration.zshrc.content;
