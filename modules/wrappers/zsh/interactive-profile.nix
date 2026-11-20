@@ -38,6 +38,7 @@ in
     editorFallback.enable = mkDefault true;
     iCloudHistory.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
     iterm2.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
+    sshKeychainProvider.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
     zp.enable = mkDefault pkgs.stdenv.hostPlatform.isDarwin;
   };
 }

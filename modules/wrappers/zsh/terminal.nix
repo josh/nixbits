@@ -22,6 +22,7 @@ in
     editorFallback.enable = lib.mkEnableOption "the platform and terminal-specific default EDITOR";
     iCloudHistory.enable = lib.mkEnableOption "history synchronization on exit when the iCloud history directory exists";
     iterm2.enable = lib.mkEnableOption "iTerm2 integration on macOS";
+    sshKeychainProvider.enable = lib.mkEnableOption "the macOS keychain as the default OpenSSH security key provider";
   };
 
   config.zshrc.content = lib.mkMerge [
@@ -45,6 +46,12 @@ in
     (lib.mkIf (config.direnv.enable && config.direnv.addToPath) (
       lib.mkOrder 1200 ''
         path=(${config.direnv.package}/bin $path)
+      ''
+    ))
+    # ssh-add and ssh-keygen read this; ssh itself uses SecurityKeyProvider.
+    (lib.mkIf (isDarwin && config.sshKeychainProvider.enable) (
+      lib.mkOrder 1200 ''
+        export SSH_SK_PROVIDER="''${SSH_SK_PROVIDER:-/usr/lib/ssh-keychain.dylib}"
       ''
     ))
     (lib.mkIf config.emacsBindings.enable (lib.mkOrder 1200 "bindkey -e"))
