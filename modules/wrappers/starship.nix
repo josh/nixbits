@@ -18,7 +18,12 @@ in
   options.showJujutsuDescription = lib.mkOption {
     type = lib.types.bool;
     default = true;
-    description = "Whether to show the first line of the working-copy change description in the prompt.";
+    description = ''
+      Whether to show the first line of the working-copy change description in the prompt.
+      It renders inside the vcs module, so it only runs in JJ repositories. With the default
+      "$all" format, $custom is expanded to leave it out; a custom format containing $custom
+      shows it a second time outside vcs.
+    '';
   };
 
   options.jujutsuWrapper = lib.mkOption {
