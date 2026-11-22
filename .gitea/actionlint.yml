@@ -1,0 +1,5 @@
+self-hosted-runner:
+  labels:
+    - nix-aarch64-darwin
+    - nix-aarch64-linux
+    - nix-x86_64-linux

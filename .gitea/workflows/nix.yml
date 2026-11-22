@@ -1,0 +1,31 @@
+name: Nix
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        system:
+          - aarch64-darwin
+          - aarch64-linux
+          - x86_64-linux
+
+    runs-on: nix-${{ matrix.system }}
+    timeout-minutes: 120
+
+    env:
+      NIX_ABORT_ON_WARN: "1"
+      NIX_CONFIG: |
+        allow-import-from-derivation = false
+      FLAKE_URI: ${{ github.server_url }}/${{ github.repository }}/archive/${{ github.sha }}.tar.gz
+
+    steps:
+      - name: Check flake
+        run: nix flake check --keep-going --print-build-logs "$FLAKE_URI"

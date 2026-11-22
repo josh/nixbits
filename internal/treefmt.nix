@@ -24,6 +24,16 @@ let
     programs.swift-format.enable = pkgs.stdenv.hostPlatform.isDarwin;
     programs.taplo.enable = true;
     # keep-sorted end
+    settings.formatter.actionlint = {
+      includes = [
+        ".gitea/workflows/*.yml"
+        ".gitea/workflows/*.yaml"
+      ];
+      options = [
+        "-config-file"
+        ".gitea/actionlint.yml"
+      ];
+    };
   };
 in
 treefmtEval.config.build
