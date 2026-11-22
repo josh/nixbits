@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "nixpkgs": { "schedule": "@weekly" },
+    "nixpkgs-unstable": { "schedule": "@weekly" }
+  }
+}
