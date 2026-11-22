@@ -1,6 +1,12 @@
 {
   "inputs": {
-    "nixpkgs": { "schedule": "@weekly" },
-    "nixpkgs-unstable": { "schedule": "@weekly" }
+    "nixpkgs": { "schedule": "@weekly" }
+  },
+  "locks": {
+    "internal/flake.lock": {
+      "inputs": {
+        "nixpkgs-unstable": { "schedule": "@weekly" }
+      }
+    }
   }
 }
