@@ -10,11 +10,11 @@ let
     ../../git.nix
     {
       settings.user = {
-        name = lib.mkForce "New Main Author";
+        name = lib.mkForce "New Trunk Author";
         email = lib.mkForce "git@example.com";
       };
       settings.core.excludesFile = lib.mkForce (
-        writeText "jj-new-main-module-gitignore" "ignored-by-module\n"
+        writeText "jj-new-trunk-module-gitignore" "ignored-by-module\n"
       );
     }
   ];
@@ -26,11 +26,11 @@ let
     }
   ];
 in
-runCommand "test-jj-new-main-module-propagation" { nativeBuildInputs = [ git ]; } ''
+runCommand "test-jj-new-trunk-module-propagation" { nativeBuildInputs = [ git ]; } ''
   export HOME="$TMPDIR/home" GIT_CONFIG_NOSYSTEM=1
   unset GIT_CONFIG_GLOBAL JJ_CONFIG
   mkdir -p "$HOME"
-  git init --initial-branch=main seed
+  git init --initial-branch=master seed
   git -C seed config user.name "Seed Author"
   git -C seed config user.email seed@example.com
   git -C seed commit --allow-empty --message initial
@@ -41,11 +41,16 @@ runCommand "test-jj-new-main-module-propagation" { nativeBuildInputs = [ git ]; 
   previous=$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r @ -T change_id)
   touch visible ignored-by-module
   export GIT_CONFIG_GLOBAL=/ignored/git-config JJ_CONFIG=/ignored/jj-config
-  ${customJj}/bin/jj-new-main
+  ${customJj}/bin/jj-new-trunk
   test "$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r '@-' -T commit_id)" = "$upstream"
-  test "$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r @ -T 'author.name()')" = "New Main Author"
+  test "$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r @ -T 'author.name()')" = "New Trunk Author"
   test "$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r @ -T 'author.email()')" = jj@example.com
   test "$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r @ -T change_id)" != "$previous"
   test "$(${customJj}/bin/jj file list --ignore-working-copy --revision "$previous")" = visible
+  git -C ../seed commit --allow-empty --message deprecated
+  deprecated=$(git -C ../seed rev-parse HEAD)
+  ${customJj}/bin/jj-new-main 2>"$TMPDIR/stderr"
+  grep --quiet "jj-new-main is deprecated" "$TMPDIR/stderr"
+  test "$(${customJj}/bin/jj log --ignore-working-copy --no-graph -r '@-' -T commit_id)" = "$deprecated"
   touch "$out"
 ''

@@ -31,7 +31,7 @@ runCommand "test-jj-module-downstream-commands" { } ''
   test "$(readlink ${customJj}/bin/review-work)" = ${review}/bin/review-work
   test "$(${customJj}/bin/jj-review)" = custom-review
   test "$(${customJj}/bin/jj-init)" = custom-init
-  for command in jj jj-clone jj-pull jj-new-main jj-untracked jj-wip-changes jj-bookmark-clean jj-git-set-upstream; do
+  for command in jj jj-clone jj-pull jj-new-trunk jj-new-main jj-untracked jj-wip-changes jj-bookmark-clean jj-git-set-upstream; do
     test -x "${customJj}/bin/$command"
   done
   touch "$out"

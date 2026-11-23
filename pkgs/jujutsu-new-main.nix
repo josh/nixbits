@@ -1,28 +1,22 @@
 {
   lib,
   writeShellApplication,
-  wlibEvalPackage,
-  git,
-  jujutsu,
   nixbits,
   jjConfiguration ? nixbits.jujutsu.configuration,
 }:
-let
-  commandEnv = import ../modules/wrappers/jujutsu/command-env.nix {
-    inherit lib git wlibEvalPackage;
-  };
-in
 writeShellApplication {
   name = "jj-new-main";
   runtimeInputs = [
-    jujutsu
+    (nixbits.jujutsu-new-trunk.override { inherit jjConfiguration; })
   ];
   inheritPath = false;
-  runtimeEnv = commandEnv jjConfiguration;
-  text = builtins.readFile ./jujutsu-new-main.bash;
+  text = ''
+    echo "jj-new-main is deprecated; use jj-new-trunk" >&2
+    exec jj-new-trunk "$@"
+  '';
 
   meta = {
-    description = "Fetch origin then create new change from main@origin";
+    description = "Deprecated alias for jj-new-trunk";
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
   };
