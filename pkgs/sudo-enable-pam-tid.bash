@@ -3,21 +3,21 @@ source "$XTRACE_PATH/share/bash/xtrace.bash"
 
 DRY_RUN=0
 while [[ $# -gt 0 ]]; do
-  case $1 in
-  --dry-run)
-    DRY_RUN=1
-    shift
-    ;;
-  *)
-    echo "unknown option: $1" >&2
-    exit 1
-    ;;
-  esac
+	case $1 in
+	--dry-run)
+		DRY_RUN=1
+		shift
+		;;
+	*)
+		echo "unknown option: $1" >&2
+		exit 1
+		;;
+	esac
 done
 
 if [ -f /etc/pam.d/sudo_local ] && cmp -s /etc/pam.d/sudo_local "$SUDO_LOCAL_TEMPLATE"; then
-  echo "pam_tid already enabled" >&2
-  exit 0
+	echo "pam_tid already enabled" >&2
+	exit 0
 fi
 
 echo "enabling pam_tid" >&2

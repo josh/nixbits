@@ -3,8 +3,8 @@ set -o nounset
 set -o pipefail
 
 if [ $# -eq 0 ]; then
-  echo "usage: x [-q|-s] [--] command [args...]" >&2
-  exit 1
+	echo "usage: x [-q|-s] [--] command [args...]" >&2
+	exit 1
 fi
 
 quiet=false
@@ -12,28 +12,28 @@ silent=false
 
 case $1 in
 -q)
-  quiet=true
-  shift
-  ;;
+	quiet=true
+	shift
+	;;
 -s)
-  silent=true
-  shift
-  ;;
+	silent=true
+	shift
+	;;
 esac
 
 if [ $# -gt 0 ] && [ "$1" == "--" ]; then
-  shift
+	shift
 fi
 
 if [ $# -eq 0 ]; then
-  echo "usage: x [-q|-s] [--] command [args...]" >&2
-  exit 1
+	echo "usage: x [-q|-s] [--] command [args...]" >&2
+	exit 1
 fi
 
 if [ "$quiet" = true ]; then
-  x-quiet "$@"
+	x-quiet "$@"
 elif [ "$silent" = true ]; then
-  x-silent "$@"
+	x-silent "$@"
 else
-  x "$@"
+	x "$@"
 fi

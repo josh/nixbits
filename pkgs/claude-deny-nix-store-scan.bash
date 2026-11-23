@@ -6,7 +6,7 @@ cmd="$(jq --raw-output '.tool_input.command // ""')" || exit 0
 [ -n "$cmd" ] || exit 0
 
 if [[ $cmd =~ $GLOB_RE ]] || { [[ $cmd =~ $SCAN_RE ]] && [[ $cmd =~ $ROOT_RE ]]; }; then
-  jq --null-input '{
+	jq --null-input '{
     hookSpecificOutput: {
       hookEventName: "PreToolUse",
       permissionDecision: "deny",

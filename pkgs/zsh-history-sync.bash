@@ -6,9 +6,9 @@ CLOUD_HISTFILE="$CLOUD_HISTFILES/$HOSTNAME.zsh-history"
 shopt -s nullglob
 
 histutils \
-  --output-format zsh \
-  --fix \
-  --tail 50000 \
-  --output "$LOCAL_HISTFILE" \
-  --output "$CLOUD_HISTFILE" \
-  "$LOCAL_HISTFILE" "$CLOUD_HISTFILES"/*.{zsh-history,fish-history}
+	--output-format zsh \
+	--fix \
+	--tail 50000 \
+	--output "$LOCAL_HISTFILE" \
+	--output "$CLOUD_HISTFILE" \
+	"$LOCAL_HISTFILE" "$CLOUD_HISTFILES"/*.{zsh-history,fish-history}

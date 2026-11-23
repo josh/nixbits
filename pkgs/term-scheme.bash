@@ -1,5 +1,5 @@
 if ! { true </dev/tty; } 2>/dev/null; then
-  exit 1
+	exit 1
 fi
 
 saved_stty="$(stty -g </dev/tty)"
@@ -11,12 +11,12 @@ stty "$saved_stty" </dev/tty
 
 case "$reply" in
 *'?997;1')
-  echo dark
-  ;;
+	echo dark
+	;;
 *'?997;2')
-  echo light
-  ;;
+	echo light
+	;;
 *)
-  exit 1
-  ;;
+	exit 1
+	;;
 esac

@@ -1,6 +1,6 @@
 if [ $# -ne 1 ]; then
-  echo "usage: age-keygen-paper <output.pdf>" >&2
-  exit 1
+	echo "usage: age-keygen-paper <output.pdf>" >&2
+	exit 1
 fi
 
 output=$(realpath --canonicalize-missing "$1")

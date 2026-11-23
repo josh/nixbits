@@ -1,4 +1,4 @@
 ifconfig -a |
-  grep 'inet ' |
-  grep broadcast |
-  awk '{ print $2 }'
+	grep 'inet ' |
+	grep broadcast |
+	awk '{ print $2 }'
