@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   symlinkJoin,
   makeWrapper,
@@ -66,7 +67,9 @@ go'.overrideAttrs (
 
         go-env = test-go-env "GOENV" "/dev/null";
         go-path = test-go-env "GOPATH" "/homeless-shelter/.local/share/go";
-        go-bin = test-go-env "GOBIN" "";
+        go-bin = test-go-env "GOBIN" (
+          lib.optionalString (lib.versionAtLeast go.version "1.27") "/homeless-shelter/.local/share/go/bin"
+        );
         go-cache = test-go-env "GOCACHE" (
           if stdenv.hostPlatform.isDarwin then
             "/homeless-shelter/Library/Caches/go-build"
